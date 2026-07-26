@@ -19,25 +19,25 @@ The build order is: project scaffolding → auth/profiles foundation → shared 
     - _Requirements: (project setup, no direct AC)_
 
 - [ ] 2. Auth and profile foundation
-  - [ ] 2.1 Create profiles migration
+  - [x] 2.1 Create profiles migration
     - Migration for `role` enum (`ADMINISTRATOR`, `MAINTENANCE_STAFF`, `OFFICE_OWNER`), `profiles` table (`user_id` PK/FK to `auth.users.id`, `role`, `failed_login_count`, `locked_until`, `last_activity_at`), and a trigger on `auth.users` insert that creates the matching `profiles` row
     - _Requirements: 5.1_
-  - [ ] 2.2 Implement authenticate flow
+  - [x] 2.2 Implement authenticate flow
     - Wrapper around `supabase.auth.signInWithPassword` that checks `profiles.locked_until` before delegating, returns a single generic error for any invalid-credentials case, and increments/resets `failed_login_count`
     - _Requirements: 5.1, 5.2, 5.7_
   - [ ]\* 2.3 Write property test for authentication outcomes
     - **Property 11: Authentication outcomes are correct and non-revealing**
     - **Validates: Requirements 5.1, 5.2**
-  - [ ] 2.4 Implement session validation and timeout
+  - [x] 2.4 Implement session validation and timeout
     - `validateSession` Postgres function checking `last_activity_at` against the configurable `session_timeout_minutes` value read from `global_config` (created in Task 3.1), updating `last_activity_at` on each validated request
     - _Requirements: 5.6_
-  - [ ] 2.5 Implement authorize permission map and RLS helper functions
+  - [x] 2.5 Implement authorize permission map and RLS helper functions
     - `authorize(session_id, action)` Postgres function backed by a static `PermissionKey -> Role[]` map; add reusable SQL helper functions (e.g. `current_role()`, `current_office_owner_id()`) for use in RLS policies throughout the schema
     - _Requirements: 5.3, 5.4, 5.5_
   - [ ]\* 2.6 Write property test for role-based access control
     - **Property 12: Role-based access control is enforced for every restricted action**
     - **Validates: Requirements 5.3, 5.4, 5.5**
-  - [ ] 2.7 Implement configureSecurityPolicy
+  - [x] 2.7 Implement configureSecurityPolicy
     - Admin-only RPC that **updates** `session_timeout_minutes`, `lockout_threshold`, and `lockout_duration_minutes` in the existing `global_config` table (created and seeded in Task 3.1 — this task does not create the table), with validation and lockout enforcement wired into `authenticate`
     - _Requirements: 5.7, 5.8_
   - [ ]\* 2.8 Write property test for session timeout and lockout configuration
@@ -45,26 +45,26 @@ The build order is: project scaffolding → auth/profiles foundation → shared 
     - **Validates: Requirements 5.6, 5.7, 5.8**
 
 - [ ] 3. Shared foundation: configuration, categories, notification queue, audit log, and seed
-  - [ ] 3.1 Create global_config migration with seeded defaults
+  - [x] 3.1 Create global_config migration with seeded defaults
     - Migration for a `global_config` table (single-row, `CHECK (id = 1)` guard) holding `session_timeout_minutes`, `lockout_threshold`, `lockout_duration_minutes`, `reminder_lead_time_days`, `reminder_frequency_days`, `payment_grace_period_days`, and `max_retries` (notification delivery), each with a positive-integer `CHECK` constraint and a sensible seeded default
     - Administrator-only `UPDATE` RLS policy plus read access for the application role; Task 2.7 (`configureSecurityPolicy`), Task 3.7 (payment grace period), and Task 20.5 (reminder configuration) all **write to** this table rather than creating it
     - _Requirements: 5.8, 8.2, 10.4, 11.6, 11.8_
-  - [ ] 3.2 Create complaint_categories migration with seeded defaults
+  - [x] 3.2 Create complaint_categories migration with seeded defaults
     - Migration for a `complaint_categories` table (unique category name, `is_active` flag) representing the "System's configured list" of Maintenance_Complaint categories, seeded with default categories (e.g. Electrical, Plumbing, HVAC, Cleaning, Security, Other); Administrator-writable via RLS, readable by all authenticated roles; referenced by `submitComplaint` validation in Task 10.2
     - _Requirements: 6.1, 6.5_
-  - [ ] 3.3 Create notifications migration
+  - [x] 3.3 Create notifications migration
     - Migration for `notification_channel`/`notification_status` enums and the `notifications` table (`retry_count`, `last_attempt_at`), created here because Tasks 6.2, 8.2, 8.4, 10.6, and 16.6 all enqueue Notifications inside their own transactions
     - _Requirements: 10.3_
-  - [ ] 3.4 Implement enqueue SQL helper
+  - [x] 3.4 Implement enqueue SQL helper
     - Plain SQL insert helper composable inside any Postgres function transaction, used by Tasks 6.2, 8.2, 8.4, 10.6, and 16.6 to enqueue Notifications without a separate round trip
     - _Requirements: 4.1, 7.4, 9.3, 10.3_
-  - [ ] 3.5 Create audit_log_entries migration
+  - [x] 3.5 Create audit_log_entries migration
     - Migration for `audit_log_entries` (acting user, action type, entity type/id, timestamp, changed field, previous value, new value) with only `INSERT`/`SELECT` grants for the application/authenticated roles (no `UPDATE`/`DELETE`) and an Administrator-only `SELECT` RLS policy; created here because `create_allotment`, `transition_allotment`, `assign_complaint`, `handle_payment_callback`, and the owner-account flows insert audit rows inside their own transactions, and a failed audit insert must roll the whole action back
     - _Requirements: 14.1, 14.3, 14.4_
-  - [ ] 3.6 Seed the first Administrator account
+  - [x] 3.6 Seed the first Administrator account
     - Seed migration / one-off bootstrap script (`supabase/seed`) that creates the initial `auth.users` record via the Supabase Auth admin API (service-role key, credentials taken from env, never committed) and sets its `profiles.role = ADMINISTRATOR`, resolving the chicken-and-egg problem that all account creation is Administrator-only
     - _Requirements: 5.3_
-  - [ ] 3.7 Implement configurePaymentGracePeriod RPC
+  - [x] 3.7 Implement configurePaymentGracePeriod RPC
     - Administrator-only RPC validating `payment_grace_period_days` as a non-negative whole number of days before persisting it to `global_config`; consumed by `run_billing_cycle_job` when computing `due_date = billing_cycle_date + payment_grace_period_days`
     - _Requirements: 8.2_
 

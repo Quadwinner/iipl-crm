@@ -8,7 +8,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./types": "./src/types/index.ts",
-    "./supabase": "./src/supabase/index.ts"
+    "./supabase": "./src/supabase/index.ts",
+    "./auth": "./src/auth/index.ts"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
