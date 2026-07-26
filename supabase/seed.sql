@@ -1,0 +1,3 @@
+-- Seed data for local development (`supabase db reset` loads this file;
+-- see [db.seed].sql_paths in supabase/config.toml).
+-- Populated in a later task, once the schema migrations exist.

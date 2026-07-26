@@ -1,0 +1,24 @@
+{
+  "name": "itoby-crm",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "packageManager": "pnpm@10.28.1",
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "dev:admin": "pnpm --filter admin-portal dev",
+    "dev:owner": "pnpm --filter owner-portal dev",
+    "build": "pnpm -r --sequential build",
+    "typecheck": "pnpm -r --sequential typecheck",
+    "lint": "pnpm -r lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "gen:types": "pnpm --filter @itoby/shared gen:types"
+  },
+  "devDependencies": {
+    "prettier": "3.6.2",
+    "typescript": "~6.0.2"
+  }
+}

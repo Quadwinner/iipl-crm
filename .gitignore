@@ -1,0 +1,23 @@
+# Environment variables (never commit secrets)
+.env
+.env.local
+.env.*.local
+apps/*/.env
+apps/*/.env.local
+supabase/.env
+
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+.vite/
+
+# Supabase local dev
+supabase/.branches
+supabase/.temp
+
+# Editor/OS
+.DS_Store
