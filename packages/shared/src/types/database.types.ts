@@ -361,6 +361,24 @@ export type Database = {
       }
       is_account_locked: { Args: { p_email: string }; Returns: boolean }
       is_administrator: { Args: never; Returns: boolean }
+      list_office_units: {
+        Args: {
+          p_building_id?: string
+          p_occupancy_status?: Database["public"]["Enums"]["occupancy_status"]
+        }
+        Returns: {
+          base_rent_amount: number
+          building_id: string
+          building_name: string
+          created_at: string
+          floor: number
+          id: string
+          occupancy_status: Database["public"]["Enums"]["occupancy_status"]
+          size_sqft: number
+          unit_code: string
+          updated_at: string
+        }[]
+      }
       occupancy_summary: {
         Args: { p_building_id?: string }
         Returns: {

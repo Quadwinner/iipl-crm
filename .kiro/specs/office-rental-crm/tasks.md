@@ -72,13 +72,13 @@ The build order is: project scaffolding → auth/profiles foundation → shared 
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 5. Building and Office_Unit inventory
-  - [ ] 5.1 Create Building/Office_Unit migration
+  - [x] 5.1 Create Building/Office_Unit migration
     - Migration for `building`, `occupancy_status` enum, `office_unit` table with `CHECK` constraints (floor -5..200, size (0,1000000], base_rent [0.01,9999999.99], unit_code length 1-50) and `UNIQUE(building_id, unit_code)`
     - _Requirements: 1.1, 1.2, 1.6_
   - [ ]\* 5.2 Write property test for Office_Unit creation
     - **Property 1: Office_Unit creation respects bounds and produces a Vacant unit**
     - **Validates: Requirements 1.1, 1.2, 1.6**
-  - [ ] 5.3 Implement unit listing, filtering, and occupancy summary
+  - [x] 5.3 Implement unit listing, filtering, and occupancy summary
     - `listUnits(filter)` query supporting Building/Occupancy_Status filters and `getOccupancySummary(building_id?)` returning occupied/vacant/total counts
     - _Requirements: 1.3, 1.4, 2.3_
   - [ ]\* 5.4 Write property test for unit listing/filtering
@@ -87,13 +87,13 @@ The build order is: project scaffolding → auth/profiles foundation → shared 
   - [ ]\* 5.5 Write property test for occupancy counts partition
     - **Property 6: Occupancy counts always partition the full inventory**
     - **Validates: Requirements 2.3**
-  - [ ] 5.6 Implement unit update
+  - [x] 5.6 Implement unit update
     - `updateUnit(unit_id, updates)` with the same bounds/uniqueness validation as creation, advancing `updated_at` without touching `occupancy_status`
     - _Requirements: 1.5, 1.7_
   - [ ]\* 5.7 Write property test for unit updates
     - **Property 3: Office_Unit updates change only the intended fields**
     - **Validates: Requirements 1.5, 1.7**
-  - [ ] 5.8 Add RLS policies for building/office_unit
+  - [x] 5.8 Add RLS policies for building/office_unit
     - Administrator write access; Administrator and Maintenance_Staff read access
     - _Requirements: 5.3_
 
