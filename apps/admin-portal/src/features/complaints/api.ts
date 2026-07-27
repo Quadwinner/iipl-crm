@@ -82,24 +82,27 @@ export function useComplaintCategories() {
   })
 }
 
+export interface MaintenanceStaffOption {
+  user_id: Uuid
+  name: string
+}
+
 /**
- * `profiles` exposes no display name, so staff are identified by their user id. RLS
- * returns nothing here for a Maintenance_Staff caller, which matches assignment being
- * Administrator-only.
+ * `list_staff` is Administrator-only in the database, which matches assignment being
+ * Administrator-only. Deactivated staff are excluded because they are not valid assignees.
  */
 export function useMaintenanceStaff(enabled = true) {
   return useQuery({
     queryKey: complaintKeys.staff,
     enabled,
     staleTime: 5 * 60_000,
-    queryFn: async (): Promise<Uuid[]> => {
-      const { data, error } = await supabase()
-        .from('profiles')
-        .select('user_id')
-        .eq('role', 'MAINTENANCE_STAFF')
-        .order('user_id')
+    queryFn: async (): Promise<MaintenanceStaffOption[]> => {
+      const { data, error } = await supabase().rpc('list_staff', { p_include_inactive: false })
       if (error) throw dbError(error, 'Maintenance staff could not be loaded.')
-      return (data ?? []).map((row) => row.user_id)
+      return (data ?? []).map((row) => ({
+        user_id: row.user_id,
+        name: row.full_name ?? row.email,
+      }))
     },
   })
 }

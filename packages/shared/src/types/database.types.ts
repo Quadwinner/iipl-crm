@@ -709,22 +709,31 @@ export type Database = {
       profiles: {
         Row: {
           failed_login_count: number
+          full_name: string | null
+          is_active: boolean
           last_activity_at: string
           locked_until: string | null
+          phone: string | null
           role: Database["public"]["Enums"]["role"]
           user_id: string
         }
         Insert: {
           failed_login_count?: number
+          full_name?: string | null
+          is_active?: boolean
           last_activity_at?: string
           locked_until?: string | null
+          phone?: string | null
           role?: Database["public"]["Enums"]["role"]
           user_id: string
         }
         Update: {
           failed_login_count?: number
+          full_name?: string | null
+          is_active?: boolean
           last_activity_at?: string
           locked_until?: string | null
+          phone?: string | null
           role?: Database["public"]["Enums"]["role"]
           user_id?: string
         }
@@ -932,6 +941,10 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      configure_notify_vault: {
+        Args: { p_project_url: string; p_service_role_key: string }
+        Returns: undefined
+      }
       configure_payment_grace_period: {
         Args: { p_days: number }
         Returns: {
@@ -1054,6 +1067,10 @@ export type Database = {
           p_name: string
           p_phone: string
         }
+        Returns: Json
+      }
+      create_staff_account: {
+        Args: { p_auth_user_id: string; p_full_name: string; p_phone: string }
         Returns: Json
       }
       current_office_owner_id: { Args: never; Returns: string }
@@ -1281,6 +1298,17 @@ export type Database = {
           updated_at: string
         }[]
       }
+      list_staff: {
+        Args: { p_include_inactive?: boolean }
+        Returns: {
+          created_at: string
+          email: string
+          full_name: string
+          is_active: boolean
+          phone: string
+          user_id: string
+        }[]
+      }
       mark_overdue_job: { Args: { p_as_of?: string }; Returns: number }
       occupancy_summary: {
         Args: { p_building_id?: string }
@@ -1391,6 +1419,10 @@ export type Database = {
       run_lease_expiry_job: { Args: { p_as_of?: string }; Returns: number }
       send_reminder_job: { Args: { p_as_of?: string }; Returns: number }
       session_expired: { Args: never; Returns: boolean }
+      set_staff_active: {
+        Args: { p_active: boolean; p_user_id: string }
+        Returns: Json
+      }
       submit_complaint: {
         Args: {
           p_category: string

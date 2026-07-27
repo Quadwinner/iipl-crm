@@ -74,6 +74,11 @@ function ComplaintDetail({ complaint }: { complaint: ComplaintRow }) {
   const canUpdateStatus = isAdministrator || isAssignee
 
   const events = useComplaintEvents(complaint.id)
+  const staff = useMaintenanceStaff(isAdministrator)
+  const assigneeName =
+    assignedTo === null
+      ? null
+      : (staff.data?.find((member) => member.user_id === assignedTo)?.name ?? null)
 
   return (
     <>
@@ -96,7 +101,11 @@ function ComplaintDetail({ complaint }: { complaint: ComplaintRow }) {
         </dd>
         <dt className="text-muted-foreground">Assigned to</dt>
         <dd>
-          <ActorLabel actorId={assignedTo} userId={userId} unassignedLabel="Unassigned" />
+          {assigneeName !== null ? (
+            <span>{assigneeName}</span>
+          ) : (
+            <ActorLabel actorId={assignedTo} userId={userId} unassignedLabel="Unassigned" />
+          )}
         </dd>
         <dt className="text-muted-foreground">Description</dt>
         <dd className="whitespace-pre-wrap">{complaint.description}</dd>
@@ -222,9 +231,9 @@ function AssignSection({
                 <SelectValue placeholder="Select a staff member" />
               </SelectTrigger>
               <SelectContent>
-                {(staff.data ?? []).map((id) => (
-                  <SelectItem key={id} value={id} className="font-mono text-xs">
-                    {id}
+                {(staff.data ?? []).map((member) => (
+                  <SelectItem key={member.user_id} value={member.user_id}>
+                    {member.name}
                   </SelectItem>
                 ))}
               </SelectContent>

@@ -10,6 +10,7 @@ import { DocumentsPage } from './documents-page'
 import { LoginPage } from './login-page'
 import { OwnersPage } from './owners-page'
 import { SettingsPage } from './settings-page'
+import { StaffPage } from './staff-page'
 import { UnitsPage } from './units-page'
 
 export function AppRoutes() {
@@ -22,6 +23,7 @@ export function AppRoutes() {
           <Route path="/units" element={<UnitsPage />} />
           <Route path="/allotments" element={<AllotmentsPage />} />
           <Route path="/owners" element={<OwnersPage />} />
+          <Route path="/staff" element={<StaffPage />} />
           <Route path="/complaints" element={<ComplaintsPage />} />
           <Route path="/billing" element={<BillingPage />} />
           <Route path="/documents" element={<DocumentsPage />} />
