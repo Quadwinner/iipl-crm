@@ -24,3 +24,8 @@ supabase/.temp
 .vscode/
 .idea/
 *.tsbuildinfo
+
+# Vercel
+.vercel
+*.log
+.env*
