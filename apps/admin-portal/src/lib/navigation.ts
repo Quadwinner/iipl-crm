@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   ScrollText,
   Settings,
+  UserCog,
   Users,
   Wrench,
   type LucideIcon,
@@ -42,6 +43,7 @@ export const NAV_ITEMS: readonly NavItem[] = [
   { to: '/documents', label: 'Documents', icon: FolderOpen, roles: ADMIN_ONLY },
   { to: '/audit', label: 'Audit log', icon: ScrollText, roles: ADMIN_ONLY },
   { to: '/settings', label: 'Settings', icon: Settings, roles: ADMIN_ONLY },
+  { to: '/profile', label: 'Your profile', icon: UserCog, roles: ALL_STAFF },
 ]
 
 export const ROLE_LABELS: Record<Role, string> = {

@@ -9,6 +9,7 @@ import { DashboardPage } from './dashboard-page'
 import { DocumentsPage } from './documents-page'
 import { LoginPage } from './login-page'
 import { OwnersPage } from './owners-page'
+import { ProfilePage } from './profile-page'
 import { SettingsPage } from './settings-page'
 import { StaffPage } from './staff-page'
 import { UnitsPage } from './units-page'
@@ -29,6 +30,7 @@ export function AppRoutes() {
           <Route path="/documents" element={<DocumentsPage />} />
           <Route path="/audit" element={<AuditPage />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Route>
       </Route>
       <Route path="*" element={<Navigate to="/dashboard" replace />} />

@@ -10,13 +10,14 @@ const url = process.env.VITE_SUPABASE_URL
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 const email = process.argv[2] ?? process.env.SEED_ADMIN_EMAIL
 const password = process.argv[3] ?? process.env.SEED_ADMIN_PASSWORD
+const fullName = process.argv[4] ?? process.env.SEED_ADMIN_NAME
 
 if (!url || !serviceKey) {
   console.error('Missing VITE_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in .env')
   process.exit(1)
 }
 if (!email || !password) {
-  console.error('Usage: node scripts/seed-admin.mjs <email> <password>')
+  console.error('Usage: node scripts/seed-admin.mjs <email> <password> [display name]')
   process.exit(1)
 }
 if (password.length < 8) {
@@ -48,9 +49,13 @@ if (found) {
   console.log(`Created ${email}`)
 }
 
+// Without a name the audit trail and complaint history fall back to a bare role label.
+const profile = { user_id: userId, role: 'ADMINISTRATOR' }
+if (fullName) profile.full_name = fullName.trim()
+
 const { error: roleError } = await admin
   .from('profiles')
-  .upsert({ user_id: userId, role: 'ADMINISTRATOR' }, { onConflict: 'user_id' })
+  .upsert(profile, { onConflict: 'user_id' })
 
 if (roleError) {
   console.error('Failed to set role:', roleError.message)

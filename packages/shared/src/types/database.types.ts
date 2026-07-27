@@ -1464,6 +1464,10 @@ export type Database = {
         }
       }
       touch_session: { Args: never; Returns: boolean }
+      update_my_profile: {
+        Args: { p_full_name: string; p_phone: string | null }
+        Returns: Json
+      }
       transition_allotment: {
         Args: {
           p_allotment_id: string

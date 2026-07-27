@@ -25,7 +25,7 @@ scripts/               One-off operational scripts
 | Build all           | `pnpm build`                         |
 | Lint                | `pnpm lint`                          |
 | Regenerate DB types | `pnpm gen:types`                     |
-| Create admin user   | `pnpm seed:admin <email> <password>` |
+| Create admin user   | `pnpm seed:admin <email> <password> [name]` |
 | Apply migrations    | `npx -y supabase db push --yes`      |
 
 Supabase CLI is not global — always `npx -y supabase`, with the token sourced from `.env`.
