@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      allotment: {
+        Row: {
+          created_at: string
+          expiration_reason: string | null
+          id: string
+          office_owner_id: string
+          office_unit_id: string
+          status: Database["public"]["Enums"]["allotment_status"]
+          terminated_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          expiration_reason?: string | null
+          id?: string
+          office_owner_id: string
+          office_unit_id: string
+          status?: Database["public"]["Enums"]["allotment_status"]
+          terminated_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          expiration_reason?: string | null
+          id?: string
+          office_owner_id?: string
+          office_unit_id?: string
+          status?: Database["public"]["Enums"]["allotment_status"]
+          terminated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "allotment_office_owner_id_fkey"
+            columns: ["office_owner_id"]
+            isOneToOne: false
+            referencedRelation: "office_owners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "allotment_office_unit_id_fkey"
+            columns: ["office_unit_id"]
+            isOneToOne: false
+            referencedRelation: "office_unit"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_log_entries: {
         Row: {
           action_type: string
@@ -92,6 +137,178 @@ export type Database = {
         }
         Relationships: []
       }
+      complaint_event: {
+        Row: {
+          actor_user_id: string | null
+          comment_text: string | null
+          complaint_id: string
+          created_at: string
+          event_type: Database["public"]["Enums"]["event_type"]
+          id: string
+          new_status: Database["public"]["Enums"]["complaint_status"] | null
+          old_status: Database["public"]["Enums"]["complaint_status"] | null
+        }
+        Insert: {
+          actor_user_id?: string | null
+          comment_text?: string | null
+          complaint_id: string
+          created_at?: string
+          event_type: Database["public"]["Enums"]["event_type"]
+          id?: string
+          new_status?: Database["public"]["Enums"]["complaint_status"] | null
+          old_status?: Database["public"]["Enums"]["complaint_status"] | null
+        }
+        Update: {
+          actor_user_id?: string | null
+          comment_text?: string | null
+          complaint_id?: string
+          created_at?: string
+          event_type?: Database["public"]["Enums"]["event_type"]
+          id?: string
+          new_status?: Database["public"]["Enums"]["complaint_status"] | null
+          old_status?: Database["public"]["Enums"]["complaint_status"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "complaint_event_complaint_id_fkey"
+            columns: ["complaint_id"]
+            isOneToOne: false
+            referencedRelation: "maintenance_complaint"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document: {
+        Row: {
+          bucket_id: string
+          created_at: string
+          file_extension: string
+          file_name: string
+          id: string
+          lease_id: string | null
+          mime_type: string
+          object_key: string
+          office_owner_id: string | null
+          size_bytes: number
+          uploaded_by: string | null
+        }
+        Insert: {
+          bucket_id?: string
+          created_at?: string
+          file_extension: string
+          file_name: string
+          id?: string
+          lease_id?: string | null
+          mime_type: string
+          object_key: string
+          office_owner_id?: string | null
+          size_bytes: number
+          uploaded_by?: string | null
+        }
+        Update: {
+          bucket_id?: string
+          created_at?: string
+          file_extension?: string
+          file_name?: string
+          id?: string
+          lease_id?: string | null
+          mime_type?: string
+          object_key?: string
+          office_owner_id?: string | null
+          size_bytes?: number
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_lease_id_fkey"
+            columns: ["lease_id"]
+            isOneToOne: false
+            referencedRelation: "lease"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_office_owner_id_fkey"
+            columns: ["office_owner_id"]
+            isOneToOne: false
+            referencedRelation: "office_owners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      file_attachment: {
+        Row: {
+          bucket_id: string
+          complaint_id: string
+          created_at: string
+          file_extension: string
+          file_name: string
+          id: string
+          mime_type: string
+          object_key: string
+          size_bytes: number
+          uploaded_by: string | null
+        }
+        Insert: {
+          bucket_id?: string
+          complaint_id: string
+          created_at?: string
+          file_extension: string
+          file_name: string
+          id?: string
+          mime_type: string
+          object_key: string
+          size_bytes: number
+          uploaded_by?: string | null
+        }
+        Update: {
+          bucket_id?: string
+          complaint_id?: string
+          created_at?: string
+          file_extension?: string
+          file_name?: string
+          id?: string
+          mime_type?: string
+          object_key?: string
+          size_bytes?: number
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "file_attachment_complaint_id_fkey"
+            columns: ["complaint_id"]
+            isOneToOne: false
+            referencedRelation: "maintenance_complaint"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      file_storage_config: {
+        Row: {
+          file_extension: string
+          file_type_accepted: boolean
+          id: string
+          max_file_size_mb: number
+          mime_type: string
+          updated_at: string
+        }
+        Insert: {
+          file_extension: string
+          file_type_accepted?: boolean
+          id?: string
+          max_file_size_mb: number
+          mime_type: string
+          updated_at?: string
+        }
+        Update: {
+          file_extension?: string
+          file_type_accepted?: boolean
+          id?: string
+          max_file_size_mb?: number
+          mime_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       global_config: {
         Row: {
           id: number
@@ -127,6 +344,165 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      invoice: {
+        Row: {
+          additional_charges: number
+          billing_cycle_key: string
+          billing_period_end: string
+          billing_period_start: string
+          created_at: string
+          due_date: string
+          id: string
+          lease_id: string
+          office_owner_id: string
+          office_unit_id: string
+          rent_amount: number
+          status: Database["public"]["Enums"]["invoice_status"]
+          total_amount: number
+        }
+        Insert: {
+          additional_charges?: number
+          billing_cycle_key: string
+          billing_period_end: string
+          billing_period_start: string
+          created_at?: string
+          due_date: string
+          id?: string
+          lease_id: string
+          office_owner_id: string
+          office_unit_id: string
+          rent_amount: number
+          status?: Database["public"]["Enums"]["invoice_status"]
+          total_amount: number
+        }
+        Update: {
+          additional_charges?: number
+          billing_cycle_key?: string
+          billing_period_end?: string
+          billing_period_start?: string
+          created_at?: string
+          due_date?: string
+          id?: string
+          lease_id?: string
+          office_owner_id?: string
+          office_unit_id?: string
+          rent_amount?: number
+          status?: Database["public"]["Enums"]["invoice_status"]
+          total_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_lease_id_fkey"
+            columns: ["lease_id"]
+            isOneToOne: false
+            referencedRelation: "lease"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_office_owner_id_fkey"
+            columns: ["office_owner_id"]
+            isOneToOne: false
+            referencedRelation: "office_owners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_office_unit_id_fkey"
+            columns: ["office_unit_id"]
+            isOneToOne: false
+            referencedRelation: "office_unit"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lease: {
+        Row: {
+          allotment_id: string
+          billing_cycle: Database["public"]["Enums"]["billing_cycle"]
+          created_at: string
+          end_date: string
+          id: string
+          rent_amount: number
+          start_date: string
+        }
+        Insert: {
+          allotment_id: string
+          billing_cycle: Database["public"]["Enums"]["billing_cycle"]
+          created_at?: string
+          end_date: string
+          id?: string
+          rent_amount: number
+          start_date: string
+        }
+        Update: {
+          allotment_id?: string
+          billing_cycle?: Database["public"]["Enums"]["billing_cycle"]
+          created_at?: string
+          end_date?: string
+          id?: string
+          rent_amount?: number
+          start_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lease_allotment_id_fkey"
+            columns: ["allotment_id"]
+            isOneToOne: true
+            referencedRelation: "allotment"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      maintenance_complaint: {
+        Row: {
+          assigned_to: string | null
+          category: string
+          created_at: string
+          description: string
+          id: string
+          office_owner_id: string
+          office_unit_id: string
+          status: Database["public"]["Enums"]["complaint_status"]
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          office_owner_id: string
+          office_unit_id: string
+          status?: Database["public"]["Enums"]["complaint_status"]
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          office_owner_id?: string
+          office_unit_id?: string
+          status?: Database["public"]["Enums"]["complaint_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintenance_complaint_office_owner_id_fkey"
+            columns: ["office_owner_id"]
+            isOneToOne: false
+            referencedRelation: "office_owners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenance_complaint_office_unit_id_fkey"
+            columns: ["office_unit_id"]
+            isOneToOne: false
+            referencedRelation: "office_unit"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notifications: {
         Row: {
@@ -252,6 +628,84 @@ export type Database = {
           },
         ]
       }
+      payment: {
+        Row: {
+          amount: number
+          completed_at: string | null
+          created_at: string
+          failure_reason: string | null
+          gateway: Database["public"]["Enums"]["gateway_type"]
+          id: string
+          invoice_id: string
+          office_owner_id: string
+          status: Database["public"]["Enums"]["payment_status"]
+          transaction_ref: string | null
+        }
+        Insert: {
+          amount: number
+          completed_at?: string | null
+          created_at?: string
+          failure_reason?: string | null
+          gateway: Database["public"]["Enums"]["gateway_type"]
+          id?: string
+          invoice_id: string
+          office_owner_id: string
+          status?: Database["public"]["Enums"]["payment_status"]
+          transaction_ref?: string | null
+        }
+        Update: {
+          amount?: number
+          completed_at?: string | null
+          created_at?: string
+          failure_reason?: string | null
+          gateway?: Database["public"]["Enums"]["gateway_type"]
+          id?: string
+          invoice_id?: string
+          office_owner_id?: string
+          status?: Database["public"]["Enums"]["payment_status"]
+          transaction_ref?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoice"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_office_owner_id_fkey"
+            columns: ["office_owner_id"]
+            isOneToOne: false
+            referencedRelation: "office_owners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_verification_failures: {
+        Row: {
+          created_at: string
+          gateway: Database["public"]["Enums"]["gateway_type"]
+          id: string
+          raw_body_hash: string
+          reason: string | null
+        }
+        Insert: {
+          created_at?: string
+          gateway: Database["public"]["Enums"]["gateway_type"]
+          id?: string
+          raw_body_hash: string
+          reason?: string | null
+        }
+        Update: {
+          created_at?: string
+          gateway?: Database["public"]["Enums"]["gateway_type"]
+          id?: string
+          raw_body_hash?: string
+          reason?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           failed_login_count: number
@@ -276,6 +730,76 @@ export type Database = {
         }
         Relationships: []
       }
+      receipt: {
+        Row: {
+          amount_paid: number
+          completed_at: string
+          document_ref: string | null
+          generated_at: string
+          id: string
+          invoice_period: string
+          office_owner_id: string
+          office_owner_name: string
+          office_unit_code: string
+          office_unit_id: string
+          payment_gateway: Database["public"]["Enums"]["gateway_type"]
+          payment_id: string
+          transaction_ref: string | null
+        }
+        Insert: {
+          amount_paid: number
+          completed_at: string
+          document_ref?: string | null
+          generated_at?: string
+          id?: string
+          invoice_period: string
+          office_owner_id: string
+          office_owner_name: string
+          office_unit_code: string
+          office_unit_id: string
+          payment_gateway: Database["public"]["Enums"]["gateway_type"]
+          payment_id: string
+          transaction_ref?: string | null
+        }
+        Update: {
+          amount_paid?: number
+          completed_at?: string
+          document_ref?: string | null
+          generated_at?: string
+          id?: string
+          invoice_period?: string
+          office_owner_id?: string
+          office_owner_name?: string
+          office_unit_code?: string
+          office_unit_id?: string
+          payment_gateway?: Database["public"]["Enums"]["gateway_type"]
+          payment_id?: string
+          transaction_ref?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receipt_office_owner_id_fkey"
+            columns: ["office_owner_id"]
+            isOneToOne: false
+            referencedRelation: "office_owners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "receipt_office_unit_id_fkey"
+            columns: ["office_unit_id"]
+            isOneToOne: false
+            referencedRelation: "office_unit"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "receipt_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: true
+            referencedRelation: "payment"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       role_permissions: {
         Row: {
           permission_key: string
@@ -296,7 +820,76 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_comment: {
+        Args: { p_comment: string; p_complaint_id: string }
+        Returns: {
+          actor_user_id: string | null
+          comment_text: string | null
+          complaint_id: string
+          created_at: string
+          event_type: Database["public"]["Enums"]["event_type"]
+          id: string
+          new_status: Database["public"]["Enums"]["complaint_status"] | null
+          old_status: Database["public"]["Enums"]["complaint_status"] | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "complaint_event"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      assert_valid_date_range: {
+        Args: { p_end: string; p_start: string }
+        Returns: undefined
+      }
+      assign_complaint: {
+        Args: { p_complaint_id: string; p_staff_id: string }
+        Returns: {
+          assigned_to: string | null
+          category: string
+          created_at: string
+          description: string
+          id: string
+          office_owner_id: string
+          office_unit_id: string
+          status: Database["public"]["Enums"]["complaint_status"]
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "maintenance_complaint"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       authorize: { Args: { p_permission: string }; Returns: boolean }
+      billing_report_rows: {
+        Args: {
+          p_building_id?: string
+          p_office_owner_id?: string
+          p_status?: Database["public"]["Enums"]["invoice_status"]
+        }
+        Returns: {
+          additional_charges: number
+          billing_cycle_key: string
+          billing_period_end: string
+          billing_period_start: string
+          building_id: string
+          building_name: string
+          created_at: string
+          due_date: string
+          invoice_id: string
+          lease_id: string
+          office_owner_id: string
+          office_unit_id: string
+          owner_name: string
+          rent_amount: number
+          status: Database["public"]["Enums"]["invoice_status"]
+          total_amount: number
+          unit_code: string
+        }[]
+      }
       config: {
         Args: never
         Returns: {
@@ -317,8 +910,50 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      configure_file_types: {
+        Args: {
+          p_file_extension: string
+          p_file_type_accepted: boolean
+          p_max_file_size_mb: number
+          p_mime_type: string
+        }
+        Returns: {
+          file_extension: string
+          file_type_accepted: boolean
+          id: string
+          max_file_size_mb: number
+          mime_type: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "file_storage_config"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       configure_payment_grace_period: {
         Args: { p_days: number }
+        Returns: {
+          id: number
+          lockout_duration_minutes: number
+          lockout_threshold: number
+          max_retries: number
+          payment_grace_period_days: number
+          reminder_frequency_days: number
+          reminder_lead_time_days: number
+          session_timeout_minutes: number
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "global_config"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      configure_reminder_settings: {
+        Args: { p_frequency_days: number; p_lead_time_days: number }
         Returns: {
           id: number
           lockout_duration_minutes: number
@@ -357,6 +992,31 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "global_config"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      create_allotment: {
+        Args: {
+          p_billing_cycle: Database["public"]["Enums"]["billing_cycle"]
+          p_lease_end: string
+          p_lease_start: string
+          p_office_owner_id: string
+          p_office_unit_id: string
+          p_rent_amount: number
+        }
+        Returns: {
+          created_at: string
+          expiration_reason: string | null
+          id: string
+          office_owner_id: string
+          office_unit_id: string
+          status: Database["public"]["Enums"]["allotment_status"]
+          terminated_at: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "allotment"
           isOneToOne: true
           isSetofReturn: false
         }
@@ -411,8 +1071,198 @@ export type Database = {
         }
         Returns: string
       }
+      get_allotment_history: {
+        Args: { p_office_unit_id: string }
+        Returns: {
+          allotment_id: string
+          billing_cycle: Database["public"]["Enums"]["billing_cycle"]
+          created_at: string
+          expiration_reason: string
+          lease_end_date: string
+          lease_start_date: string
+          office_owner_id: string
+          office_unit_id: string
+          owner_contact_email: string
+          owner_name: string
+          rent_amount: number
+          status: Database["public"]["Enums"]["allotment_status"]
+          terminated_at: string
+        }[]
+      }
+      get_billing_report: {
+        Args: {
+          p_building_id?: string
+          p_office_owner_id?: string
+          p_status?: Database["public"]["Enums"]["invoice_status"]
+        }
+        Returns: {
+          additional_charges: number
+          billing_cycle_key: string
+          billing_period_end: string
+          billing_period_start: string
+          building_id: string
+          building_name: string
+          created_at: string
+          due_date: string
+          invoice_id: string
+          lease_id: string
+          office_owner_id: string
+          office_unit_id: string
+          owner_name: string
+          rent_amount: number
+          status: Database["public"]["Enums"]["invoice_status"]
+          total_amount: number
+          unit_code: string
+        }[]
+      }
+      get_invoices_for_owner: {
+        Args: never
+        Returns: {
+          additional_charges: number
+          billing_cycle_key: string
+          billing_period_end: string
+          billing_period_start: string
+          building_id: string
+          building_name: string
+          created_at: string
+          due_date: string
+          invoice_id: string
+          lease_id: string
+          office_owner_id: string
+          office_unit_id: string
+          owner_name: string
+          rent_amount: number
+          status: Database["public"]["Enums"]["invoice_status"]
+          total_amount: number
+          unit_code: string
+        }[]
+      }
+      get_occupancy_dashboard: {
+        Args: { p_building_id?: string }
+        Returns: {
+          occupancy_rate_percent: number
+          occupied_count: number
+          total_units: number
+          vacant_count: number
+        }[]
+      }
+      get_report_export: {
+        Args: {
+          p_building_id?: string
+          p_end_date?: string
+          p_start_date?: string
+        }
+        Returns: {
+          billing_cycle_key: string
+          billing_period_end: string
+          billing_period_start: string
+          building_id: string
+          building_name: string
+          due_date: string
+          invoice_id: string
+          office_owner_id: string
+          office_unit_id: string
+          owner_name: string
+          status: Database["public"]["Enums"]["invoice_status"]
+          total_amount: number
+          unit_code: string
+        }[]
+      }
+      get_revenue_dashboard: {
+        Args: {
+          p_building_id?: string
+          p_end_date?: string
+          p_start_date?: string
+        }
+        Returns: {
+          overdue_invoice_count: number
+          range_end: string
+          range_start: string
+          total_outstanding_dues: number
+          total_rent_collected: number
+        }[]
+      }
+      handle_payment_callback: {
+        Args: {
+          p_amount: number
+          p_gateway: Database["public"]["Enums"]["gateway_type"]
+          p_gateway_timestamp?: string
+          p_invoice_id: string
+          p_outcome: string
+          p_transaction_ref: string
+        }
+        Returns: Json
+      }
+      initiate_payment: {
+        Args: {
+          p_amount: number
+          p_gateway: Database["public"]["Enums"]["gateway_type"]
+          p_invoice_id: string
+          p_transaction_ref?: string
+        }
+        Returns: {
+          amount: number
+          completed_at: string | null
+          created_at: string
+          failure_reason: string | null
+          gateway: Database["public"]["Enums"]["gateway_type"]
+          id: string
+          invoice_id: string
+          office_owner_id: string
+          status: Database["public"]["Enums"]["payment_status"]
+          transaction_ref: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "payment"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      invoke_notify: { Args: never; Returns: undefined }
       is_account_locked: { Args: { p_email: string }; Returns: boolean }
       is_administrator: { Args: never; Returns: boolean }
+      list_all_complaints: {
+        Args: {
+          p_category?: string
+          p_created_from?: string
+          p_created_to?: string
+          p_office_owner_id?: string
+          p_office_unit_id?: string
+          p_status?: Database["public"]["Enums"]["complaint_status"]
+        }
+        Returns: {
+          assigned_to: string
+          building_name: string
+          category: string
+          created_at: string
+          description: string
+          id: string
+          office_owner_id: string
+          office_unit_id: string
+          owner_name: string
+          status: Database["public"]["Enums"]["complaint_status"]
+          unit_code: string
+          updated_at: string
+        }[]
+      }
+      list_complaints_for_owner: {
+        Args: never
+        Returns: {
+          assigned_to: string
+          building_name: string
+          category: string
+          created_at: string
+          description: string
+          id: string
+          office_owner_id: string
+          office_unit_id: string
+          owner_name: string
+          status: Database["public"]["Enums"]["complaint_status"]
+          unit_code: string
+          updated_at: string
+        }[]
+      }
       list_office_units: {
         Args: {
           p_building_id?: string
@@ -431,12 +1281,52 @@ export type Database = {
           updated_at: string
         }[]
       }
+      mark_overdue_job: { Args: { p_as_of?: string }; Returns: number }
       occupancy_summary: {
         Args: { p_building_id?: string }
         Returns: {
           occupied_count: number
           total_count: number
           vacant_count: number
+        }[]
+      }
+      owner_of_attachment: { Args: { p_object_key: string }; Returns: string }
+      owner_of_document: { Args: { p_object_key: string }; Returns: string }
+      owner_of_receipt: { Args: { p_object_key: string }; Returns: string }
+      pending_notifications: {
+        Args: { p_limit?: number }
+        Returns: {
+          channel: Database["public"]["Enums"]["notification_channel"]
+          id: string
+          notification_type: string
+          payload: Json
+          recipient_email: string
+          recipient_phone: string
+          retry_count: number
+          user_id: string
+        }[]
+      }
+      query_audit_log: {
+        Args: {
+          p_action_type?: string
+          p_actor_user_id?: string
+          p_from_date?: string
+          p_limit?: number
+          p_offset?: number
+          p_to_date?: string
+        }
+        Returns: {
+          action_type: string
+          actor_email: string
+          actor_role: Database["public"]["Enums"]["role"]
+          actor_user_id: string
+          created_at: string
+          entity_id: string
+          entity_type: string
+          field_name: string
+          id: string
+          new_value: string
+          old_value: string
         }[]
       }
       record_audit: {
@@ -452,9 +1342,125 @@ export type Database = {
       }
       record_login_failure: { Args: { p_email: string }; Returns: undefined }
       record_login_success: { Args: never; Returns: undefined }
+      record_notification_attempt: {
+        Args: { p_id: string; p_success: boolean }
+        Returns: {
+          channel: Database["public"]["Enums"]["notification_channel"]
+          created_at: string
+          id: string
+          last_attempt_at: string | null
+          next_attempt_at: string
+          notification_type: string
+          payload: Json
+          retry_count: number
+          status: Database["public"]["Enums"]["notification_status"]
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "notifications"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       require_permission: { Args: { p_permission: string }; Returns: undefined }
+      run_billing_cycle_job: {
+        Args: { p_as_of?: string }
+        Returns: {
+          additional_charges: number
+          billing_cycle_key: string
+          billing_period_end: string
+          billing_period_start: string
+          created_at: string
+          due_date: string
+          id: string
+          lease_id: string
+          office_owner_id: string
+          office_unit_id: string
+          rent_amount: number
+          status: Database["public"]["Enums"]["invoice_status"]
+          total_amount: number
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "invoice"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      run_lease_expiry_job: { Args: { p_as_of?: string }; Returns: number }
+      send_reminder_job: { Args: { p_as_of?: string }; Returns: number }
       session_expired: { Args: never; Returns: boolean }
+      submit_complaint: {
+        Args: {
+          p_category: string
+          p_description: string
+          p_office_unit_id: string
+        }
+        Returns: {
+          assigned_to: string | null
+          category: string
+          created_at: string
+          description: string
+          id: string
+          office_owner_id: string
+          office_unit_id: string
+          status: Database["public"]["Enums"]["complaint_status"]
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "maintenance_complaint"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       touch_session: { Args: never; Returns: boolean }
+      transition_allotment: {
+        Args: {
+          p_allotment_id: string
+          p_reason?: string
+          p_target_status: Database["public"]["Enums"]["allotment_status"]
+        }
+        Returns: {
+          created_at: string
+          expiration_reason: string | null
+          id: string
+          office_owner_id: string
+          office_unit_id: string
+          status: Database["public"]["Enums"]["allotment_status"]
+          terminated_at: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "allotment"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      update_complaint_status: {
+        Args: {
+          p_complaint_id: string
+          p_new_status: Database["public"]["Enums"]["complaint_status"]
+        }
+        Returns: {
+          assigned_to: string | null
+          category: string
+          created_at: string
+          description: string
+          id: string
+          office_owner_id: string
+          office_unit_id: string
+          status: Database["public"]["Enums"]["complaint_status"]
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "maintenance_complaint"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       update_office_unit: {
         Args: {
           p_base_rent_amount?: number
@@ -503,10 +1509,17 @@ export type Database = {
       }
     }
     Enums: {
+      allotment_status: "ACTIVE" | "TERMINATED" | "EXPIRED"
+      billing_cycle: "MONTHLY" | "QUARTERLY" | "YEARLY"
+      complaint_status: "OPEN" | "ASSIGNED" | "IN_PROGRESS" | "RESOLVED"
+      event_type: "STATUS_CHANGE" | "COMMENT"
+      gateway_type: "UPI" | "RAZORPAY"
+      invoice_status: "DUE" | "PARTIALLY_PAID" | "PAID" | "OVERDUE"
       notification_channel: "EMAIL" | "SMS" | "IN_APP"
       notification_status: "PENDING" | "SENT" | "FAILED"
       occupancy_status: "VACANT" | "OCCUPIED"
       owner_status: "ACTIVE" | "DEACTIVATED"
+      payment_status: "PENDING" | "COMPLETED" | "FAILED" | "CANCELLED"
       role: "ADMINISTRATOR" | "MAINTENANCE_STAFF" | "OFFICE_OWNER"
     }
     CompositeTypes: {
@@ -635,10 +1648,17 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      allotment_status: ["ACTIVE", "TERMINATED", "EXPIRED"],
+      billing_cycle: ["MONTHLY", "QUARTERLY", "YEARLY"],
+      complaint_status: ["OPEN", "ASSIGNED", "IN_PROGRESS", "RESOLVED"],
+      event_type: ["STATUS_CHANGE", "COMMENT"],
+      gateway_type: ["UPI", "RAZORPAY"],
+      invoice_status: ["DUE", "PARTIALLY_PAID", "PAID", "OVERDUE"],
       notification_channel: ["EMAIL", "SMS", "IN_APP"],
       notification_status: ["PENDING", "SENT", "FAILED"],
       occupancy_status: ["VACANT", "OCCUPIED"],
       owner_status: ["ACTIVE", "DEACTIVATED"],
+      payment_status: ["PENDING", "COMPLETED", "FAILED", "CANCELLED"],
       role: ["ADMINISTRATOR", "MAINTENANCE_STAFF", "OFFICE_OWNER"],
     },
   },

@@ -21,3 +21,6 @@ supabase/.temp
 
 # Editor/OS
 .DS_Store
+.vscode/
+.idea/
+*.tsbuildinfo

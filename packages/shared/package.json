@@ -9,7 +9,12 @@
     ".": "./src/index.ts",
     "./types": "./src/types/index.ts",
     "./supabase": "./src/supabase/index.ts",
-    "./auth": "./src/auth/index.ts"
+    "./auth": "./src/auth/index.ts",
+    "./inventory": "./src/inventory/index.ts",
+    "./storage": "./src/storage/index.ts",
+    "./payments": "./src/payments/index.ts",
+    "./reporting": "./src/reporting/index.ts",
+    "./validation": "./src/validation/index.ts"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -18,7 +23,9 @@
     "gen:types": "supabase gen types typescript --linked --schema public > src/types/database.types.ts"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.95.0"
+    "@supabase/supabase-js": "^2.95.0",
+    "pdf-lib": "^1.17.1",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "oxlint": "^1.71.0",
