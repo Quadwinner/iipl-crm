@@ -16,11 +16,28 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "gen:types": "pnpm --filter @itoby/shared gen:types",
-    "seed:admin": "node scripts/seed-admin.mjs"
+    "seed:admin": "node scripts/seed-admin.mjs",
+    "test": "vitest --run --passWithNoTests",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui"
   },
   "devDependencies": {
     "@supabase/supabase-js": "^2.110.8",
+    "@vitest/ui": "^4.1.10",
+    "dotenv": "^17.4.2",
+    "fast-check": "^4.9.0",
     "prettier": "3.6.2",
-    "typescript": "~6.0.2"
+    "supabase": "2.109.1",
+    "typescript": "~6.0.2",
+    "vitest": "^4.1.10"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "supabase"
+    ]
   }
 }

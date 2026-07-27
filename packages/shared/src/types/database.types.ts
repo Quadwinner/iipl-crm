@@ -167,6 +167,47 @@ export type Database = {
         }
         Relationships: []
       }
+      office_owners: {
+        Row: {
+          contact_email: string
+          created_at: string
+          id: string
+          name: string
+          phone: string
+          status: Database["public"]["Enums"]["owner_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          contact_email: string
+          created_at?: string
+          id?: string
+          name: string
+          phone: string
+          status?: Database["public"]["Enums"]["owner_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          contact_email?: string
+          created_at?: string
+          id?: string
+          name?: string
+          phone?: string
+          status?: Database["public"]["Enums"]["owner_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "office_owners_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       office_unit: {
         Row: {
           base_rent_amount: number
@@ -346,10 +387,21 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      create_owner_account: {
+        Args: {
+          p_auth_user_id: string
+          p_contact_email: string
+          p_name: string
+          p_phone: string
+        }
+        Returns: Json
+      }
+      current_office_owner_id: { Args: never; Returns: string }
       current_role: {
         Args: never
         Returns: Database["public"]["Enums"]["role"]
       }
+      deactivate_owner_internal: { Args: { p_owner_id: string }; Returns: Json }
       enqueue_notification: {
         Args: {
           p_channel: Database["public"]["Enums"]["notification_channel"]
@@ -430,11 +482,31 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      update_owner_profile: {
+        Args: { p_contact_email?: string; p_name?: string; p_phone?: string }
+        Returns: {
+          contact_email: string
+          created_at: string
+          id: string
+          name: string
+          phone: string
+          status: Database["public"]["Enums"]["owner_status"]
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "office_owners"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
       notification_channel: "EMAIL" | "SMS" | "IN_APP"
       notification_status: "PENDING" | "SENT" | "FAILED"
       occupancy_status: "VACANT" | "OCCUPIED"
+      owner_status: "ACTIVE" | "DEACTIVATED"
       role: "ADMINISTRATOR" | "MAINTENANCE_STAFF" | "OFFICE_OWNER"
     }
     CompositeTypes: {
@@ -566,6 +638,7 @@ export const Constants = {
       notification_channel: ["EMAIL", "SMS", "IN_APP"],
       notification_status: ["PENDING", "SENT", "FAILED"],
       occupancy_status: ["VACANT", "OCCUPIED"],
+      owner_status: ["ACTIVE", "DEACTIVATED"],
       role: ["ADMINISTRATOR", "MAINTENANCE_STAFF", "OFFICE_OWNER"],
     },
   },

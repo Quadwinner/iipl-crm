@@ -6,21 +6,29 @@ inclusion: always
 
 ## Supabase CLI
 
-CLI is not installed globally. Always `npx -y supabase`.
+CLI is a root devDependency (`supabase@2.109.1`), not global. Always `pnpm exec supabase`.
+
+Do **not** use `npx -y supabase` — pnpm 10 blocks lifecycle scripts, so npx cannot
+place the CLI binary and fails with a misleading `sh: 1: supabase: not found`.
 
 Every command needs the access token sourced from root `.env`:
 
 ```bash
 set -a; source .env; set +a
-SUPABASE_ACCESS_TOKEN="$SUPABASE_ACCESS_TOKEN" npx -y supabase <cmd>
+SUPABASE_ACCESS_TOKEN="$SUPABASE_ACCESS_TOKEN" pnpm exec supabase <cmd>
 ```
 
 **Always pass `--yes` to `db push`.** Without it the CLI blocks forever on an
 interactive `[Y/n]` prompt.
 
 ```bash
-npx -y supabase db push --yes
+pnpm exec supabase db push --yes
 ```
+
+If the binary ever goes missing again, `pnpm install` is enough — the version is
+pinned and `pnpm.onlyBuiltDependencies` in root `package.json` keeps `supabase`
+allowed to run its install step. Keep the CLI version at or above whatever wrote
+`supabase/config.toml`, or the CLI rejects the config with `invalid keys` errors.
 
 Known-harmless output — do not investigate or "fix" these:
 - `Skipping migration .gitkeep... (file name must match pattern)` — placeholder file.
