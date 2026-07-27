@@ -13,19 +13,13 @@ if (!token) {
 
 const REPO = 'Quadwinner/iipl-crm'
 
-const PROJECTS = [
-  {
-    name: 'iipl-admin-portal',
-    // Exit 0 = skip build. Build only when the app or shared code changed.
-    ignoreCommand:
-      'git diff --quiet HEAD^ HEAD -- ../../apps/admin-portal ../../packages/shared ../../pnpm-lock.yaml',
-  },
-  {
-    name: 'iipl-owner-portal',
-    ignoreCommand:
-      'git diff --quiet HEAD^ HEAD -- ../../apps/owner-portal ../../packages/shared ../../pnpm-lock.yaml',
-  },
-]
+/**
+ * No ignored build step: a `git diff --quiet HEAD^ HEAD` guard exits 0 ("skip") on merge
+ * commits and on Vercel's shallow clones where HEAD^ is absent, which silently CANCELs
+ * legitimate deployments. Rebuilding both portals on every push wastes a build but never
+ * skips one that mattered.
+ */
+const PROJECTS = [{ name: 'iipl-admin-portal' }, { name: 'iipl-owner-portal' }]
 
 async function api(path, options = {}) {
   const res = await fetch(`https://api.vercel.com${path}`, {
@@ -47,7 +41,7 @@ async function api(path, options = {}) {
   return body
 }
 
-for (const { name, ignoreCommand } of PROJECTS) {
+for (const { name } of PROJECTS) {
   try {
     await api(`/v9/projects/${name}/link`, {
       method: 'POST',
@@ -60,7 +54,7 @@ for (const { name, ignoreCommand } of PROJECTS) {
 
   await api(`/v9/projects/${name}`, {
     method: 'PATCH',
-    body: JSON.stringify({ commandForIgnoringBuildStep: ignoreCommand }),
+    body: JSON.stringify({ commandForIgnoringBuildStep: null }),
   })
-  console.log(`${name}: ignored build step set`)
+  console.log(`${name}: builds on every push (no ignore step)`)
 }
