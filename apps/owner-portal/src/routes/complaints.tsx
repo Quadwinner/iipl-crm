@@ -67,6 +67,7 @@ export function ComplaintsScreen() {
               <TableHead>Category</TableHead>
               <TableHead>Office unit</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Assigned to</TableHead>
               <TableHead>
                 <span className="sr-only">Actions</span>
               </TableHead>
@@ -85,6 +86,11 @@ export function ComplaintsScreen() {
                 </TableCell>
                 <TableCell>
                   <ComplaintStatusBadge status={row.status} />
+                </TableCell>
+                <TableCell>
+                  {row.assigned_to_name ?? (
+                    <span className="text-muted-foreground">Unassigned</span>
+                  )}
                 </TableCell>
                 <TableCell className="text-right">
                   <Button

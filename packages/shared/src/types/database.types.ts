@@ -829,6 +829,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      actor_display_name: { Args: { p_user_id: string }; Returns: string }
       add_comment: {
         Args: { p_comment: string; p_complaint_id: string }
         Returns: {
@@ -1132,6 +1133,20 @@ export type Database = {
           unit_code: string
         }[]
       }
+      get_complaint_history: {
+        Args: { p_complaint_id: string }
+        Returns: {
+          actor_name: string
+          actor_role: Database["public"]["Enums"]["role"]
+          actor_user_id: string
+          comment_text: string
+          created_at: string
+          event_type: Database["public"]["Enums"]["event_type"]
+          id: string
+          new_status: Database["public"]["Enums"]["complaint_status"]
+          old_status: Database["public"]["Enums"]["complaint_status"]
+        }[]
+      }
       get_invoices_for_owner: {
         Args: never
         Returns: {
@@ -1267,6 +1282,7 @@ export type Database = {
         Args: never
         Returns: {
           assigned_to: string
+          assigned_to_name: string
           building_name: string
           category: string
           created_at: string

@@ -49,6 +49,12 @@ function ComplaintDetail({ complaint }: { complaint: ComplaintRow }) {
         <dd>
           <time dateTime={complaint.created_at}>{formatTimestamp(complaint.created_at)}</time>
         </dd>
+        <dt className="text-muted-foreground">Assigned to</dt>
+        <dd>
+          {complaint.assigned_to_name ?? (
+            <span className="text-muted-foreground">Not yet assigned</span>
+          )}
+        </dd>
         <dt className="text-muted-foreground">Description</dt>
         <dd className="whitespace-pre-wrap">{complaint.description}</dd>
       </dl>
@@ -80,7 +86,7 @@ function ComplaintDetail({ complaint }: { complaint: ComplaintRow }) {
                     ? 'System'
                     : event.actor_user_id === owner?.userId
                       ? 'You'
-                      : 'IIPL staff'}
+                      : (event.actor_name ?? 'IIPL staff')}
                 </p>
                 {event.event_type === 'STATUS_CHANGE' ? (
                   <p className="text-sm">

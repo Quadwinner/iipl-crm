@@ -13,7 +13,8 @@ import { supabase } from '@/lib/supabase'
 
 export type ComplaintRow =
   Database['public']['Functions']['list_complaints_for_owner']['Returns'][number]
-export type ComplaintEventRow = Database['public']['Tables']['complaint_event']['Row']
+export type ComplaintEventRow =
+  Database['public']['Functions']['get_complaint_history']['Returns'][number]
 
 export interface AllottedUnit {
   id: Uuid
@@ -48,16 +49,18 @@ export function useOwnerComplaints() {
   })
 }
 
+/**
+ * `get_complaint_history` returns the acting user's display name alongside each event;
+ * `complaint_event` alone cannot, because owners cannot read staff `profiles` rows.
+ */
 export function useComplaintEvents(complaintId: Uuid | null) {
   return useQuery({
     queryKey: complaintKeys.events(complaintId ?? 'none'),
     enabled: complaintId !== null,
     queryFn: async (): Promise<ComplaintEventRow[]> => {
-      const { data, error } = await supabase()
-        .from('complaint_event')
-        .select('*')
-        .eq('complaint_id', complaintId as Uuid)
-        .order('created_at', { ascending: true })
+      const { data, error } = await supabase().rpc('get_complaint_history', {
+        p_complaint_id: complaintId as Uuid,
+      })
       if (error) throw dbError(error, 'The status history could not be loaded.')
       return data ?? []
     },

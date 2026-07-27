@@ -136,7 +136,11 @@ function ComplaintDetail({ complaint }: { complaint: ComplaintRow }) {
                     {dateTimeFormat.format(new Date(event.created_at))}
                   </time>
                   {' · '}
-                  <ActorLabel actorId={event.actor_user_id} userId={userId} />
+                  {event.actor_user_id === null
+                    ? 'System'
+                    : event.actor_user_id === userId
+                      ? 'You'
+                      : (event.actor_name ?? 'IIPL staff')}
                 </p>
                 {event.event_type === 'STATUS_CHANGE' ? (
                   <p className="text-sm">
