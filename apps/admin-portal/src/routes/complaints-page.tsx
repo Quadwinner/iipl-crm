@@ -33,6 +33,7 @@ import {
   EMPTY_COMPLAINT_FILTERS,
   useComplaintCategories,
   useComplaints,
+  useMaintenanceStaff,
   type ComplaintFilters,
   type ComplaintRow,
 } from '@/features/complaints/api'
@@ -55,6 +56,13 @@ export function ComplaintsPage() {
   const categories = useComplaintCategories()
   const owners = useOwnerOptions()
   const complaints = useComplaints(filters)
+
+  // list_staff is Administrator-only, so Maintenance_Staff viewers keep the id fallback.
+  const staff = useMaintenanceStaff(role === 'ADMINISTRATOR')
+  const staffNames = useMemo(
+    () => new Map((staff.data ?? []).map((member) => [member.user_id, member.name])),
+    [staff.data],
+  )
 
   /** Read the open complaint back out of the list so it refreshes after a mutation. */
   const selected = complaints.data?.find((row) => row.id === selectedId) ?? null
@@ -89,6 +97,10 @@ export function ComplaintsPage() {
           const assignee = info.getValue() as Uuid | null
           if (!assignee) return <span className="text-muted-foreground">Unassigned</span>
           if (assignee === userId) return 'You'
+          const name = staffNames.get(assignee)
+          if (name) return name
+          // A deactivated assignee is absent from the assignable list, so fall back to a
+          // short id rather than rendering nothing.
           return (
             <span className="font-mono text-xs" title={assignee}>
               {assignee.slice(0, 8)}
@@ -111,7 +123,7 @@ export function ComplaintsPage() {
         ),
       }),
     ],
-    [userId],
+    [userId, staffNames],
   )
 
   const table = useReactTable({
