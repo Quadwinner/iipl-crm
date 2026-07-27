@@ -412,3 +412,13 @@ enabled = true
 # declarative_schema_path = "./database"
 # JSON string passed through to pg-delta SQL formatting.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":80,\"commaStyle\":\"trailing\"}"
+
+# Payment_Gateway webhook receivers (Task 16.4 / 16.5). These are called by the UPI PSP
+# and Razorpay, which cannot present a Supabase Auth JWT, so platform JWT verification is
+# disabled here. Authenticity is enforced inside each function by HMAC signature
+# verification over the raw request body before any state change (Requirement 9.5, 9.7).
+[functions.webhooks-upi]
+verify_jwt = false
+
+[functions.webhooks-razorpay]
+verify_jwt = false

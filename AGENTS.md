@@ -16,17 +16,17 @@ scripts/               One-off operational scripts
 
 ## Commands
 
-| Task | Command |
-|---|---|
-| Install | `pnpm install` |
-| Dev (admin) | `pnpm dev:admin` → :5173 |
-| Dev (owner) | `pnpm dev:owner` → :5174 |
-| Typecheck all | `pnpm typecheck` |
-| Build all | `pnpm build` |
-| Lint | `pnpm lint` |
-| Regenerate DB types | `pnpm gen:types` |
-| Create admin user | `pnpm seed:admin <email> <password>` |
-| Apply migrations | `npx -y supabase db push --yes` |
+| Task                | Command                              |
+| ------------------- | ------------------------------------ |
+| Install             | `pnpm install`                       |
+| Dev (admin)         | `pnpm dev:admin` → :5173             |
+| Dev (owner)         | `pnpm dev:owner` → :5174             |
+| Typecheck all       | `pnpm typecheck`                     |
+| Build all           | `pnpm build`                         |
+| Lint                | `pnpm lint`                          |
+| Regenerate DB types | `pnpm gen:types`                     |
+| Create admin user   | `pnpm seed:admin <email> <password>` |
+| Apply migrations    | `npx -y supabase db push --yes`      |
 
 Supabase CLI is not global — always `npx -y supabase`, with the token sourced from `.env`.
 

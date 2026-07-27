@@ -58,6 +58,19 @@ never commit it, never paste keys into chat or code. `.env.example` holds names 
 Before any commit: `git diff --cached | grep -cE 'sbp_[a-z0-9]{40}|eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'`
 must return 0.
 
+## Repository hygiene
+
+Do not create summary, implementation-notes, integration, usage, or per-function
+README files. No `TASK_N_IMPLEMENTATION.md`, no `*_USAGE.md`, no `INTEGRATION.md`.
+Task outcomes belong in the chat response and the commit message, not in new files.
+
+Only these docs exist and only these should be edited: root `README.md`, `AGENTS.md`,
+`.kiro/steering/*`, and the three spec files under `.kiro/specs/office-rental-crm/`.
+
+Every new file must be something the application needs at build or run time —
+a migration, an Edge Function, source, config, or a test. Delete scratch and
+verification files before finishing a task.
+
 ## Code style
 
 - Minimal comments. Only explain non-obvious *why* (e.g. a security guard's purpose).
