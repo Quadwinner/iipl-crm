@@ -40,9 +40,7 @@ export function ComplaintsScreen() {
 
       <Separator />
 
-      <h2 className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-        Your complaints
-      </h2>
+      <h2 className="section-label">Your complaints</h2>
 
       {complaints.isPending ? (
         <div className="space-y-2" aria-busy="true">
@@ -55,7 +53,7 @@ export function ComplaintsScreen() {
           {complaints.error.message}
         </p>
       ) : rows.length === 0 ? (
-        <Empty className="border">
+        <Empty className="surface-card">
           <EmptyHeader>
             <EmptyMedia variant="icon">
               <Wrench aria-hidden="true" />
@@ -65,6 +63,7 @@ export function ComplaintsScreen() {
           </EmptyHeader>
         </Empty>
       ) : (
+        <div className="surface-card overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
@@ -112,6 +111,7 @@ export function ComplaintsScreen() {
             ))}
           </TableBody>
         </Table>
+        </div>
       )}
 
       <ComplaintDetailDialog complaint={open} onClose={() => setOpenId(null)} />

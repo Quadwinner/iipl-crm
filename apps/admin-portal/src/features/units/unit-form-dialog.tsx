@@ -228,6 +228,9 @@ export function UnitFormDialog({ target, buildings, onClose }: UnitFormDialogPro
           {target?.mode === 'edit' ? (
             <p className="text-muted-foreground text-sm">
               Occupancy status: {OCCUPANCY_LABELS[target.unit.occupancy_status]}
+              {target.unit.occupancy_status === 'OCCUPIED'
+                ? ' — changing base rent also updates the active lease and unpaid invoices.'
+                : ''}
             </p>
           ) : null}
 

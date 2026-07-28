@@ -4,6 +4,11 @@ import { ArrowLeft, FileText, Phone, Mail } from 'lucide-react'
 import { DetailTabs } from '@/components/detail-tabs'
 import { PageHeader } from '@/components/page-header'
 import { AllotmentStatusBadge } from '@/features/allotments/allotment-status-badge'
+import {
+  EditLeaseRentDialog,
+  type EditRentRequest,
+} from '@/features/allotments/edit-lease-rent-dialog'
+import type { AllotmentListRow } from '@/features/allotments/api'
 import { InvoiceStatusBadge } from '@/features/billing/status-badge'
 import { ComplaintStatusBadge } from '@/features/complaints/status-badge'
 import { UploadDocumentDialog } from '@/features/documents/upload-document-dialog'
@@ -35,6 +40,7 @@ export function TenantDetailPage() {
   const { ownerId } = useParams<{ ownerId: string }>()
   const navigate = useNavigate()
   const [deactivateOpen, setDeactivateOpen] = useState(false)
+  const [editRent, setEditRent] = useState<EditRentRequest | null>(null)
 
   const tenant = useTenant(ownerId as Uuid | undefined)
   const allotments = useTenantAllotments(ownerId ? (ownerId as Uuid) : null)
@@ -155,13 +161,21 @@ export function TenantDetailPage() {
                             <AllotmentStatusBadge status={row.status} />
                           </CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-1 px-4 text-sm">
+                        <CardContent className="space-y-2 px-4 text-sm">
                           <p>
                             {formatDate(row.lease_start)} – {formatDate(row.lease_end)}
                           </p>
                           <p className="font-mono tabular-nums">
                             {formatCurrency(row.rent_amount)} · {row.billing_cycle ?? '—'}
                           </p>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setEditRent({ allotment: row as AllotmentListRow })}
+                          >
+                            Edit rent
+                          </Button>
                         </CardContent>
                       </Card>
                     ))}
@@ -367,6 +381,8 @@ export function TenantDetailPage() {
           void tenant.refetch()
         }}
       />
+
+      <EditLeaseRentDialog request={editRent} onClose={() => setEditRent(null)} />
     </section>
   )
 }

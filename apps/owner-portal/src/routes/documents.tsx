@@ -54,7 +54,7 @@ export function DocumentsScreen() {
           {documents.error.message}
         </p>
       ) : rows.length === 0 ? (
-        <Empty className="border">
+        <Empty className="surface-card">
           <EmptyHeader>
             <EmptyMedia variant="icon">
               <FolderOpen aria-hidden="true" />
@@ -66,6 +66,7 @@ export function DocumentsScreen() {
           </EmptyHeader>
         </Empty>
       ) : (
+        <div className="surface-card overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
@@ -121,6 +122,7 @@ export function DocumentsScreen() {
             ))}
           </TableBody>
         </Table>
+        </div>
       )}
     </section>
   )

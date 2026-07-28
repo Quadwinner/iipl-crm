@@ -45,6 +45,8 @@ interface InvoiceBreakdown {
   electricity_amount: number
   electricity_units: number | null
   electricity_note: string | null
+  maintenance_amount: number
+  maintenance_note: string | null
   additional_charges: number
   total_amount: number
   billing_cycle_key: string
@@ -60,12 +62,20 @@ const accent = rgb(0.12, 0.35, 0.55)
 const accentSoft = rgb(0.93, 0.96, 0.98)
 const white = rgb(1, 1, 1)
 
+function pdfSafeText(text: string): string {
+  // Standard PDF fonts only support WinAnsi. Normalize Intl output from Deno/ICU.
+  return text
+    .replace(/\u20B9/g, 'Rs.')
+    .replace(/\u202f/g, ',')
+    .replace(/\u00a0/g, ' ')
+}
+
 function formatInr(amount: number): string {
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
+  const formatted = new Intl.NumberFormat('en-IN', {
+    minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(amount)
+  return `Rs. ${formatted}`
 }
 
 function formatDateOnly(value: string): string {
@@ -96,7 +106,7 @@ function drawText(
   font: PDFFont,
   color = ink,
 ) {
-  page.drawText(text, { x, y, size, font, color })
+  page.drawText(pdfSafeText(text), { x, y, size, font, color })
 }
 
 async function renderReceiptPdf(
@@ -179,12 +189,19 @@ async function renderReceiptPdf(
       let detail: string | null = null
       if (units != null && units > 0) {
         const rate = Math.round((Number(invoice.electricity_amount) / units) * 100) / 100
-        detail = `${units} units × ₹${rate}`
+        detail = `${units} units × Rs. ${rate}`
       }
       if (note) detail = detail ? `${detail} · ${note}` : note
       lines.push([
         detail ? `Electricity — ${detail}` : 'Electricity charges',
         Number(invoice.electricity_amount),
+      ])
+    }
+    if (Number(invoice.maintenance_amount) > 0) {
+      const note = invoice.maintenance_note?.trim()
+      lines.push([
+        note ? `Maintenance — ${note}` : 'Maintenance fee',
+        Number(invoice.maintenance_amount),
       ])
     }
     if (Number(invoice.additional_charges) > 0) {
@@ -322,7 +339,7 @@ Deno.serve(async (req) => {
   const { data: payment } = await serviceClient
     .from('payment')
     .select(
-      'invoice_id, invoice(rent_amount, electricity_amount, electricity_units, electricity_note, additional_charges, total_amount, billing_cycle_key, billing_period_start, billing_period_end, office_unit(building(name)))',
+      'invoice_id, invoice(rent_amount, electricity_amount, electricity_units, electricity_note, maintenance_amount, maintenance_note, additional_charges, total_amount, billing_cycle_key, billing_period_start, billing_period_end, office_unit(building(name)))',
     )
     .eq('id', receipt.payment_id)
     .maybeSingle()
@@ -333,6 +350,8 @@ Deno.serve(async (req) => {
         electricity_amount: number
         electricity_units: number | null
         electricity_note: string | null
+        maintenance_amount: number
+        maintenance_note: string | null
         additional_charges: number
         total_amount: number
         billing_cycle_key: string
@@ -350,6 +369,8 @@ Deno.serve(async (req) => {
       electricity_units:
         inv.electricity_units == null ? null : Number(inv.electricity_units),
       electricity_note: inv.electricity_note,
+      maintenance_amount: Number(inv.maintenance_amount ?? 0),
+      maintenance_note: inv.maintenance_note,
       additional_charges: Number(inv.additional_charges),
       total_amount: Number(inv.total_amount),
       billing_cycle_key: inv.billing_cycle_key,
@@ -359,34 +380,43 @@ Deno.serve(async (req) => {
     }
   }
 
-  const pdfBytes = await renderReceiptPdf(receipt as ReceiptRow, invoice)
-  const objectKey = `${receipt.office_owner_id}/${crypto.randomUUID()}.pdf`
+  try {
+    const pdfBytes = await renderReceiptPdf(receipt as ReceiptRow, invoice)
+    const objectKey = `${receipt.office_owner_id}/${crypto.randomUUID()}.pdf`
 
-  const { error: uploadError } = await serviceClient.storage
-    .from(BUCKET)
-    .upload(objectKey, pdfBytes, { contentType: 'application/pdf', upsert: false })
+    const { error: uploadError } = await serviceClient.storage
+      .from(BUCKET)
+      .upload(objectKey, pdfBytes, { contentType: 'application/pdf', upsert: false })
 
-  if (uploadError) {
-    console.error('receipt upload failed:', uploadError.message)
+    if (uploadError) {
+      console.error('receipt upload failed:', uploadError.message)
+      return jsonResponse(500, {
+        error_code: 'UPLOAD_FAILED',
+        message: 'Failed to store receipt PDF',
+      })
+    }
+
+    const { error: updateError } = await serviceClient
+      .from('receipt')
+      .update({ document_ref: objectKey })
+      .eq('id', receipt.id)
+
+    if (updateError) {
+      await serviceClient.storage.from(BUCKET).remove([objectKey])
+      console.error('receipt document_ref update failed:', updateError.message)
+      return jsonResponse(500, {
+        error_code: 'UPDATE_FAILED',
+        message: 'Failed to record receipt PDF path',
+      })
+    }
+
+    return jsonResponse(200, { success: true, data: { id: receipt.id, document_ref: objectKey } })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    console.error('receipt PDF render failed:', message)
     return jsonResponse(500, {
-      error_code: 'UPLOAD_FAILED',
-      message: 'Failed to store receipt PDF',
+      error_code: 'RENDER_FAILED',
+      message: 'Failed to render receipt PDF',
     })
   }
-
-  const { error: updateError } = await serviceClient
-    .from('receipt')
-    .update({ document_ref: objectKey })
-    .eq('id', receipt.id)
-
-  if (updateError) {
-    await serviceClient.storage.from(BUCKET).remove([objectKey])
-    console.error('receipt document_ref update failed:', updateError.message)
-    return jsonResponse(500, {
-      error_code: 'UPDATE_FAILED',
-      message: 'Failed to record receipt PDF path',
-    })
-  }
-
-  return jsonResponse(200, { success: true, data: { id: receipt.id, document_ref: objectKey } })
 })

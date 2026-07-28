@@ -110,6 +110,17 @@ export function InvoiceDetailDialog({ invoice, onClose, onPay }: InvoiceDetailDi
                       {formatCurrency(invoice.electricity_amount ?? 0)}
                     </dd>
                   </div>
+                  <div className="flex items-center justify-between gap-3 px-4 py-2.5">
+                    <dt className="text-muted-foreground">
+                      Maintenance
+                      {invoice.maintenance_note ? (
+                        <span className="mt-0.5 block text-xs">{invoice.maintenance_note}</span>
+                      ) : null}
+                    </dt>
+                    <dd className="font-mono tabular-nums">
+                      {formatCurrency(invoice.maintenance_amount ?? 0)}
+                    </dd>
+                  </div>
                   {(invoice.additional_charges ?? 0) > 0 ? (
                     <div className="flex items-center justify-between gap-3 px-4 py-2.5">
                       <dt className="text-muted-foreground">Other charges</dt>

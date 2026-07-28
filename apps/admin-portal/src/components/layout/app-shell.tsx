@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
-import { LogOut, Menu } from 'lucide-react'
+import { Building2, LogOut, Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/auth/use-auth'
 import { cn } from '@/lib/utils'
@@ -31,9 +31,14 @@ export function AppShell() {
         )}
       >
         <nav aria-label="Sections" className="flex flex-col gap-5 px-3 py-5 md:sticky md:top-0 md:min-h-svh">
-          <div className="space-y-0.5 px-2">
-            <p className="text-sm font-semibold tracking-tight">IIPL</p>
-            <p className="text-muted-foreground text-xs">Office rentals CRM</p>
+          <div className="flex items-center gap-2.5 px-2">
+            <div className="bg-sidebar-primary text-sidebar-primary-foreground flex size-9 items-center justify-center rounded-lg shadow-sm">
+              <Building2 className="size-4" aria-hidden="true" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold tracking-tight">IIPL</p>
+              <p className="text-sidebar-foreground/70 text-xs">Office rentals CRM</p>
+            </div>
           </div>
           <ul className="flex flex-col gap-0.5">
             {items.map(({ to, label, icon: Icon }) => (
@@ -43,10 +48,10 @@ export function AppShell() {
                   onClick={() => setNavOpen(false)}
                   className={({ isActive }) =>
                     cn(
-                      'focus-visible:ring-sidebar-ring flex items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none focus-visible:ring-[3px]',
+                      'focus-visible:ring-sidebar-ring flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm outline-none transition-colors focus-visible:ring-[3px]',
                       isActive
-                        ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
-                        : 'text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground',
+                        ? 'bg-sidebar-primary text-sidebar-primary-foreground font-medium shadow-sm'
+                        : 'text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
                     )
                   }
                 >
@@ -60,7 +65,7 @@ export function AppShell() {
       </aside>
 
       <div className="flex min-w-0 flex-col">
-        <header className="flex h-14 shrink-0 items-center gap-3 border-b px-4 md:px-6">
+        <header className="flex h-14 shrink-0 items-center gap-3 border-b bg-card/60 px-4 backdrop-blur-sm md:px-6">
           <Button
             type="button"
             variant="ghost"
@@ -90,7 +95,7 @@ export function AppShell() {
           </div>
         </header>
 
-        <main id="main" className="min-w-0 flex-1 px-4 py-6 md:px-6">
+        <main id="main" className="min-w-0 flex-1 px-4 py-6 md:px-6 md:py-8">
           <Outlet />
         </main>
       </div>

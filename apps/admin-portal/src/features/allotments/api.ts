@@ -180,3 +180,24 @@ export function useTransitionAllotment() {
     },
   })
 }
+
+export function useUpdateLeaseRent() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (input: { allotmentId: Uuid; rentAmount: number }) => {
+      const { data, error } = await supabase().rpc('update_lease_rent', {
+        p_allotment_id: input.allotmentId,
+        p_rent_amount: input.rentAmount,
+      })
+      if (error) throw dbError(error, 'The lease rent could not be updated.')
+      return data
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: allotmentKeys.all })
+      void queryClient.invalidateQueries({ queryKey: ['units'] })
+      void queryClient.invalidateQueries({ queryKey: ['tenants'] })
+      void queryClient.invalidateQueries({ queryKey: ['billing'] })
+    },
+  })
+}

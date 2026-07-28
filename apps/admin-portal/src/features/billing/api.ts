@@ -84,3 +84,24 @@ export function useSetElectricityCharge() {
     },
   })
 }
+
+export function useSetMaintenanceCharge() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (input: { invoiceId: Uuid; amount: number; note?: string }) => {
+      const { data, error } = await supabase().rpc('set_invoice_maintenance_charge', {
+        p_invoice_id: input.invoiceId,
+        p_amount: input.amount,
+        p_note: input.note || undefined,
+      })
+      if (error) throw dbError(error, 'The maintenance fee could not be saved.')
+      return data
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: billingKeys.all })
+      void queryClient.invalidateQueries({ queryKey: ['tenants'] })
+      void queryClient.invalidateQueries({ queryKey: ['reporting'] })
+    },
+  })
+}

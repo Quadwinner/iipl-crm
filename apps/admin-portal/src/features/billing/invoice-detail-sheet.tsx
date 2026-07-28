@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/table'
 import { InvoiceStatusBadge } from '@/features/billing/status-badge'
 import { ElectricityChargeForm } from '@/features/billing/electricity-charge-form'
+import { MaintenanceChargeForm } from '@/features/billing/maintenance-charge-form'
 import { billingKeys, type BillingRow } from '@/features/billing/api'
 import { dbError } from '@/lib/db-error'
 import { formatCurrency, formatDate, formatDateTime } from '@/lib/format'
@@ -119,6 +120,17 @@ export function InvoiceDetailSheet({ invoice, onClose }: InvoiceDetailSheetProps
                     {formatCurrency(shown.electricity_amount ?? 0)}
                   </dd>
                 </div>
+                <div className="flex items-center justify-between gap-3 px-4 py-2.5">
+                  <dt className="text-muted-foreground">
+                    Maintenance
+                    {shown.maintenance_note ? (
+                      <span className="mt-0.5 block text-xs">{shown.maintenance_note}</span>
+                    ) : null}
+                  </dt>
+                  <dd className="font-mono tabular-nums">
+                    {formatCurrency(shown.maintenance_amount ?? 0)}
+                  </dd>
+                </div>
                 {(shown.additional_charges ?? 0) > 0 ? (
                   <div className="flex items-center justify-between gap-3 px-4 py-2.5">
                     <dt className="text-muted-foreground">Other charges</dt>
@@ -156,12 +168,29 @@ export function InvoiceDetailSheet({ invoice, onClose }: InvoiceDetailSheetProps
                         ? {
                             ...current,
                             electricity_amount: updated.electricity_amount,
-                            electricity_units: updated.electricity_units,
-                            electricity_note: updated.electricity_note,
+                            electricity_units: updated.electricity_units ?? current.electricity_units,
+                            electricity_note: updated.electricity_note ?? '',
                             total_amount: updated.total_amount,
                           }
                         : current,
                     )
+                void queryClient.invalidateQueries({ queryKey: billingKeys.all })
+              }}
+            />
+
+            <MaintenanceChargeForm
+              invoice={shown}
+              onSaved={(updated) => {
+                setLocalInvoice((current) =>
+                  current
+                    ? {
+                        ...current,
+                        maintenance_amount: updated.maintenance_amount,
+                        maintenance_note: updated.maintenance_note ?? '',
+                        total_amount: updated.total_amount,
+                      }
+                    : current,
+                )
                 void queryClient.invalidateQueries({ queryKey: billingKeys.all })
               }}
             />

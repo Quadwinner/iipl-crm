@@ -35,7 +35,7 @@ export function useUpdateMyProfile() {
     mutationFn: async (input: MyProfileInput) => {
       const { data, error } = await supabase().rpc('update_my_profile', {
         p_full_name: input.full_name,
-        p_phone: input.phone === '' ? null : input.phone,
+        p_phone: input.phone,
       })
       if (error) throw dbError(error, 'Your profile could not be saved.')
       return data

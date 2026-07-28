@@ -358,6 +358,8 @@ export type Database = {
           electricity_units: number | null
           id: string
           lease_id: string
+          maintenance_amount: number
+          maintenance_note: string | null
           office_owner_id: string
           office_unit_id: string
           rent_amount: number
@@ -376,6 +378,8 @@ export type Database = {
           electricity_units?: number | null
           id?: string
           lease_id: string
+          maintenance_amount?: number
+          maintenance_note?: string | null
           office_owner_id: string
           office_unit_id: string
           rent_amount: number
@@ -394,6 +398,8 @@ export type Database = {
           electricity_units?: number | null
           id?: string
           lease_id?: string
+          maintenance_amount?: number
+          maintenance_note?: string | null
           office_owner_id?: string
           office_unit_id?: string
           rent_amount?: number
@@ -858,6 +864,24 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      apply_lease_rent_change: {
+        Args: { p_lease_id: string; p_rent_amount: number }
+        Returns: {
+          allotment_id: string
+          billing_cycle: Database["public"]["Enums"]["billing_cycle"]
+          created_at: string
+          end_date: string
+          id: string
+          rent_amount: number
+          start_date: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "lease"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       assert_valid_date_range: {
         Args: { p_end: string; p_start: string }
         Returns: undefined
@@ -899,10 +923,12 @@ export type Database = {
           created_at: string
           due_date: string
           electricity_amount: number
-          electricity_note: string | null
-          electricity_units: number | null
+          electricity_note: string
+          electricity_units: number
           invoice_id: string
           lease_id: string
+          maintenance_amount: number
+          maintenance_note: string
           office_owner_id: string
           office_unit_id: string
           owner_name: string
@@ -1135,10 +1161,12 @@ export type Database = {
           created_at: string
           due_date: string
           electricity_amount: number
-          electricity_note: string | null
-          electricity_units: number | null
+          electricity_note: string
+          electricity_units: number
           invoice_id: string
           lease_id: string
+          maintenance_amount: number
+          maintenance_note: string
           office_owner_id: string
           office_unit_id: string
           owner_name: string
@@ -1174,10 +1202,12 @@ export type Database = {
           created_at: string
           due_date: string
           electricity_amount: number
-          electricity_note: string | null
-          electricity_units: number | null
+          electricity_note: string
+          electricity_units: number
           invoice_id: string
           lease_id: string
+          maintenance_amount: number
+          maintenance_note: string
           office_owner_id: string
           office_unit_id: string
           owner_name: string
@@ -1268,6 +1298,15 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      invoice_charge_total: {
+        Args: {
+          p_additional: number
+          p_electricity: number
+          p_maintenance: number
+          p_rent: number
+        }
+        Returns: number
       }
       invoke_notify: { Args: never; Returns: undefined }
       is_account_locked: { Args: { p_email: string }; Returns: boolean }
@@ -1440,6 +1479,8 @@ export type Database = {
           electricity_units: number | null
           id: string
           lease_id: string
+          maintenance_amount: number
+          maintenance_note: string | null
           office_owner_id: string
           office_unit_id: string
           rent_amount: number
@@ -1457,7 +1498,12 @@ export type Database = {
       send_reminder_job: { Args: { p_as_of?: string }; Returns: number }
       session_expired: { Args: never; Returns: boolean }
       set_invoice_electricity_charge: {
-        Args: { p_amount: number; p_invoice_id: string; p_note?: string; p_units?: number }
+        Args: {
+          p_amount: number
+          p_invoice_id: string
+          p_note?: string
+          p_units?: number
+        }
         Returns: {
           additional_charges: number
           billing_cycle_key: string
@@ -1470,6 +1516,37 @@ export type Database = {
           electricity_units: number | null
           id: string
           lease_id: string
+          maintenance_amount: number
+          maintenance_note: string | null
+          office_owner_id: string
+          office_unit_id: string
+          rent_amount: number
+          status: Database["public"]["Enums"]["invoice_status"]
+          total_amount: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "invoice"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      set_invoice_maintenance_charge: {
+        Args: { p_amount: number; p_invoice_id: string; p_note?: string }
+        Returns: {
+          additional_charges: number
+          billing_cycle_key: string
+          billing_period_end: string
+          billing_period_start: string
+          created_at: string
+          due_date: string
+          electricity_amount: number
+          electricity_note: string | null
+          electricity_units: number | null
+          id: string
+          lease_id: string
+          maintenance_amount: number
+          maintenance_note: string | null
           office_owner_id: string
           office_unit_id: string
           rent_amount: number
@@ -1512,10 +1589,6 @@ export type Database = {
         }
       }
       touch_session: { Args: never; Returns: boolean }
-      update_my_profile: {
-        Args: { p_full_name: string; p_phone: string | null }
-        Returns: Json
-      }
       transition_allotment: {
         Args: {
           p_allotment_id: string
@@ -1560,6 +1633,28 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      update_lease_rent: {
+        Args: { p_allotment_id: string; p_rent_amount: number }
+        Returns: {
+          allotment_id: string
+          billing_cycle: Database["public"]["Enums"]["billing_cycle"]
+          created_at: string
+          end_date: string
+          id: string
+          rent_amount: number
+          start_date: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "lease"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      update_my_profile: {
+        Args: { p_full_name: string; p_phone: string }
+        Returns: Json
       }
       update_office_unit: {
         Args: {

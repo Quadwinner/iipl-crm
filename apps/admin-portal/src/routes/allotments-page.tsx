@@ -43,6 +43,10 @@ import {
   TransitionAllotmentDialog,
   type TransitionRequest,
 } from '@/features/allotments/transition-allotment-dialog'
+import {
+  EditLeaseRentDialog,
+  type EditRentRequest,
+} from '@/features/allotments/edit-lease-rent-dialog'
 import { useOwners } from '@/features/owners/api'
 import { formatCurrency, formatDate, isPastDate } from '@/lib/format'
 
@@ -51,6 +55,7 @@ const ALL = 'ALL'
 export function AllotmentsPage() {
   const [filters, setFilters] = useState<AllotmentFilters>({ status: 'ACTIVE', ownerId: null })
   const [transition, setTransition] = useState<TransitionRequest | null>(null)
+  const [editRent, setEditRent] = useState<EditRentRequest | null>(null)
   const [history, setHistory] = useState<HistoryTarget | null>(null)
 
   const allotments = useAllotments(filters)
@@ -126,6 +131,14 @@ export function AllotmentsPage() {
               </Button>
               {allotment.status === 'ACTIVE' ? (
                 <>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setEditRent({ allotment })}
+                  >
+                    Edit rent
+                  </Button>
                   <Button
                     type="button"
                     variant="ghost"
@@ -274,6 +287,7 @@ export function AllotmentsPage() {
       )}
 
       <TransitionAllotmentDialog request={transition} onClose={() => setTransition(null)} />
+      <EditLeaseRentDialog request={editRent} onClose={() => setEditRent(null)} />
       <AllotmentHistorySheet target={history} onClose={() => setHistory(null)} />
     </section>
   )

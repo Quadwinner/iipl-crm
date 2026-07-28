@@ -107,6 +107,7 @@ export function InvoicesScreen() {
           label="Overdue"
           value={formatCurrency(totals.overdue)}
           loading={invoices.isPending}
+          tone={totals.overdue > 0 ? 'warning' : 'default'}
         />
         <KpiCard label="Invoices" value={String(totals.count)} loading={invoices.isPending} />
       </KpiGrid>
@@ -144,7 +145,7 @@ export function InvoicesScreen() {
           {invoices.error.message}
         </p>
       ) : rows.length === 0 ? (
-        <Empty className="border">
+        <Empty className="surface-card">
           <EmptyHeader>
             <EmptyMedia variant="icon">
               <IndianRupee aria-hidden="true" />
@@ -158,6 +159,7 @@ export function InvoicesScreen() {
           </EmptyHeader>
         </Empty>
       ) : (
+        <div className="surface-card overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
@@ -215,6 +217,7 @@ export function InvoicesScreen() {
             ))}
           </TableBody>
         </Table>
+        </div>
       )}
 
       <InvoiceDetailDialog

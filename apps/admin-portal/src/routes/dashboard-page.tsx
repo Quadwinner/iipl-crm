@@ -405,7 +405,7 @@ function AdminDashboard() {
       <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-2">
-            <h2 className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+            <h2 className="section-label">
               Invoices in range
             </h2>
             <Button type="button" variant="ghost" size="sm" asChild>
@@ -425,7 +425,9 @@ function AdminDashboard() {
                 </EmptyMedia>
                 <EmptyTitle>No invoices</EmptyTitle>
                 <EmptyDescription>
-                  No invoices fall in the selected date range for this building.
+                  No invoices are due or were paid in the selected date range
+                  {filters.buildingId ? ' for this building' : ''}. Try widening the range or
+                  open Billing to see every invoice.
                 </EmptyDescription>
               </EmptyHeader>
             </Empty>

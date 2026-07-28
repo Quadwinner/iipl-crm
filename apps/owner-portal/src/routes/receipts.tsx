@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useRef } from 'react'
 import { ReceiptText } from 'lucide-react'
 
 import { PageHeader } from '@/components/page-header'
@@ -13,7 +14,12 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useAuth } from '@/auth/use-auth'
-import { useDownloadReceipt, useOwnerReceipts, type ReceiptRow } from '@/features/receipts/api'
+import {
+  useDownloadReceipt,
+  useGenerateReceiptPdf,
+  useOwnerReceipts,
+  type ReceiptRow,
+} from '@/features/receipts/api'
 import { formatCurrency, formatTimestamp } from '@/lib/format'
 
 const NO_ROWS: ReceiptRow[] = []
@@ -25,8 +31,23 @@ export function ReceiptsScreen() {
   const ownerId = owner?.ownerId ?? ''
   const receipts = useOwnerReceipts(ownerId)
   const download = useDownloadReceipt(ownerId)
+  const generatePdf = useGenerateReceiptPdf(ownerId)
+  const triggered = useRef(new Set<string>())
 
   const rows = receipts.data ?? NO_ROWS
+  const pendingIds = useMemo(
+    () => rows.filter((row) => !row.document_ref).map((row) => row.id),
+    [rows],
+  )
+
+  useEffect(() => {
+    if (!ownerId || pendingIds.length === 0) return
+    for (const id of pendingIds) {
+      if (triggered.current.has(id)) continue
+      triggered.current.add(id)
+      void generatePdf.mutate(id)
+    }
+  }, [ownerId, pendingIds, generatePdf])
 
   return (
     <section className="space-y-6">
@@ -41,6 +62,12 @@ export function ReceiptsScreen() {
         </p>
       ) : null}
 
+      {generatePdf.isError ? (
+        <p role="alert" className="text-destructive text-sm">
+          {generatePdf.error.message}
+        </p>
+      ) : null}
+
       {receipts.isPending ? (
         <div className="space-y-2" aria-busy="true">
           <Skeleton className="h-9 w-full" />
@@ -52,7 +79,7 @@ export function ReceiptsScreen() {
           {receipts.error.message}
         </p>
       ) : rows.length === 0 ? (
-        <Empty className="border">
+        <Empty className="surface-card">
           <EmptyHeader>
             <EmptyMedia variant="icon">
               <ReceiptText aria-hidden="true" />
@@ -64,6 +91,7 @@ export function ReceiptsScreen() {
           </EmptyHeader>
         </Empty>
       ) : (
+        <div className="surface-card overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
@@ -105,13 +133,25 @@ export function ReceiptsScreen() {
                       Download
                     </Button>
                   ) : (
-                    <span className="text-muted-foreground text-sm">Preparing…</span>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      disabled={generatePdf.isPending}
+                      onClick={() => {
+                        triggered.current.add(row.id)
+                        generatePdf.mutate(row.id)
+                      }}
+                    >
+                      {generatePdf.isPending ? 'Preparing…' : 'Prepare PDF'}
+                    </Button>
                   )}
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
+        </div>
       )}
     </section>
   )

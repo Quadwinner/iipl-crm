@@ -65,7 +65,7 @@ export function LeaseScreen() {
           <Skeleton className="h-40 w-full" />
         </div>
       ) : (leases.data ?? []).length === 0 ? (
-        <Empty className="border">
+        <Empty className="surface-card">
           <EmptyHeader>
             <EmptyMedia variant="icon">
               <FileText aria-hidden="true" />
@@ -137,7 +137,7 @@ function LeaseCard({
   const remaining = daysUntil(lease.lease_end)
 
   return (
-    <Card className="py-4">
+    <Card className="surface-card py-4">
       <CardHeader className="px-4 pb-2">
         <CardTitle className="flex flex-wrap items-center justify-between gap-2 text-base">
           <span>

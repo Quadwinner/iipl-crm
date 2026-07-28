@@ -117,7 +117,7 @@ export function SubmitComplaintForm() {
   const noUnits = !units.isPending && (units.data ?? []).length === 0
 
   return (
-    <Card>
+    <Card className="surface-card">
       <CardHeader>
         <CardTitle className="text-base">Raise a complaint</CardTitle>
       </CardHeader>

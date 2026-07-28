@@ -1,6 +1,7 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { downloadReceipt, type GatewayType, type Uuid } from '@itoby/shared'
 import { dbError } from '@/lib/db-error'
+import { invokeEdgeFunction } from '@/lib/edge-function'
 import { supabase } from '@/lib/supabase'
 
 export interface ReceiptRow {
@@ -50,6 +51,21 @@ export function useDownloadReceipt(ownerId: Uuid) {
       const file = await downloadReceipt(supabase(), ownerId, receiptId)
       window.open(file.signedUrl, '_blank', 'noopener,noreferrer')
       return file.fileName
+    },
+  })
+}
+
+/** Triggers async PDF generation when document_ref is still null after payment. */
+export function useGenerateReceiptPdf(ownerId: Uuid) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (receiptId: Uuid) => {
+      await invokeEdgeFunction<{ success: boolean }>('receipt-pdf', { receipt_id: receiptId })
+      return receiptId
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: receiptKeys.list(ownerId) })
     },
   })
 }
