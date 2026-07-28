@@ -153,9 +153,7 @@ export async function loadGstInvoiceInput(
 
   if (Number(row.maintenance_amount ?? 0) > 0) {
     lineItems.push({
-      description: row.maintenance_note?.trim()
-        ? `MAINTENANCE — ${row.maintenance_note.trim()}`
-        : 'MAINTENANCE FEE',
+      description: 'MAINTENANCE',
       hsnSac: '999599',
       rate: Number(row.maintenance_amount),
       qty: 1,

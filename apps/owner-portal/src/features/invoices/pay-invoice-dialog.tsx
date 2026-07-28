@@ -219,9 +219,6 @@ function PayInvoiceForm({
         <dt className="text-muted-foreground">Maintenance</dt>
         <dd className="font-mono tabular-nums">
           {formatCurrency(invoice.maintenance_amount ?? 0)}
-          {invoice.maintenance_note ? (
-            <span className="text-muted-foreground ml-2 text-xs">· {invoice.maintenance_note}</span>
-          ) : null}
         </dd>
         <dt className="text-muted-foreground">Invoice total</dt>
         <dd className="font-mono tabular-nums">{formatCurrency(invoice.total_amount)}</dd>

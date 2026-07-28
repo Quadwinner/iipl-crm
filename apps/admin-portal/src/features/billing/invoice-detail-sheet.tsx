@@ -142,12 +142,7 @@ export function InvoiceDetailSheet({ invoice, onClose }: InvoiceDetailSheetProps
                   </dd>
                 </div>
                 <div className="flex items-center justify-between gap-3 px-4 py-2.5">
-                  <dt className="text-muted-foreground">
-                    Maintenance
-                    {shown.maintenance_note ? (
-                      <span className="mt-0.5 block text-xs">{shown.maintenance_note}</span>
-                    ) : null}
-                  </dt>
+                  <dt className="text-muted-foreground">Maintenance</dt>
                   <dd className="font-mono tabular-nums">
                     {formatCurrency(shown.maintenance_amount ?? 0)}
                   </dd>
@@ -216,7 +211,6 @@ export function InvoiceDetailSheet({ invoice, onClose }: InvoiceDetailSheetProps
                     ? {
                         ...current,
                         maintenance_amount: updated.maintenance_amount,
-                        maintenance_note: updated.maintenance_note ?? '',
                         total_amount: updated.total_amount,
                       }
                     : current,

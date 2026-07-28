@@ -119,12 +119,7 @@ export function InvoiceDetailDialog({ invoice, onClose, onPay }: InvoiceDetailDi
                     </dd>
                   </div>
                   <div className="flex items-center justify-between gap-3 px-4 py-2.5">
-                    <dt className="text-muted-foreground">
-                      Maintenance
-                      {invoice.maintenance_note ? (
-                        <span className="mt-0.5 block text-xs">{invoice.maintenance_note}</span>
-                      ) : null}
-                    </dt>
+                    <dt className="text-muted-foreground">Maintenance</dt>
                     <dd className="font-mono tabular-nums">
                       {formatCurrency(invoice.maintenance_amount ?? 0)}
                     </dd>

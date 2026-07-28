@@ -14,12 +14,6 @@ const schema = z.object({
     .number({ error: 'Enter the maintenance fee amount.' })
     .min(0, 'Amount cannot be negative.')
     .max(9_999_999.99, 'Amount is too large.'),
-  note: z
-    .string()
-    .trim()
-    .max(500, 'Note must be at most 500 characters.')
-    .optional()
-    .or(z.literal('')),
 })
 
 type FormValues = z.infer<typeof schema>
@@ -28,7 +22,6 @@ interface MaintenanceChargeFormProps {
   invoice: BillingRow
   onSaved?: (updated: {
     maintenance_amount: number
-    maintenance_note: string | null
     total_amount: number
   }) => void
 }
@@ -47,17 +40,15 @@ export function MaintenanceChargeForm({ invoice, onSaved }: MaintenanceChargeFor
     resolver: zodResolver(schema),
     defaultValues: {
       amount: invoice.maintenance_amount ?? 0,
-      note: invoice.maintenance_note ?? '',
     },
   })
 
   useEffect(() => {
     reset({
       amount: invoice.maintenance_amount ?? 0,
-      note: invoice.maintenance_note ?? '',
     })
     setFormError(null)
-  }, [invoice.invoice_id, invoice.maintenance_amount, invoice.maintenance_note, reset])
+  }, [invoice.invoice_id, invoice.maintenance_amount, reset])
 
   async function onSubmit(values: FormValues) {
     setFormError(null)
@@ -65,12 +56,10 @@ export function MaintenanceChargeForm({ invoice, onSaved }: MaintenanceChargeFor
       const updated = await setCharge.mutateAsync({
         invoiceId: invoice.invoice_id,
         amount: values.amount,
-        note: values.note?.trim() || undefined,
       })
       toast.success('Maintenance fee saved — tenant can pay it with rent')
       onSaved?.({
         maintenance_amount: updated.maintenance_amount,
-        maintenance_note: updated.maintenance_note,
         total_amount: updated.total_amount,
       })
     } catch (error) {
@@ -101,21 +90,6 @@ export function MaintenanceChargeForm({ invoice, onSaved }: MaintenanceChargeFor
         {errors.amount ? (
           <p role="alert" className="text-destructive text-sm">
             {errors.amount.message}
-          </p>
-        ) : null}
-      </div>
-
-      <div className="space-y-1.5">
-        <Label htmlFor={`maint-note-${invoice.invoice_id}`}>Note (optional)</Label>
-        <Input
-          id={`maint-note-${invoice.invoice_id}`}
-          placeholder="e.g. August 2026 common area upkeep"
-          disabled={locked || isSubmitting}
-          {...register('note')}
-        />
-        {errors.note ? (
-          <p role="alert" className="text-destructive text-sm">
-            {errors.note.message}
           </p>
         ) : null}
       </div>
