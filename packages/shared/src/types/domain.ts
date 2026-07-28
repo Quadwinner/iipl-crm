@@ -49,6 +49,35 @@ export type ComplaintStatus = (typeof COMPLAINT_STATUSES)[number]
 export const COMPLAINT_EVENT_TYPES = ['STATUS_CHANGE', 'COMMENT'] as const
 export type ComplaintEventType = (typeof COMPLAINT_EVENT_TYPES)[number]
 
+export const EXPENSE_CATEGORIES = [
+  'CLEANING',
+  'GUARD_SALARY',
+  'DIESEL',
+  'ELECTRICITY',
+  'WATER',
+  'REPAIRS',
+  'MAINTENANCE',
+  'SUPPLIES',
+  'OTHER',
+] as const
+export type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number]
+
+export const EXPENSE_CATEGORY_LABELS: Record<ExpenseCategory, string> = {
+  CLEANING: 'Cleaning',
+  GUARD_SALARY: 'Guard salary',
+  DIESEL: 'Diesel / fuel',
+  ELECTRICITY: 'Electricity',
+  WATER: 'Water',
+  REPAIRS: 'Repairs',
+  MAINTENANCE: 'Maintenance',
+  SUPPLIES: 'Office supplies',
+  OTHER: 'Other',
+}
+
+export function expenseCategoryLabel(category: ExpenseCategory): string {
+  return EXPENSE_CATEGORY_LABELS[category]
+}
+
 export const NOTIFICATION_CHANNELS = ['EMAIL', 'SMS', 'IN_APP'] as const
 export type NotificationChannel = (typeof NOTIFICATION_CHANNELS)[number]
 

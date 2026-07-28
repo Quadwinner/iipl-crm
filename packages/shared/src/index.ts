@@ -1,6 +1,7 @@
 export * from './types'
 export * from './supabase'
 export * from './auth'
+export * from './billing'
 export * from './inventory'
 export * from './storage'
 export * from './payments'

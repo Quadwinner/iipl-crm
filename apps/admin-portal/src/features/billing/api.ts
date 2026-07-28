@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { Database, InvoiceStatus, Uuid } from '@itoby/shared'
+import { downloadInvoice, type Database, type InvoiceStatus, type Uuid } from '@itoby/shared'
 import { dbError } from '@/lib/db-error'
+import { invokeEdgeFunction } from '@/lib/edge-function'
 import { supabase } from '@/lib/supabase'
 
 export type BillingRow = Database['public']['Functions']['get_billing_report']['Returns'][number]
@@ -102,6 +103,39 @@ export function useSetMaintenanceCharge() {
       void queryClient.invalidateQueries({ queryKey: billingKeys.all })
       void queryClient.invalidateQueries({ queryKey: ['tenants'] })
       void queryClient.invalidateQueries({ queryKey: ['reporting'] })
+    },
+  })
+}
+
+export function useGenerateInvoicePdf() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (invoiceId: Uuid) => {
+      await invokeEdgeFunction<{ success: boolean }>('invoice-pdf', { invoice_id: invoiceId })
+      return invoiceId
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: billingKeys.all })
+    },
+  })
+}
+
+export function useDownloadInvoicePdf() {
+  const generate = useGenerateInvoicePdf()
+
+  return useMutation({
+    mutationFn: async (invoiceId: Uuid) => {
+      try {
+        const file = await downloadInvoice(supabase(), invoiceId)
+        window.open(file.signedUrl, '_blank', 'noopener,noreferrer')
+        return file.fileName
+      } catch {
+        await generate.mutateAsync(invoiceId)
+        const file = await downloadInvoice(supabase(), invoiceId)
+        window.open(file.signedUrl, '_blank', 'noopener,noreferrer')
+        return file.fileName
+      }
     },
   })
 }

@@ -119,6 +119,59 @@ export type Database = {
         }
         Relationships: []
       }
+      building_expense: {
+        Row: {
+          amount: number
+          building_id: string
+          category: Database["public"]["Enums"]["expense_category"]
+          created_at: string
+          created_by: string | null
+          description: string | null
+          expense_date: string
+          id: string
+          reference_note: string | null
+          title: string
+          updated_at: string
+          vendor_name: string | null
+        }
+        Insert: {
+          amount: number
+          building_id: string
+          category: Database["public"]["Enums"]["expense_category"]
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          expense_date: string
+          id?: string
+          reference_note?: string | null
+          title: string
+          updated_at?: string
+          vendor_name?: string | null
+        }
+        Update: {
+          amount?: number
+          building_id?: string
+          category?: Database["public"]["Enums"]["expense_category"]
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          expense_date?: string
+          id?: string
+          reference_note?: string | null
+          title?: string
+          updated_at?: string
+          vendor_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "building_expense_building_id_fkey"
+            columns: ["building_id"]
+            isOneToOne: false
+            referencedRelation: "building"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       complaint_categories: {
         Row: {
           id: string
@@ -311,7 +364,20 @@ export type Database = {
       }
       global_config: {
         Row: {
+          bank_account_number: string
+          bank_branch: string
+          bank_ifsc: string
+          bank_name: string
+          company_address: string
+          company_email: string
+          company_gstin: string
+          company_legal_name: string
+          company_phone: string
+          company_place_of_supply: string
+          default_gst_rate_percent: number
+          default_hsn_sac: string
           id: number
+          invoice_series_prefix: string
           lockout_duration_minutes: number
           lockout_threshold: number
           max_retries: number
@@ -322,7 +388,20 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          bank_account_number?: string
+          bank_branch?: string
+          bank_ifsc?: string
+          bank_name?: string
+          company_address?: string
+          company_email?: string
+          company_gstin?: string
+          company_legal_name?: string
+          company_phone?: string
+          company_place_of_supply?: string
+          default_gst_rate_percent?: number
+          default_hsn_sac?: string
           id?: number
+          invoice_series_prefix?: string
           lockout_duration_minutes?: number
           lockout_threshold?: number
           max_retries?: number
@@ -333,7 +412,20 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          bank_account_number?: string
+          bank_branch?: string
+          bank_ifsc?: string
+          bank_name?: string
+          company_address?: string
+          company_email?: string
+          company_gstin?: string
+          company_legal_name?: string
+          company_phone?: string
+          company_place_of_supply?: string
+          default_gst_rate_percent?: number
+          default_hsn_sac?: string
           id?: number
+          invoice_series_prefix?: string
           lockout_duration_minutes?: number
           lockout_threshold?: number
           max_retries?: number
@@ -352,11 +444,13 @@ export type Database = {
           billing_period_end: string
           billing_period_start: string
           created_at: string
+          document_ref: string | null
           due_date: string
           electricity_amount: number
           electricity_note: string | null
           electricity_units: number | null
           id: string
+          invoice_number: string | null
           lease_id: string
           maintenance_amount: number
           maintenance_note: string | null
@@ -372,11 +466,13 @@ export type Database = {
           billing_period_end: string
           billing_period_start: string
           created_at?: string
+          document_ref?: string | null
           due_date: string
           electricity_amount?: number
           electricity_note?: string | null
           electricity_units?: number | null
           id?: string
+          invoice_number?: string | null
           lease_id: string
           maintenance_amount?: number
           maintenance_note?: string | null
@@ -392,11 +488,13 @@ export type Database = {
           billing_period_end?: string
           billing_period_start?: string
           created_at?: string
+          document_ref?: string | null
           due_date?: string
           electricity_amount?: number
           electricity_note?: string | null
           electricity_units?: number | null
           id?: string
+          invoice_number?: string | null
           lease_id?: string
           maintenance_amount?: number
           maintenance_note?: string | null
@@ -429,6 +527,21 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      invoice_number_counter: {
+        Row: {
+          financial_year: string
+          last_number: number
+        }
+        Insert: {
+          financial_year: string
+          last_number?: number
+        }
+        Update: {
+          financial_year?: string
+          last_number?: number
+        }
+        Relationships: []
       }
       lease: {
         Row: {
@@ -560,8 +673,11 @@ export type Database = {
       }
       office_owners: {
         Row: {
+          billing_address: string | null
+          company_name: string | null
           contact_email: string
           created_at: string
+          gstin: string | null
           id: string
           name: string
           phone: string
@@ -570,8 +686,11 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          billing_address?: string | null
+          company_name?: string | null
           contact_email: string
           created_at?: string
+          gstin?: string | null
           id?: string
           name: string
           phone: string
@@ -580,8 +699,11 @@ export type Database = {
           user_id: string
         }
         Update: {
+          billing_address?: string | null
+          company_name?: string | null
           contact_email?: string
           created_at?: string
+          gstin?: string | null
           id?: string
           name?: string
           phone?: string
@@ -906,6 +1028,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      assign_invoice_number: { Args: { p_invoice_id: string }; Returns: string }
       authorize: { Args: { p_permission: string }; Returns: boolean }
       billing_report_rows: {
         Args: {
@@ -941,7 +1064,67 @@ export type Database = {
       config: {
         Args: never
         Returns: {
+          bank_account_number: string
+          bank_branch: string
+          bank_ifsc: string
+          bank_name: string
+          company_address: string
+          company_email: string
+          company_gstin: string
+          company_legal_name: string
+          company_phone: string
+          company_place_of_supply: string
+          default_gst_rate_percent: number
+          default_hsn_sac: string
           id: number
+          invoice_series_prefix: string
+          lockout_duration_minutes: number
+          lockout_threshold: number
+          max_retries: number
+          payment_grace_period_days: number
+          reminder_frequency_days: number
+          reminder_lead_time_days: number
+          session_timeout_minutes: number
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "global_config"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      configure_company_billing: {
+        Args: {
+          p_bank_account_number: string
+          p_bank_branch: string
+          p_bank_ifsc: string
+          p_bank_name: string
+          p_company_address: string
+          p_company_email: string
+          p_company_gstin: string
+          p_company_legal_name: string
+          p_company_phone: string
+          p_company_place_of_supply: string
+          p_default_gst_rate_percent: number
+          p_default_hsn_sac: string
+          p_invoice_series_prefix: string
+        }
+        Returns: {
+          bank_account_number: string
+          bank_branch: string
+          bank_ifsc: string
+          bank_name: string
+          company_address: string
+          company_email: string
+          company_gstin: string
+          company_legal_name: string
+          company_phone: string
+          company_place_of_supply: string
+          default_gst_rate_percent: number
+          default_hsn_sac: string
+          id: number
+          invoice_series_prefix: string
           lockout_duration_minutes: number
           lockout_threshold: number
           max_retries: number
@@ -987,7 +1170,20 @@ export type Database = {
       configure_payment_grace_period: {
         Args: { p_days: number }
         Returns: {
+          bank_account_number: string
+          bank_branch: string
+          bank_ifsc: string
+          bank_name: string
+          company_address: string
+          company_email: string
+          company_gstin: string
+          company_legal_name: string
+          company_phone: string
+          company_place_of_supply: string
+          default_gst_rate_percent: number
+          default_hsn_sac: string
           id: number
+          invoice_series_prefix: string
           lockout_duration_minutes: number
           lockout_threshold: number
           max_retries: number
@@ -1007,7 +1203,20 @@ export type Database = {
       configure_reminder_settings: {
         Args: { p_frequency_days: number; p_lead_time_days: number }
         Returns: {
+          bank_account_number: string
+          bank_branch: string
+          bank_ifsc: string
+          bank_name: string
+          company_address: string
+          company_email: string
+          company_gstin: string
+          company_legal_name: string
+          company_phone: string
+          company_place_of_supply: string
+          default_gst_rate_percent: number
+          default_hsn_sac: string
           id: number
+          invoice_series_prefix: string
           lockout_duration_minutes: number
           lockout_threshold: number
           max_retries: number
@@ -1031,7 +1240,20 @@ export type Database = {
           p_session_timeout_minutes: number
         }
         Returns: {
+          bank_account_number: string
+          bank_branch: string
+          bank_ifsc: string
+          bank_name: string
+          company_address: string
+          company_email: string
+          company_gstin: string
+          company_legal_name: string
+          company_phone: string
+          company_place_of_supply: string
+          default_gst_rate_percent: number
+          default_hsn_sac: string
           id: number
+          invoice_series_prefix: string
           lockout_duration_minutes: number
           lockout_threshold: number
           max_retries: number
@@ -1069,6 +1291,38 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "allotment"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      create_building_expense: {
+        Args: {
+          p_amount: number
+          p_building_id: string
+          p_category: Database["public"]["Enums"]["expense_category"]
+          p_description?: string
+          p_expense_date: string
+          p_reference_note?: string
+          p_title: string
+          p_vendor_name?: string
+        }
+        Returns: {
+          amount: number
+          building_id: string
+          category: Database["public"]["Enums"]["expense_category"]
+          created_at: string
+          created_by: string | null
+          description: string | null
+          expense_date: string
+          id: string
+          reference_note: string | null
+          title: string
+          updated_at: string
+          vendor_name: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "building_expense"
           isOneToOne: true
           isSetofReturn: false
         }
@@ -1118,6 +1372,10 @@ export type Database = {
         Returns: Database["public"]["Enums"]["role"]
       }
       deactivate_owner_internal: { Args: { p_owner_id: string }; Returns: Json }
+      delete_building_expense: {
+        Args: { p_expense_id: string }
+        Returns: undefined
+      }
       enqueue_notification: {
         Args: {
           p_channel: Database["public"]["Enums"]["notification_channel"]
@@ -1127,6 +1385,7 @@ export type Database = {
         }
         Returns: string
       }
+      financial_year_label: { Args: { p_date?: string }; Returns: string }
       get_allotment_history: {
         Args: { p_office_unit_id: string }
         Returns: {
@@ -1335,6 +1594,28 @@ export type Database = {
           updated_at: string
         }[]
       }
+      list_building_expenses: {
+        Args: {
+          p_building_id?: string
+          p_category?: Database["public"]["Enums"]["expense_category"]
+          p_end_date?: string
+          p_start_date?: string
+        }
+        Returns: {
+          amount: number
+          building_id: string
+          building_name: string
+          category: Database["public"]["Enums"]["expense_category"]
+          created_at: string
+          description: string
+          expense_date: string
+          id: string
+          reference_note: string
+          title: string
+          updated_at: string
+          vendor_name: string
+        }[]
+      }
       list_complaints_for_owner: {
         Args: never
         Returns: {
@@ -1383,6 +1664,7 @@ export type Database = {
         }[]
       }
       mark_overdue_job: { Args: { p_as_of?: string }; Returns: number }
+      next_invoice_number: { Args: { p_date?: string }; Returns: string }
       occupancy_summary: {
         Args: { p_building_id?: string }
         Returns: {
@@ -1393,6 +1675,7 @@ export type Database = {
       }
       owner_of_attachment: { Args: { p_object_key: string }; Returns: string }
       owner_of_document: { Args: { p_object_key: string }; Returns: string }
+      owner_of_invoice: { Args: { p_object_key: string }; Returns: string }
       owner_of_receipt: { Args: { p_object_key: string }; Returns: string }
       pending_notifications: {
         Args: { p_limit?: number }
@@ -1473,11 +1756,13 @@ export type Database = {
           billing_period_end: string
           billing_period_start: string
           created_at: string
+          document_ref: string | null
           due_date: string
           electricity_amount: number
           electricity_note: string | null
           electricity_units: number | null
           id: string
+          invoice_number: string | null
           lease_id: string
           maintenance_amount: number
           maintenance_note: string | null
@@ -1510,11 +1795,13 @@ export type Database = {
           billing_period_end: string
           billing_period_start: string
           created_at: string
+          document_ref: string | null
           due_date: string
           electricity_amount: number
           electricity_note: string | null
           electricity_units: number | null
           id: string
+          invoice_number: string | null
           lease_id: string
           maintenance_amount: number
           maintenance_note: string | null
@@ -1539,11 +1826,13 @@ export type Database = {
           billing_period_end: string
           billing_period_start: string
           created_at: string
+          document_ref: string | null
           due_date: string
           electricity_amount: number
           electricity_note: string | null
           electricity_units: number | null
           id: string
+          invoice_number: string | null
           lease_id: string
           maintenance_amount: number
           maintenance_note: string | null
@@ -1607,6 +1896,39 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "allotment"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      update_building_expense: {
+        Args: {
+          p_amount?: number
+          p_building_id?: string
+          p_category?: Database["public"]["Enums"]["expense_category"]
+          p_description?: string
+          p_expense_date?: string
+          p_expense_id: string
+          p_reference_note?: string
+          p_title?: string
+          p_vendor_name?: string
+        }
+        Returns: {
+          amount: number
+          building_id: string
+          category: Database["public"]["Enums"]["expense_category"]
+          created_at: string
+          created_by: string | null
+          description: string | null
+          expense_date: string
+          id: string
+          reference_note: string | null
+          title: string
+          updated_at: string
+          vendor_name: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "building_expense"
           isOneToOne: true
           isSetofReturn: false
         }
@@ -1686,8 +2008,11 @@ export type Database = {
       update_owner_profile: {
         Args: { p_contact_email?: string; p_name?: string; p_phone?: string }
         Returns: {
+          billing_address: string | null
+          company_name: string | null
           contact_email: string
           created_at: string
+          gstin: string | null
           id: string
           name: string
           phone: string
@@ -1708,6 +2033,16 @@ export type Database = {
       billing_cycle: "MONTHLY" | "QUARTERLY" | "YEARLY"
       complaint_status: "OPEN" | "ASSIGNED" | "IN_PROGRESS" | "RESOLVED"
       event_type: "STATUS_CHANGE" | "COMMENT"
+      expense_category:
+        | "CLEANING"
+        | "GUARD_SALARY"
+        | "DIESEL"
+        | "ELECTRICITY"
+        | "WATER"
+        | "REPAIRS"
+        | "MAINTENANCE"
+        | "SUPPLIES"
+        | "OTHER"
       gateway_type: "UPI" | "RAZORPAY"
       invoice_status: "DUE" | "PARTIALLY_PAID" | "PAID" | "OVERDUE"
       notification_channel: "EMAIL" | "SMS" | "IN_APP"
@@ -1847,6 +2182,17 @@ export const Constants = {
       billing_cycle: ["MONTHLY", "QUARTERLY", "YEARLY"],
       complaint_status: ["OPEN", "ASSIGNED", "IN_PROGRESS", "RESOLVED"],
       event_type: ["STATUS_CHANGE", "COMMENT"],
+      expense_category: [
+        "CLEANING",
+        "GUARD_SALARY",
+        "DIESEL",
+        "ELECTRICITY",
+        "WATER",
+        "REPAIRS",
+        "MAINTENANCE",
+        "SUPPLIES",
+        "OTHER",
+      ],
       gateway_type: ["UPI", "RAZORPAY"],
       invoice_status: ["DUE", "PARTIALLY_PAID", "PAID", "OVERDUE"],
       notification_channel: ["EMAIL", "SMS", "IN_APP"],

@@ -12,6 +12,7 @@ import {
   Settings,
   UserCog,
   Users,
+  Wallet,
   Wrench,
   type LucideIcon,
 } from 'lucide-react'
@@ -43,6 +44,7 @@ export const NAV_ITEMS: readonly NavItem[] = [
   { to: '/staff', label: 'Maintenance staff', icon: HardHat, roles: ADMIN_ONLY },
   { to: '/complaints', label: 'Complaints', icon: Wrench, roles: ALL_STAFF },
   { to: '/billing', label: 'Billing', icon: IndianRupee, roles: ADMIN_ONLY },
+  { to: '/expenses', label: 'Expenses', icon: Wallet, roles: ADMIN_ONLY },
   { to: '/payments', label: 'Payments', icon: CreditCard, roles: ADMIN_ONLY },
   { to: '/documents', label: 'Documents', icon: FolderOpen, roles: ADMIN_ONLY },
   { to: '/audit', label: 'Audit log', icon: ScrollText, roles: ADMIN_ONLY },

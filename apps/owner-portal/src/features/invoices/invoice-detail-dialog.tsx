@@ -23,6 +23,9 @@ import { dbError } from '@/lib/db-error'
 import { formatCurrency, formatDate, formatTimestamp } from '@/lib/format'
 import { supabase } from '@/lib/supabase'
 import type { InvoiceRow } from './api'
+import { useDownloadInvoicePdf } from './api'
+import { InvoiceGstSummary } from './invoice-gst-summary'
+import { useGstRatePercent } from './use-gst-rate'
 import { InvoiceStatusBadge } from './status-badge'
 
 interface InvoicePaymentRow {
@@ -59,6 +62,8 @@ function useInvoicePayments(invoiceId: Uuid | null) {
 
 export function InvoiceDetailDialog({ invoice, onClose, onPay }: InvoiceDetailDialogProps) {
   const payments = useInvoicePayments(invoice?.invoice_id ?? null)
+  const downloadPdf = useDownloadInvoicePdf()
+  const gstRate = useGstRatePercent()
   const canPay = invoice != null && invoice.status !== 'PAID' && invoice.outstanding_amount > 0
 
   return (
@@ -78,7 +83,7 @@ export function InvoiceDetailDialog({ invoice, onClose, onPay }: InvoiceDetailDi
                 <div className="bg-muted/40 flex items-center justify-between gap-3 border-b px-4 py-3">
                   <div>
                     <p className="text-muted-foreground text-xs tracking-wide uppercase">
-                      Amount due
+                      Amount due (incl. GST)
                     </p>
                     <p className="font-mono text-2xl font-semibold tabular-nums">
                       {formatCurrency(invoice.outstanding_amount)}
@@ -86,6 +91,9 @@ export function InvoiceDetailDialog({ invoice, onClose, onPay }: InvoiceDetailDi
                   </div>
                   <InvoiceStatusBadge status={invoice.status} />
                 </div>
+                <p className="text-muted-foreground border-b px-4 py-2 text-xs">
+                  Line items are taxable values (before GST).
+                </p>
                 <dl className="divide-y text-sm">
                   <div className="flex items-center justify-between gap-3 px-4 py-2.5">
                     <dt className="text-muted-foreground">Office rent</dt>
@@ -129,15 +137,21 @@ export function InvoiceDetailDialog({ invoice, onClose, onPay }: InvoiceDetailDi
                       </dd>
                     </div>
                   ) : null}
-                  <div className="flex items-center justify-between gap-3 px-4 py-2.5 font-medium">
-                    <dt>Invoice total</dt>
-                    <dd className="font-mono tabular-nums">{formatCurrency(invoice.total_amount)}</dd>
-                  </div>
                   <div className="flex items-center justify-between gap-3 px-4 py-2.5">
                     <dt className="text-muted-foreground">Already paid</dt>
                     <dd className="font-mono tabular-nums">{formatCurrency(invoice.paid_amount)}</dd>
                   </div>
                 </dl>
+                <InvoiceGstSummary
+                  parts={{
+                    rent_amount: invoice.rent_amount,
+                    additional_charges: invoice.additional_charges,
+                    electricity_amount: invoice.electricity_amount,
+                    maintenance_amount: invoice.maintenance_amount,
+                  }}
+                  gstRatePercent={gstRate.data ?? 18}
+                  payableTotal={invoice.outstanding_amount}
+                />
               </div>
 
               <dl className="grid grid-cols-[8rem_1fr] gap-x-3 gap-y-2 text-sm">
@@ -194,6 +208,15 @@ export function InvoiceDetailDialog({ invoice, onClose, onPay }: InvoiceDetailDi
             </div>
 
             <DialogFooter className="gap-2 sm:justify-start">
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                disabled={downloadPdf.isPending}
+                onClick={() => downloadPdf.mutate(invoice.invoice_id)}
+              >
+                {downloadPdf.isPending ? 'Preparing PDF…' : 'Download tax invoice'}
+              </Button>
               {canPay ? (
                 <Button
                   type="button"

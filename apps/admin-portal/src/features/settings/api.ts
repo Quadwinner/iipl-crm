@@ -106,3 +106,42 @@ export function useConfigureFileType() {
     return data
   }, settingsKeys.fileStorage)
 }
+
+export function useConfigureCompanyBilling() {
+  return useConfigMutation(
+    async (input: {
+      company_legal_name: string
+      company_gstin: string
+      company_address: string
+      company_phone: string
+      company_email: string
+      company_place_of_supply: string
+      bank_name: string
+      bank_account_number: string
+      bank_ifsc: string
+      bank_branch: string
+      invoice_series_prefix: string
+      default_gst_rate_percent: number
+      default_hsn_sac: string
+    }) => {
+      const { data, error } = await supabase().rpc('configure_company_billing', {
+        p_company_legal_name: input.company_legal_name,
+        p_company_gstin: input.company_gstin,
+        p_company_address: input.company_address,
+        p_company_phone: input.company_phone,
+        p_company_email: input.company_email,
+        p_company_place_of_supply: input.company_place_of_supply,
+        p_bank_name: input.bank_name,
+        p_bank_account_number: input.bank_account_number,
+        p_bank_ifsc: input.bank_ifsc,
+        p_bank_branch: input.bank_branch,
+        p_invoice_series_prefix: input.invoice_series_prefix,
+        p_default_gst_rate_percent: input.default_gst_rate_percent,
+        p_default_hsn_sac: input.default_hsn_sac,
+      })
+      if (error) throw dbError(error, 'The company billing profile could not be saved.')
+      return data
+    },
+    settingsKeys.globalConfig,
+  )
+}

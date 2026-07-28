@@ -23,7 +23,10 @@ import {
 import { InvoiceStatusBadge } from '@/features/billing/status-badge'
 import { ElectricityChargeForm } from '@/features/billing/electricity-charge-form'
 import { MaintenanceChargeForm } from '@/features/billing/maintenance-charge-form'
-import { billingKeys, type BillingRow } from '@/features/billing/api'
+import { billingKeys, useDownloadInvoicePdf, type BillingRow } from '@/features/billing/api'
+import { InvoiceGstSummary } from '@/features/billing/invoice-gst-summary'
+import { useGlobalConfig } from '@/features/settings/api'
+import { Button } from '@/components/ui/button'
 import { dbError } from '@/lib/db-error'
 import { formatCurrency, formatDate, formatDateTime } from '@/lib/format'
 import { supabase } from '@/lib/supabase'
@@ -62,6 +65,9 @@ function useInvoicePayments(invoiceId: Uuid | null) {
 export function InvoiceDetailSheet({ invoice, onClose }: InvoiceDetailSheetProps) {
   const payments = useInvoicePayments(invoice?.invoice_id ?? null)
   const queryClient = useQueryClient()
+  const downloadPdf = useDownloadInvoicePdf()
+  const config = useGlobalConfig()
+  const gstRate = Number(config.data?.default_gst_rate_percent ?? 18)
   const [localInvoice, setLocalInvoice] = useState<BillingRow | null>(invoice)
 
   useEffect(() => {
@@ -80,6 +86,18 @@ export function InvoiceDetailSheet({ invoice, onClose }: InvoiceDetailSheetProps
               ? `${shown.unit_code} · ${shown.building_name} · ${shown.owner_name}`
               : ''}
           </SheetDescription>
+          {shown ? (
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="mt-2"
+              disabled={downloadPdf.isPending}
+              onClick={() => downloadPdf.mutate(shown.invoice_id)}
+            >
+              {downloadPdf.isPending ? 'Preparing PDF…' : 'Download tax invoice'}
+            </Button>
+          ) : null}
         </SheetHeader>
 
         {shown ? (
@@ -88,7 +106,7 @@ export function InvoiceDetailSheet({ invoice, onClose }: InvoiceDetailSheetProps
               <div className="bg-muted/40 flex items-center justify-between gap-3 border-b px-4 py-3">
                 <div>
                   <p className="text-muted-foreground text-xs tracking-wide uppercase">
-                    Invoice total
+                    Invoice total (incl. GST)
                   </p>
                   <p className="font-mono text-2xl font-semibold tabular-nums">
                     {formatCurrency(shown.total_amount)}
@@ -96,6 +114,9 @@ export function InvoiceDetailSheet({ invoice, onClose }: InvoiceDetailSheetProps
                 </div>
                 <InvoiceStatusBadge status={shown.status} />
               </div>
+              <p className="text-muted-foreground border-b px-4 py-2 text-xs">
+                Line items are taxable values (before GST).
+              </p>
               <dl className="divide-y text-sm">
                 <div className="flex items-center justify-between gap-3 px-4 py-2.5">
                   <dt className="text-muted-foreground">Office rent</dt>
@@ -140,6 +161,15 @@ export function InvoiceDetailSheet({ invoice, onClose }: InvoiceDetailSheetProps
                   </div>
                 ) : null}
               </dl>
+              <InvoiceGstSummary
+                parts={{
+                  rent_amount: shown.rent_amount,
+                  additional_charges: shown.additional_charges,
+                  electricity_amount: shown.electricity_amount,
+                  maintenance_amount: shown.maintenance_amount,
+                }}
+                gstRatePercent={gstRate}
+              />
             </div>
 
             <dl className="grid grid-cols-[8rem_1fr] gap-x-3 gap-y-2 text-sm">

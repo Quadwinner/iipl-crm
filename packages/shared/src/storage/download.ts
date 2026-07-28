@@ -15,6 +15,7 @@ export const STORAGE_BUCKETS = {
   complaintAttachments: 'complaint-attachments',
   ownerDocuments: 'owner-documents',
   receipts: 'receipts',
+  invoices: 'invoices',
 } as const
 
 /** Default signed-URL lifetime, kept short since URLs are minted on demand. */
@@ -147,4 +148,34 @@ export async function downloadReceipt(
     expiresInSeconds,
   )
   return { signedUrl, fileName: `receipt-${data.invoice_period}.pdf` }
+}
+
+/**
+ * Resolves an invoice row (RLS-scoped) and returns a signed URL for its GST tax invoice PDF.
+ */
+export async function downloadInvoice(
+  client: DbClient,
+  invoiceId: string,
+  expiresInSeconds: number = DEFAULT_SIGNED_URL_TTL_SECONDS,
+): Promise<SignedFile> {
+  const { data, error } = await client
+    .from('invoice')
+    .select('document_ref, invoice_number, billing_cycle_key')
+    .eq('id', invoiceId)
+    .maybeSingle()
+
+  if (error || !data?.document_ref) {
+    throw new FileAccessError('Invoice PDF is not yet available')
+  }
+
+  const signedUrl = await mintSignedUrl(
+    client,
+    STORAGE_BUCKETS.invoices,
+    data.document_ref,
+    expiresInSeconds,
+  )
+  const fileName = data.invoice_number
+    ? `tax-invoice-${data.invoice_number.replace(/\//g, '-')}.pdf`
+    : `tax-invoice-${data.billing_cycle_key}.pdf`
+  return { signedUrl, fileName }
 }

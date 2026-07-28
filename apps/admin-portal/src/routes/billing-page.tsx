@@ -116,7 +116,7 @@ export function BillingPage() {
         cell: (info) => <time dateTime={info.getValue()}>{formatDate(info.getValue())}</time>,
       }),
       columnHelper.accessor('total_amount', {
-        header: () => <span className="block text-right">Amount</span>,
+        header: () => <span className="block text-right">Amount (incl. GST)</span>,
         cell: (info) => (
           <span className="block text-right font-mono tabular-nums">
             {formatCurrency(info.getValue())}

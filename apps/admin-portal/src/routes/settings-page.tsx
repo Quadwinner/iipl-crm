@@ -1,6 +1,7 @@
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useGlobalConfig } from '@/features/settings/api'
+import { CompanyBillingForm } from '@/features/settings/company-billing-form'
 import { FileTypeSection } from '@/features/settings/file-type-section'
 import { PaymentGracePeriodForm } from '@/features/settings/payment-grace-period-form'
 import { ReminderSettingsForm } from '@/features/settings/reminder-settings-form'
@@ -37,6 +38,8 @@ export function SettingsPage() {
           <ReminderSettingsForm config={config.data} />
           <Separator />
           <PaymentGracePeriodForm config={config.data} />
+          <Separator />
+          <CompanyBillingForm config={config.data} />
         </>
       )}
 

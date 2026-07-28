@@ -8,6 +8,7 @@ import { BuildingsPage } from './buildings-page'
 import { ComplaintsPage } from './complaints-page'
 import { DashboardPage } from './dashboard-page'
 import { DocumentsPage } from './documents-page'
+import { ExpensesPage } from './expenses-page'
 import { LoginPage } from './login-page'
 import { OwnersPage } from './owners-page'
 import { PaymentsPage } from './payments-page'
@@ -33,6 +34,7 @@ export function AppRoutes() {
           <Route path="/staff" element={<StaffPage />} />
           <Route path="/complaints" element={<ComplaintsPage />} />
           <Route path="/billing" element={<BillingPage />} />
+          <Route path="/expenses" element={<ExpensesPage />} />
           <Route path="/payments" element={<PaymentsPage />} />
           <Route path="/documents" element={<DocumentsPage />} />
           <Route path="/audit" element={<AuditPage />} />
