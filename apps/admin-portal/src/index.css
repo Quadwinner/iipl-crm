@@ -145,7 +145,6 @@
     font-family: var(--font-sans);
     background-image:
       radial-gradient(ellipse 80% 50% at 50% -20%, color-mix(in oklch, var(--brand-glow) 14%, transparent), transparent);
-    background-attachment: fixed;
   }
 }
 

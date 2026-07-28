@@ -1,11 +1,24 @@
 import * as React from 'react'
 import { AlertDialog as AlertDialogPrimitive } from 'radix-ui'
 
+import { unlockBodyScroll } from '@/lib/scroll-lock'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 
-function AlertDialog({ ...props }: React.ComponentProps<typeof AlertDialogPrimitive.Root>) {
-  return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />
+function AlertDialog({
+  onOpenChange,
+  ...props
+}: React.ComponentProps<typeof AlertDialogPrimitive.Root>) {
+  return (
+    <AlertDialogPrimitive.Root
+      data-slot="alert-dialog"
+      onOpenChange={(open) => {
+        if (!open) unlockBodyScroll()
+        onOpenChange?.(open)
+      }}
+      {...props}
+    />
+  )
 }
 
 function AlertDialogTrigger({

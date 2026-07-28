@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { Building2, LogOut, Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/auth/use-auth'
+import { unlockBodyScroll } from '@/lib/scroll-lock'
 import { cn } from '@/lib/utils'
 import { navItemForPath, navItemsForRole, ROLE_LABELS } from '@/lib/navigation'
 
@@ -10,6 +11,10 @@ export function AppShell() {
   const { email, role, signOut } = useAuth()
   const location = useLocation()
   const [navOpen, setNavOpen] = useState(false)
+
+  useEffect(() => {
+    unlockBodyScroll()
+  }, [location.pathname])
 
   const items = navItemsForRole(role)
   const section = navItemForPath(location.pathname)
@@ -27,10 +32,11 @@ export function AppShell() {
         id="app-nav"
         className={cn(
           'bg-sidebar text-sidebar-foreground border-sidebar-border border-b md:border-r md:border-b-0',
+          'md:sticky md:top-0 md:h-svh md:overflow-y-auto',
           navOpen ? 'block' : 'hidden md:block',
         )}
       >
-        <nav aria-label="Sections" className="flex flex-col gap-5 px-3 py-5 md:sticky md:top-0 md:min-h-svh">
+        <nav aria-label="Sections" className="flex flex-col gap-5 px-3 py-5">
           <div className="flex items-center gap-2.5 px-2">
             <div className="bg-sidebar-primary text-sidebar-primary-foreground flex size-9 items-center justify-center rounded-lg shadow-sm">
               <Building2 className="size-4" aria-hidden="true" />
@@ -64,7 +70,7 @@ export function AppShell() {
         </nav>
       </aside>
 
-      <div className="flex min-w-0 flex-col">
+      <div className="flex min-h-svh min-w-0 flex-col md:h-svh md:overflow-hidden">
         <header className="flex h-14 shrink-0 items-center gap-3 border-b bg-card/60 px-4 backdrop-blur-sm md:px-6">
           <Button
             type="button"
@@ -95,7 +101,10 @@ export function AppShell() {
           </div>
         </header>
 
-        <main id="main" className="min-w-0 flex-1 px-4 py-6 md:px-6 md:py-8">
+        <main
+          id="main"
+          className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-4 py-6 md:px-6 md:py-8"
+        >
           <Outlet />
         </main>
       </div>

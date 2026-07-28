@@ -2,11 +2,24 @@ import * as React from 'react'
 import { XIcon } from 'lucide-react'
 import { Dialog as DialogPrimitive } from 'radix-ui'
 
+import { unlockBodyScroll } from '@/lib/scroll-lock'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 
-function Dialog({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) {
-  return <DialogPrimitive.Root data-slot="dialog" {...props} />
+function Dialog({
+  onOpenChange,
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Root>) {
+  return (
+    <DialogPrimitive.Root
+      data-slot="dialog"
+      onOpenChange={(open) => {
+        if (!open) unlockBodyScroll()
+        onOpenChange?.(open)
+      }}
+      {...props}
+    />
+  )
 }
 
 function DialogTrigger({ ...props }: React.ComponentProps<typeof DialogPrimitive.Trigger>) {

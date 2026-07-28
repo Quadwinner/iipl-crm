@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { mapDbError } from '@/lib/db-error'
+import { unlockBodyScroll } from '@/lib/scroll-lock'
 import { useDeactivateOwner, type OwnerRow } from './api'
 
 interface DeactivateOwnerDialogProps {
@@ -25,6 +26,7 @@ export function DeactivateOwnerDialog({ owner, onClose }: DeactivateOwnerDialogP
 
     const { id: ownerId, name } = owner
     onClose()
+    unlockBodyScroll()
 
     const toastId = toast.loading(`Deactivating ${name}…`)
     try {
