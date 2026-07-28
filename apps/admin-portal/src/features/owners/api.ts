@@ -73,22 +73,23 @@ export function useCreateOwner() {
   })
 }
 
-interface DeactivateOwnerResponse {
-  success: boolean
-  message?: string
-}
-
-/** Session revocation is admin-API work, so it runs in the `deactivate-owner` Edge Function. */
+/** Revokes sessions and sets status in one Postgres RPC — faster than an Edge Function round-trip. */
 export function useDeactivateOwner() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (ownerId: Uuid) =>
-      invokeEdgeFunction<DeactivateOwnerResponse>('deactivate-owner', { owner_id: ownerId }),
-    onSuccess: () => {
+    mutationFn: async (ownerId: Uuid) => {
+      const { data, error } = await supabase().rpc('deactivate_owner', {
+        p_owner_id: ownerId,
+      })
+      if (error) throw dbError(error, 'The tenant account could not be deactivated.')
+      return data
+    },
+    onSuccess: (_data, ownerId) => {
       void queryClient.invalidateQueries({ queryKey: ownerKeys.all })
       void queryClient.invalidateQueries({ queryKey: ['allotments'] })
       void queryClient.invalidateQueries({ queryKey: ['tenants'] })
+      void queryClient.invalidateQueries({ queryKey: ['tenants', 'detail', ownerId] })
     },
   })
 }

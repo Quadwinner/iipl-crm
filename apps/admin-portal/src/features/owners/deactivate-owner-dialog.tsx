@@ -1,8 +1,6 @@
-import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -10,7 +8,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { EdgeFunctionError } from '@/lib/edge-function'
+import { Button } from '@/components/ui/button'
+import { mapDbError } from '@/lib/db-error'
 import { useDeactivateOwner, type OwnerRow } from './api'
 
 interface DeactivateOwnerDialogProps {
@@ -20,30 +19,19 @@ interface DeactivateOwnerDialogProps {
 
 export function DeactivateOwnerDialog({ owner, onClose }: DeactivateOwnerDialogProps) {
   const deactivate = useDeactivateOwner()
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (owner !== null) setError(null)
-  }, [owner])
 
   async function onConfirm() {
     if (owner === null) return
-    setError(null)
+
+    const { id: ownerId, name } = owner
+    onClose()
+
+    const toastId = toast.loading(`Deactivating ${name}…`)
     try {
-      await deactivate.mutateAsync(owner.id)
-      toast.success('Owner account deactivated')
-      onClose()
+      await deactivate.mutateAsync(ownerId)
+      toast.success('Tenant deactivated', { id: toastId })
     } catch (caught) {
-      const status = caught instanceof EdgeFunctionError ? caught.status : 0
-      if (status === 401 || status === 403) {
-        setError('Your role is not permitted to deactivate owner accounts.')
-        return
-      }
-      if (status === 404) {
-        setError('This owner account no longer exists. Refresh the list.')
-        return
-      }
-      setError(caught instanceof Error ? caught.message : String(caught))
+      toast.error(mapDbError(caught).message, { id: toastId })
     }
   }
 
@@ -64,24 +52,11 @@ export function DeactivateOwnerDialog({ owner, onClose }: DeactivateOwnerDialogP
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        {error ? (
-          <p role="alert" className="text-destructive text-sm">
-            {error}
-          </p>
-        ) : null}
-
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={deactivate.isPending}>Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            variant="destructive"
-            disabled={deactivate.isPending}
-            onClick={(event) => {
-              event.preventDefault()
-              void onConfirm()
-            }}
-          >
-            {deactivate.isPending ? 'Deactivating…' : 'Deactivate'}
-          </AlertDialogAction>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <Button type="button" variant="destructive" onClick={() => void onConfirm()}>
+            Deactivate
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

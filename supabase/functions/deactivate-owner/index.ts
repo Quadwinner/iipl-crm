@@ -4,8 +4,8 @@
  * Requirements: 4.7, 14.1
  *
  * Flow:
- * 1. Verify admin permission
- * 2. Revoke all sessions via Supabase Auth Admin API (global signout)
+ * 1. Verify admin permission (caller JWT + anon key, same pattern as create-owner)
+ * 2. Revoke all auth sessions for the owner's user_id
  * 3. Call deactivate_owner_internal RPC to atomically update status + audit log
  */
 
@@ -20,76 +20,82 @@ interface DeactivateOwnerRequest {
   owner_id: string
 }
 
+function jsonResponse(status: number, payload: Record<string, unknown>): Response {
+  return new Response(JSON.stringify(payload), {
+    status,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  })
+}
+
+function failure(status: number, errorCode: string, message: string): Response {
+  return jsonResponse(status, {
+    success: false,
+    error_code: errorCode,
+    error: message,
+    message,
+  })
+}
+
 Deno.serve(async (req) => {
-  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
+  if (req.method !== 'POST') {
+    return failure(405, 'METHOD_NOT_ALLOWED', 'Method not allowed')
+  }
+
   try {
-    // Get authorization header
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
-      return new Response(
-        JSON.stringify({ error_code: 'UNAUTHORIZED', message: 'Missing authorization header' }),
-        {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        },
-      )
+      return failure(401, 'UNAUTHORIZED', 'Missing authorization header')
     }
 
-    // Create clients
+    const callerToken = authHeader.replace(/^Bearer\s+/i, '').trim()
+    if (!callerToken) {
+      return failure(401, 'UNAUTHORIZED', 'Missing authorization header')
+    }
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? supabaseServiceKey
 
-    // Client for checking permissions (uses caller's session)
-    const userClient = createClient(supabaseUrl, supabaseServiceKey, {
-      global: {
-        headers: { Authorization: authHeader },
-      },
-      auth: { persistSession: false },
-    })
-
-    // Service-role client for admin operations
     const serviceClient = createClient(supabaseUrl, supabaseServiceKey, {
-      auth: { persistSession: false },
+      auth: { autoRefreshToken: false, persistSession: false },
     })
 
-    // Verify admin permission
-    const { data: hasPermission, error: permError } = await userClient.rpc('authorize', {
+    const { data: callerData, error: callerError } = await serviceClient.auth.getUser(callerToken)
+    if (callerError || !callerData?.user) {
+      return failure(401, 'UNAUTHORIZED', 'Invalid or expired session')
+    }
+
+    const callerClient = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: `Bearer ${callerToken}` } },
+      auth: { autoRefreshToken: false, persistSession: false },
+    })
+
+    const { data: hasPermission, error: permError } = await callerClient.rpc('authorize', {
       p_permission: 'OWNER_ACCOUNT_DEACTIVATE',
     })
 
-    if (permError || !hasPermission) {
-      return new Response(
-        JSON.stringify({
-          error_code: 'PERMISSION_DENIED',
-          message: 'OWNER_ACCOUNT_DEACTIVATE requires Administrator role',
-        }),
-        {
-          status: 403,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        },
+    if (permError) {
+      console.error('Permission check failed:', permError)
+      return failure(403, 'PERMISSION_DENIED', 'Permission could not be verified')
+    }
+
+    if (hasPermission !== true) {
+      return failure(
+        403,
+        'PERMISSION_DENIED',
+        'OWNER_ACCOUNT_DEACTIVATE requires Administrator role',
       )
     }
 
-    // Parse request body
     const body: DeactivateOwnerRequest = await req.json()
     if (!body.owner_id) {
-      return new Response(
-        JSON.stringify({
-          error_code: 'INVALID_REQUEST',
-          message: 'Missing required field: owner_id',
-        }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        },
-      )
+      return failure(400, 'INVALID_REQUEST', 'Missing required field: owner_id')
     }
 
-    // Get owner's user_id
     const { data: owner, error: ownerError } = await serviceClient
       .from('office_owners')
       .select('user_id')
@@ -97,76 +103,34 @@ Deno.serve(async (req) => {
       .single()
 
     if (ownerError || !owner) {
-      return new Response(
-        JSON.stringify({
-          error_code: 'OWNER_NOT_FOUND',
-          message: 'Office owner not found',
-        }),
-        {
-          status: 404,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        },
-      )
+      return failure(404, 'OWNER_NOT_FOUND', 'Office owner not found')
     }
 
-    // Revoke all sessions for this user (global signout)
-    const { error: signOutError } = await serviceClient.auth.admin.signOut(owner.user_id, 'global')
+    const { error: revokeError } = await serviceClient.rpc('revoke_user_auth_sessions', {
+      p_user_id: owner.user_id,
+    })
 
-    if (signOutError) {
-      console.error('Failed to revoke sessions:', signOutError)
-      return new Response(
-        JSON.stringify({
-          error_code: 'SESSION_REVOCATION_FAILED',
-          message: 'Failed to revoke user sessions',
-        }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        },
-      )
+    if (revokeError) {
+      console.error('Failed to revoke sessions:', revokeError)
+      return failure(500, 'SESSION_REVOCATION_FAILED', 'Failed to revoke user sessions')
     }
 
-    // Call internal RPC to atomically update status + audit log
     const { data: result, error: rpcError } = await serviceClient.rpc('deactivate_owner_internal', {
       p_owner_id: body.owner_id,
     })
 
     if (rpcError) {
       console.error('Failed to deactivate owner:', rpcError)
-      return new Response(
-        JSON.stringify({
-          error_code: 'DEACTIVATION_FAILED',
-          message: 'Failed to deactivate owner account',
-        }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        },
-      )
+      return failure(500, 'DEACTIVATION_FAILED', 'Failed to deactivate owner account')
     }
 
-    return new Response(
-      JSON.stringify({
-        success: true,
-        message: 'Owner account deactivated successfully',
-        data: result,
-      }),
-      {
-        status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      },
-    )
+    return jsonResponse(200, {
+      success: true,
+      message: 'Owner account deactivated successfully',
+      data: result,
+    })
   } catch (error) {
     console.error('Unexpected error:', error)
-    return new Response(
-      JSON.stringify({
-        error_code: 'INTERNAL_ERROR',
-        message: 'Internal server error',
-      }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      },
-    )
+    return failure(500, 'INTERNAL_ERROR', 'Internal server error')
   }
 })

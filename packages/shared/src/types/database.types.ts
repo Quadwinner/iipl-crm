@@ -1371,6 +1371,7 @@ export type Database = {
         Args: never
         Returns: Database["public"]["Enums"]["role"]
       }
+      deactivate_owner: { Args: { p_owner_id: string }; Returns: Json }
       deactivate_owner_internal: { Args: { p_owner_id: string }; Returns: Json }
       delete_building_expense: {
         Args: { p_expense_id: string }
@@ -1567,6 +1568,15 @@ export type Database = {
         }
         Returns: number
       }
+      invoice_taxable_subtotal: {
+        Args: {
+          p_additional: number
+          p_electricity: number
+          p_maintenance: number
+          p_rent: number
+        }
+        Returns: number
+      }
       invoke_notify: { Args: never; Returns: undefined }
       is_account_locked: { Args: { p_email: string }; Returns: boolean }
       is_administrator: { Args: never; Returns: boolean }
@@ -1748,6 +1758,10 @@ export type Database = {
         }
       }
       require_permission: { Args: { p_permission: string }; Returns: undefined }
+      revoke_user_auth_sessions: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
       run_billing_cycle_job: {
         Args: { p_as_of?: string }
         Returns: {
