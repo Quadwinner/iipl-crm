@@ -223,16 +223,14 @@ export async function renderGstInvoicePdf(input: GstInvoiceInput): Promise<Uint8
 
   const computedLines = input.lineItems.map((item) => {
     const taxable = Math.round(item.rate * item.qty * 100) / 100
-    const taxAmount = Math.round(taxable * (gstRate / 100) * 100) / 100
-    const total = Math.round((taxable + taxAmount) * 100) / 100
-    return { ...item, taxable, taxAmount, total }
+    return { ...item, taxable }
   })
 
-  const taxableTotal = computedLines.reduce((sum, row) => sum + row.taxable, 0)
-  const taxTotal = computedLines.reduce((sum, row) => sum + row.taxAmount, 0)
-  const grandTotal = Math.round((taxableTotal + taxTotal) * 100) / 100
+  const taxableTotal = Math.round(computedLines.reduce((sum, row) => sum + row.taxable, 0) * 100) / 100
+  const taxTotal = Math.round(taxableTotal * (gstRate / 100) * 100) / 100
   const cgst = Math.round(taxTotal / 2 * 100) / 100
   const sgst = Math.round((taxTotal - cgst) * 100) / 100
+  const grandTotal = Math.round((taxableTotal + taxTotal) * 100) / 100
 
   // Outer border
   drawBox(page, margin, 56, contentW, y - 56 + 4)
@@ -317,9 +315,9 @@ export async function renderGstInvoicePdf(input: GstInvoiceInput): Promise<Uint8
 
   y -= partyH
 
-  // Items table
-  const cols = [24, 148, 52, 58, 36, 68, 72, 68]
-  const headers = ['#', 'Item', 'HSN/SAC', 'Rate / Item', 'Qty', 'Taxable Value', 'Tax Amount', 'Amount']
+  // Items table — line amounts are pre-GST; tax is applied once on the invoice total below.
+  const cols = [24, 200, 58, 72, 40, 85]
+  const headers = ['#', 'Item', 'HSN/SAC', 'Rate / Item', 'Qty', 'Amount']
   const tableX = margin
   const rowH = 22
   const headerRowH = 24
@@ -356,8 +354,6 @@ export async function renderGstInvoicePdf(input: GstInvoiceInput): Promise<Uint8
       formatInrPlain(row.rate),
       row.qtyLabel ?? `${row.qty} QTY`,
       formatInrPlain(row.taxable),
-      `${formatInrPlain(row.taxAmount)} (${gstRate}%)`,
-      formatInrPlain(row.total),
     ]
     for (let i = 0; i < cells.length; i++) {
       if (i > 0) {
