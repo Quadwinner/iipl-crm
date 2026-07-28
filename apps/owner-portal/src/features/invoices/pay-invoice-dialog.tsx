@@ -20,13 +20,6 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { useAuth } from '@/auth/use-auth'
 import { EdgeFunctionError } from '@/lib/edge-function'
 import { formatCurrency, formatDate } from '@/lib/format'
@@ -205,35 +198,63 @@ function PayInvoiceForm({
       </DialogHeader>
 
       <dl className="grid gap-x-6 gap-y-2 text-sm sm:grid-cols-[7rem_1fr]">
+        <dt className="text-muted-foreground">Office rent</dt>
+        <dd className="font-mono tabular-nums">{formatCurrency(invoice.rent_amount)}</dd>
+        <dt className="text-muted-foreground">Electricity</dt>
+        <dd className="font-mono tabular-nums">
+          {formatCurrency(invoice.electricity_amount ?? 0)}
+          {invoice.electricity_units != null ? (
+            <span className="text-muted-foreground ml-2 text-xs">
+              ({invoice.electricity_units} units
+              {invoice.electricity_units > 0 && (invoice.electricity_amount ?? 0) > 0
+                ? ` × ₹${Math.round(((invoice.electricity_amount ?? 0) / invoice.electricity_units) * 100) / 100}`
+                : ''}
+              )
+            </span>
+          ) : null}
+          {invoice.electricity_note ? (
+            <span className="text-muted-foreground ml-2 text-xs">· {invoice.electricity_note}</span>
+          ) : null}
+        </dd>
         <dt className="text-muted-foreground">Invoice total</dt>
         <dd className="font-mono tabular-nums">{formatCurrency(invoice.total_amount)}</dd>
         <dt className="text-muted-foreground">Already paid</dt>
         <dd className="font-mono tabular-nums">{formatCurrency(invoice.paid_amount)}</dd>
         <dt className="text-muted-foreground">Outstanding</dt>
-        <dd className="font-mono tabular-nums">{formatCurrency(invoice.outstanding_amount)}</dd>
+        <dd className="font-mono font-medium tabular-nums">
+          {formatCurrency(invoice.outstanding_amount)}
+        </dd>
       </dl>
 
       {payable ? (
         <form noValidate className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
-          <div className="space-y-1.5">
-            <Label htmlFor="payment-gateway">Payment method</Label>
-            <Select
-              value={gateway}
-              onValueChange={(value) =>
-                setValue('gateway', value as GatewayType, { shouldValidate: true })
-              }
-            >
-              <SelectTrigger id="payment-gateway" className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {PAYMENT_GATEWAYS.map((value) => (
-                  <SelectItem key={value} value={value}>
-                    {GATEWAY_LABELS[value]}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="space-y-2">
+            <Label>Payment method</Label>
+            <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Payment method">
+              {PAYMENT_GATEWAYS.map((value) => {
+                const selected = gateway === value
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    role="radio"
+                    aria-checked={selected}
+                    onClick={() => setValue('gateway', value, { shouldValidate: true })}
+                    className={[
+                      'focus-visible:ring-ring rounded-lg border px-3 py-3 text-left text-sm transition-colors outline-none focus-visible:ring-[3px]',
+                      selected
+                        ? 'border-foreground bg-muted/60 font-medium'
+                        : 'border-border text-muted-foreground hover:border-foreground/40 hover:text-foreground',
+                    ].join(' ')}
+                  >
+                    <span className="block">{GATEWAY_LABELS[value]}</span>
+                    <span className="text-muted-foreground mt-0.5 block text-xs">
+                      {value === 'UPI' ? 'Pay via UPI apps' : 'Card / UPI / netbanking'}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
             {errors.gateway ? (
               <p role="alert" className="text-destructive text-sm">
                 {errors.gateway.message}
@@ -242,7 +263,19 @@ function PayInvoiceForm({
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="payment-amount">Amount</Label>
+            <div className="flex items-center justify-between gap-2">
+              <Label htmlFor="payment-amount">Amount</Label>
+              <Button
+                type="button"
+                variant="ghost"
+                size="xs"
+                onClick={() =>
+                  setValue('amount', invoice.outstanding_amount, { shouldValidate: true })
+                }
+              >
+                Pay full amount
+              </Button>
+            </div>
             <Input
               id="payment-amount"
               type="number"

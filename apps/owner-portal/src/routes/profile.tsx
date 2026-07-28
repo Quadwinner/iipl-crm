@@ -1,4 +1,4 @@
-import { ScreenHeader } from '@/components/screen-header'
+import { PageHeader } from '@/components/page-header'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAuth } from '@/auth/use-auth'
@@ -11,8 +11,11 @@ export function ProfileScreen() {
   const profile = useOwnerProfile(owner?.userId ?? '')
 
   return (
-    <>
-      <ScreenHeader title="Your profile" />
+    <section className="space-y-6">
+      <PageHeader
+        title="Your profile"
+        description="Update the contact details used for reminders and receipts."
+      />
 
       {profile.isPending ? (
         <div className="max-w-md space-y-4" aria-busy="true">
@@ -28,9 +31,11 @@ export function ProfileScreen() {
         <>
           <ProfileForm profile={profile.data} />
 
-          <Separator className="my-8" />
+          <Separator />
 
-          <h2 className="text-muted-foreground mb-3 text-xs font-medium uppercase">Account</h2>
+          <h2 className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+            Account
+          </h2>
           <dl className="grid max-w-md gap-x-6 gap-y-2 text-sm sm:grid-cols-[9rem_1fr]">
             <dt className="text-muted-foreground">Status</dt>
             <dd>{profile.data.status === 'ACTIVE' ? 'Active' : 'Deactivated'}</dd>
@@ -41,6 +46,6 @@ export function ProfileScreen() {
           </dl>
         </>
       )}
-    </>
+    </section>
   )
 }

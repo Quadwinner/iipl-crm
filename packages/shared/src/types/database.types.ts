@@ -353,6 +353,9 @@ export type Database = {
           billing_period_start: string
           created_at: string
           due_date: string
+          electricity_amount: number
+          electricity_note: string | null
+          electricity_units: number | null
           id: string
           lease_id: string
           office_owner_id: string
@@ -368,6 +371,9 @@ export type Database = {
           billing_period_start: string
           created_at?: string
           due_date: string
+          electricity_amount?: number
+          electricity_note?: string | null
+          electricity_units?: number | null
           id?: string
           lease_id: string
           office_owner_id: string
@@ -383,6 +389,9 @@ export type Database = {
           billing_period_start?: string
           created_at?: string
           due_date?: string
+          electricity_amount?: number
+          electricity_note?: string | null
+          electricity_units?: number | null
           id?: string
           lease_id?: string
           office_owner_id?: string
@@ -889,6 +898,9 @@ export type Database = {
           building_name: string
           created_at: string
           due_date: string
+          electricity_amount: number
+          electricity_note: string | null
+          electricity_units: number | null
           invoice_id: string
           lease_id: string
           office_owner_id: string
@@ -1122,6 +1134,9 @@ export type Database = {
           building_name: string
           created_at: string
           due_date: string
+          electricity_amount: number
+          electricity_note: string | null
+          electricity_units: number | null
           invoice_id: string
           lease_id: string
           office_owner_id: string
@@ -1158,6 +1173,9 @@ export type Database = {
           building_name: string
           created_at: string
           due_date: string
+          electricity_amount: number
+          electricity_note: string | null
+          electricity_units: number | null
           invoice_id: string
           lease_id: string
           office_owner_id: string
@@ -1417,6 +1435,9 @@ export type Database = {
           billing_period_start: string
           created_at: string
           due_date: string
+          electricity_amount: number
+          electricity_note: string | null
+          electricity_units: number | null
           id: string
           lease_id: string
           office_owner_id: string
@@ -1435,6 +1456,33 @@ export type Database = {
       run_lease_expiry_job: { Args: { p_as_of?: string }; Returns: number }
       send_reminder_job: { Args: { p_as_of?: string }; Returns: number }
       session_expired: { Args: never; Returns: boolean }
+      set_invoice_electricity_charge: {
+        Args: { p_amount: number; p_invoice_id: string; p_note?: string; p_units?: number }
+        Returns: {
+          additional_charges: number
+          billing_cycle_key: string
+          billing_period_end: string
+          billing_period_start: string
+          created_at: string
+          due_date: string
+          electricity_amount: number
+          electricity_note: string | null
+          electricity_units: number | null
+          id: string
+          lease_id: string
+          office_owner_id: string
+          office_unit_id: string
+          rent_amount: number
+          status: Database["public"]["Enums"]["invoice_status"]
+          total_amount: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "invoice"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       set_staff_active: {
         Args: { p_active: boolean; p_user_id: string }
         Returns: Json

@@ -1,6 +1,6 @@
 import { FolderOpen } from 'lucide-react'
 
-import { ScreenHeader } from '@/components/screen-header'
+import { PageHeader } from '@/components/page-header'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
@@ -31,15 +31,14 @@ export function DocumentsScreen() {
   const rows = documents.data ?? NO_ROWS
 
   return (
-    <>
-      <ScreenHeader title="Your documents" />
-
-      <p className="text-muted-foreground mb-6 text-sm">
-        Documents linked to your lease or account. Downloads open through a short-lived link.
-      </p>
+    <section className="space-y-6">
+      <PageHeader
+        title="Your documents"
+        description="Documents linked to your lease or account. Downloads open through a short-lived link."
+      />
 
       {download.isError ? (
-        <p role="alert" className="text-destructive mb-4 text-sm">
+        <p role="alert" className="text-destructive text-sm">
           {download.error.message}
         </p>
       ) : null}
@@ -123,6 +122,6 @@ export function DocumentsScreen() {
           </TableBody>
         </Table>
       )}
-    </>
+    </section>
   )
 }

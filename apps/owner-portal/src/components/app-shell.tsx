@@ -3,8 +3,11 @@ import { LogOut } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/auth/use-auth'
+import { cn } from '@/lib/utils'
 
 const NAV_ITEMS = [
+  { to: '/home', label: 'Home' },
+  { to: '/lease', label: 'My lease' },
   { to: '/invoices', label: 'Invoices' },
   { to: '/receipts', label: 'Receipts' },
   { to: '/complaints', label: 'Complaints' },
@@ -26,7 +29,10 @@ export function AppShell() {
 
       <header className="border-b">
         <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between gap-4 px-4">
-          <p className="text-sm font-semibold tracking-tight">IIPL office rentals</p>
+          <div className="space-y-0.5">
+            <p className="text-sm font-semibold tracking-tight">IIPL</p>
+            <p className="text-muted-foreground text-xs">Owner portal</p>
+          </div>
           <div className="flex items-center gap-3">
             {owner ? (
               <span className="text-muted-foreground max-w-[16rem] truncate text-sm">
@@ -41,18 +47,18 @@ export function AppShell() {
         </div>
 
         <nav aria-label="Portal sections" className="mx-auto w-full max-w-5xl px-4">
-          <ul className="-mb-px flex gap-4 overflow-x-auto">
+          <ul className="-mb-px flex gap-1 overflow-x-auto sm:gap-4">
             {NAV_ITEMS.map((item) => (
               <li key={item.to}>
                 <NavLink
                   to={item.to}
                   className={({ isActive }) =>
-                    [
-                      'focus-visible:ring-ring inline-flex h-9 items-center border-b-2 text-sm transition-colors focus-visible:rounded-sm focus-visible:ring-[3px] focus-visible:outline-none',
+                    cn(
+                      'focus-visible:ring-ring inline-flex h-9 items-center border-b-2 px-1 text-sm whitespace-nowrap transition-colors focus-visible:rounded-sm focus-visible:ring-[3px] focus-visible:outline-none',
                       isActive
                         ? 'border-foreground text-foreground font-medium'
                         : 'text-muted-foreground hover:text-foreground border-transparent',
-                    ].join(' ')
+                    )
                   }
                 >
                   {item.label}

@@ -30,8 +30,11 @@ export function AppShell() {
           navOpen ? 'block' : 'hidden md:block',
         )}
       >
-        <nav aria-label="Sections" className="flex flex-col gap-4 px-3 py-4 md:sticky md:top-0">
-          <p className="px-2 text-sm font-semibold tracking-tight">IIPL office rentals</p>
+        <nav aria-label="Sections" className="flex flex-col gap-5 px-3 py-5 md:sticky md:top-0 md:min-h-svh">
+          <div className="space-y-0.5 px-2">
+            <p className="text-sm font-semibold tracking-tight">IIPL</p>
+            <p className="text-muted-foreground text-xs">Office rentals CRM</p>
+          </div>
           <ul className="flex flex-col gap-0.5">
             {items.map(({ to, label, icon: Icon }) => (
               <li key={to}>

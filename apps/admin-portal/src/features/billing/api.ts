@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { Database, InvoiceStatus, Uuid } from '@itoby/shared'
 import { dbError } from '@/lib/db-error'
 import { supabase } from '@/lib/supabase'
@@ -56,4 +56,31 @@ export function billingTotals(rows: BillingRow[]): BillingTotals {
     }),
     { invoiceCount: 0, invoicedTotal: 0, outstandingTotal: 0, overdueTotal: 0 },
   )
+}
+
+export function useSetElectricityCharge() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (input: {
+      invoiceId: Uuid
+      amount: number
+      note?: string
+      units?: number | null
+    }) => {
+      const { data, error } = await supabase().rpc('set_invoice_electricity_charge', {
+        p_invoice_id: input.invoiceId,
+        p_amount: input.amount,
+        p_note: input.note || undefined,
+        p_units: input.units ?? undefined,
+      })
+      if (error) throw dbError(error, 'The electricity charge could not be saved.')
+      return data
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: billingKeys.all })
+      void queryClient.invalidateQueries({ queryKey: ['tenants'] })
+      void queryClient.invalidateQueries({ queryKey: ['reporting'] })
+    },
+  })
 }

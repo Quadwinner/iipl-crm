@@ -66,7 +66,10 @@ export function useCreateOwner() {
         phone: input.phone,
         password: input.password,
       }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ownerKeys.all }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ownerKeys.all })
+      void queryClient.invalidateQueries({ queryKey: ['tenants'] })
+    },
   })
 }
 
@@ -85,6 +88,7 @@ export function useDeactivateOwner() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ownerKeys.all })
       void queryClient.invalidateQueries({ queryKey: ['allotments'] })
+      void queryClient.invalidateQueries({ queryKey: ['tenants'] })
     },
   })
 }

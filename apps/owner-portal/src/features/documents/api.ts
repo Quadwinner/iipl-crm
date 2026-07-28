@@ -27,6 +27,7 @@ export const documentKeys = {
 export function useOwnerDocuments(ownerId: Uuid) {
   return useQuery({
     queryKey: documentKeys.list(ownerId),
+    enabled: Boolean(ownerId),
     queryFn: async (): Promise<OwnerDocumentRow[]> => {
       const { data, error } = await supabase()
         .from('document')

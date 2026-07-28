@@ -1,10 +1,12 @@
 import type { Role } from '@itoby/shared'
 import {
   Building2,
+  CreditCard,
   FolderOpen,
   Handshake,
   HardHat,
   IndianRupee,
+  LandPlot,
   LayoutDashboard,
   ScrollText,
   Settings,
@@ -34,12 +36,14 @@ const ADMIN_ONLY: readonly Role[] = ['ADMINISTRATOR']
  */
 export const NAV_ITEMS: readonly NavItem[] = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ALL_STAFF },
+  { to: '/buildings', label: 'Buildings', icon: LandPlot, roles: ADMIN_ONLY },
   { to: '/units', label: 'Office units', icon: Building2, roles: ADMIN_ONLY },
   { to: '/allotments', label: 'Allotments', icon: Handshake, roles: ADMIN_ONLY },
-  { to: '/owners', label: 'Office owners', icon: Users, roles: ADMIN_ONLY },
+  { to: '/tenants', label: 'Tenants', icon: Users, roles: ADMIN_ONLY },
   { to: '/staff', label: 'Maintenance staff', icon: HardHat, roles: ADMIN_ONLY },
   { to: '/complaints', label: 'Complaints', icon: Wrench, roles: ALL_STAFF },
   { to: '/billing', label: 'Billing', icon: IndianRupee, roles: ADMIN_ONLY },
+  { to: '/payments', label: 'Payments', icon: CreditCard, roles: ADMIN_ONLY },
   { to: '/documents', label: 'Documents', icon: FolderOpen, roles: ADMIN_ONLY },
   { to: '/audit', label: 'Audit log', icon: ScrollText, roles: ADMIN_ONLY },
   { to: '/settings', label: 'Settings', icon: Settings, roles: ADMIN_ONLY },

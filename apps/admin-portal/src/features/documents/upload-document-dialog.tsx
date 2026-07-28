@@ -37,7 +37,11 @@ import {
 
 const NO_LEASE = '__none'
 
-export function UploadDocumentDialog() {
+interface UploadDocumentDialogProps {
+  defaultOwnerId?: string
+}
+
+export function UploadDocumentDialog({ defaultOwnerId }: UploadDocumentDialogProps = {}) {
   const [open, setOpen] = useState(false)
   const [file, setFile] = useState<File | null>(null)
   const [fileError, setFileError] = useState<string | null>(null)
@@ -55,7 +59,7 @@ export function UploadDocumentDialog() {
     formState: { errors, isSubmitting },
   } = useForm<DocumentLinkInput>({
     resolver: zodResolver(documentLinkSchema),
-    defaultValues: { office_owner_id: '', lease_id: '' },
+    defaultValues: { office_owner_id: defaultOwnerId ?? '', lease_id: '' },
   })
 
   const ownerId = watch('office_owner_id')
@@ -65,10 +69,12 @@ export function UploadDocumentDialog() {
   function onOpenChange(next: boolean) {
     setOpen(next)
     if (!next) {
-      reset({ office_owner_id: '', lease_id: '' })
+      reset({ office_owner_id: defaultOwnerId ?? '', lease_id: '' })
       setFile(null)
       setFileError(null)
       setFormError(null)
+    } else if (defaultOwnerId) {
+      reset({ office_owner_id: defaultOwnerId, lease_id: '' })
     }
   }
 

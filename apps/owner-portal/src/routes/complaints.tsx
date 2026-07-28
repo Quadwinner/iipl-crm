@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Wrench } from 'lucide-react'
 
-import { ScreenHeader } from '@/components/screen-header'
+import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
 import { Separator } from '@/components/ui/separator'
@@ -30,14 +30,19 @@ export function ComplaintsScreen() {
   const open = rows.find((row) => row.id === openId) ?? null
 
   return (
-    <>
-      <ScreenHeader title="Maintenance complaints" />
+    <section className="space-y-6">
+      <PageHeader
+        title="Maintenance complaints"
+        description="Report issues with your office unit and track resolution status."
+      />
 
       <SubmitComplaintForm />
 
-      <Separator className="my-8" />
+      <Separator />
 
-      <h2 className="text-muted-foreground mb-3 text-xs font-medium uppercase">Your complaints</h2>
+      <h2 className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+        Your complaints
+      </h2>
 
       {complaints.isPending ? (
         <div className="space-y-2" aria-busy="true">
@@ -110,6 +115,6 @@ export function ComplaintsScreen() {
       )}
 
       <ComplaintDetailDialog complaint={open} onClose={() => setOpenId(null)} />
-    </>
+    </section>
   )
 }
