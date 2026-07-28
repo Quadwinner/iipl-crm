@@ -85,11 +85,25 @@ export function useDeactivateOwner() {
       if (error) throw dbError(error, 'The tenant account could not be deactivated.')
       return data
     },
-    onSuccess: (_data, ownerId) => {
+    onMutate: async (ownerId) => {
+      await queryClient.cancelQueries({ queryKey: ownerKeys.all })
+
+      const previous = queryClient.getQueriesData<OwnerRow[]>({ queryKey: ownerKeys.all })
+      queryClient.setQueriesData<OwnerRow[]>({ queryKey: ownerKeys.all }, (owners) =>
+        owners?.map((owner) =>
+          owner.id === ownerId ? { ...owner, status: 'DEACTIVATED' } : owner,
+        ),
+      )
+
+      return { previous }
+    },
+    onError: (_error, _ownerId, context) => {
+      for (const [key, data] of context?.previous ?? []) {
+        queryClient.setQueryData(key, data)
+      }
+    },
+    onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: ownerKeys.all })
-      void queryClient.invalidateQueries({ queryKey: ['allotments'] })
-      void queryClient.invalidateQueries({ queryKey: ['tenants'] })
-      void queryClient.invalidateQueries({ queryKey: ['tenants', 'detail', ownerId] })
     },
   })
 }

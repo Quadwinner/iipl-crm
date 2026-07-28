@@ -150,6 +150,7 @@ export function OwnersPage() {
                 type="button"
                 variant="ghost"
                 size="sm"
+                onPointerDown={(event) => event.stopPropagation()}
                 onClick={(event) => {
                   event.stopPropagation()
                   setPendingDeactivation(row.original)

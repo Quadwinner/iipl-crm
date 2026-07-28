@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import type { GatewayType, PaymentStatus, Uuid } from '@itoby/shared'
 import { EMPTY_BILLING_FILTERS, useBillingReport } from '@/features/billing/api'
@@ -61,29 +62,32 @@ export function useEnrichedTenants() {
   const isError = owners.isError || allotments.isError || billing.isError || payments.isError
   const error = owners.error ?? allotments.error ?? billing.error ?? payments.error
 
-  const data: TenantListRow[] | undefined =
-    owners.data && allotments.data && billing.data && payments.data
-      ? owners.data.map((owner) => {
-          const activeUnits = allotments.data
-            .filter((row) => row.office_owner_id === owner.id)
-            .map((row) => `${row.building_name} · ${row.unit_code}`)
+  const data = useMemo((): TenantListRow[] | undefined => {
+    if (!owners.data || !allotments.data || !billing.data || !payments.data) {
+      return undefined
+    }
 
-          const outstanding = billing.data
-            .filter((row) => row.office_owner_id === owner.id && row.status !== 'PAID')
-            .reduce((sum, row) => sum + row.total_amount, 0)
+    return owners.data.map((owner) => {
+      const activeUnits = allotments.data
+        .filter((row) => row.office_owner_id === owner.id)
+        .map((row) => `${row.building_name} · ${row.unit_code}`)
 
-          const ownerPayments = payments.data
-            .filter((row) => row.office_owner_id === owner.id && row.status === 'COMPLETED')
-            .sort((a, b) => (b.completed_at ?? b.created_at).localeCompare(a.completed_at ?? a.created_at))
+      const outstanding = billing.data
+        .filter((row) => row.office_owner_id === owner.id && row.status !== 'PAID')
+        .reduce((sum, row) => sum + row.total_amount, 0)
 
-          return {
-            ...owner,
-            active_units: activeUnits,
-            outstanding_balance: outstanding,
-            last_payment_at: ownerPayments[0]?.completed_at ?? ownerPayments[0]?.created_at ?? null,
-          }
-        })
-      : undefined
+      const ownerPayments = payments.data
+        .filter((row) => row.office_owner_id === owner.id && row.status === 'COMPLETED')
+        .sort((a, b) => (b.completed_at ?? b.created_at).localeCompare(a.completed_at ?? a.created_at))
+
+      return {
+        ...owner,
+        active_units: activeUnits,
+        outstanding_balance: outstanding,
+        last_payment_at: ownerPayments[0]?.completed_at ?? ownerPayments[0]?.created_at ?? null,
+      }
+    })
+  }, [owners.data, allotments.data, billing.data, payments.data])
 
   return { data, isPending, isError, error }
 }
