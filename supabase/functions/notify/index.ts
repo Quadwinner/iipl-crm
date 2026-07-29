@@ -138,18 +138,18 @@ function renderEmail(notification: PendingNotification): { subject: string; html
 
     case 'REMINDER_UPCOMING':
       return {
-        subject: `Rent due ${escapeHtml(p.due_date)} — ${inr(p.amount_due)}`,
+        subject: `Rent due ${escapeHtml(p.due_date)} — ${inr(p.amount_due ?? p.amount)}`,
         html:
-          `<p>This is a reminder that rent of <strong>${inr(p.amount_due)}</strong> ` +
+          `<p>This is a reminder that rent of <strong>${inr(p.amount_due ?? p.amount)}</strong> ` +
           `is due on ${escapeHtml(p.due_date)}.</p>` +
           link,
       }
 
     case 'REMINDER_OVERDUE':
       return {
-        subject: `Overdue rent — ${inr(p.amount_due)}`,
+        subject: `Overdue rent — ${inr(p.amount_due ?? p.amount)}`,
         html:
-          `<p>Rent of <strong>${inr(p.amount_due)}</strong> was due on ` +
+          `<p>Rent of <strong>${inr(p.amount_due ?? p.amount)}</strong> was due on ` +
           `${escapeHtml(p.due_date)} and is now overdue.</p>` +
           `<p>Please settle it at your earliest convenience.</p>` +
           link,

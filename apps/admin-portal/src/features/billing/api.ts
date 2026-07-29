@@ -138,3 +138,24 @@ export function useDownloadInvoicePdf() {
     },
   })
 }
+
+/** Queues email / SMS / in-app bill reminders for one unpaid invoice. */
+export function useSendInvoiceReminder() {
+  return useMutation({
+    mutationFn: async (invoiceId: Uuid) => {
+      const { data, error } = await supabase().rpc('send_invoice_reminder', {
+        p_invoice_id: invoiceId,
+      })
+      if (error) throw dbError(error, 'The bill reminder could not be sent.')
+
+      // Flush the notify queue so the tenant receives it promptly.
+      try {
+        await invokeEdgeFunction<{ success?: boolean }>('notify', {})
+      } catch {
+        // Delivery still runs on the scheduled notify cron if this fails.
+      }
+
+      return data
+    },
+  })
+}

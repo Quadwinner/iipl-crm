@@ -46,7 +46,7 @@ export function ReminderSettingsForm({ config }: { config: GlobalConfigRow }) {
   return (
     <SettingsSection
       title="Payment reminders"
-      description="How far before a due date reminders start, and how often they repeat while an invoice is unpaid."
+      description="How far before a due date automatic reminders start, and how often they repeat while an invoice is unpaid. Administrators can also share a bill reminder for any unpaid invoice from Billing in the Admin Portal (email, SMS, and in-app)."
     >
       <form noValidate className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
         {formError ? (

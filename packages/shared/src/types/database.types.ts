@@ -1794,6 +1794,7 @@ export type Database = {
         }
       }
       run_lease_expiry_job: { Args: { p_as_of?: string }; Returns: number }
+      send_invoice_reminder: { Args: { p_invoice_id: string }; Returns: Json }
       send_reminder_job: { Args: { p_as_of?: string }; Returns: number }
       session_expired: { Args: never; Returns: boolean }
       set_invoice_electricity_charge: {

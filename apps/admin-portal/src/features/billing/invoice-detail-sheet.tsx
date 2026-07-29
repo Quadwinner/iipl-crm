@@ -23,13 +23,14 @@ import {
 import { InvoiceStatusBadge } from '@/features/billing/status-badge'
 import { ElectricityChargeForm } from '@/features/billing/electricity-charge-form'
 import { MaintenanceChargeForm } from '@/features/billing/maintenance-charge-form'
-import { billingKeys, useDownloadInvoicePdf, type BillingRow } from '@/features/billing/api'
+import { billingKeys, useDownloadInvoicePdf, useSendInvoiceReminder, type BillingRow } from '@/features/billing/api'
 import { InvoiceGstSummary } from '@/features/billing/invoice-gst-summary'
 import { useGlobalConfig } from '@/features/settings/api'
 import { Button } from '@/components/ui/button'
-import { dbError } from '@/lib/db-error'
+import { dbError, mapDbError } from '@/lib/db-error'
 import { formatCurrency, formatDate, formatDateTime } from '@/lib/format'
 import { supabase } from '@/lib/supabase'
+import { toast } from 'sonner'
 
 interface InvoicePaymentRow {
   id: Uuid
@@ -66,6 +67,7 @@ export function InvoiceDetailSheet({ invoice, onClose }: InvoiceDetailSheetProps
   const payments = useInvoicePayments(invoice?.invoice_id ?? null)
   const queryClient = useQueryClient()
   const downloadPdf = useDownloadInvoicePdf()
+  const sendReminder = useSendInvoiceReminder()
   const config = useGlobalConfig()
   const gstRate = Number(config.data?.default_gst_rate_percent ?? 18)
   const [localInvoice, setLocalInvoice] = useState<BillingRow | null>(invoice)
@@ -75,6 +77,17 @@ export function InvoiceDetailSheet({ invoice, onClose }: InvoiceDetailSheetProps
   }, [invoice])
 
   const shown = localInvoice
+  const canRemind = shown != null && shown.status !== 'PAID'
+
+  async function onSendReminder() {
+    if (!shown) return
+    try {
+      await sendReminder.mutateAsync(shown.invoice_id)
+      toast.success('Bill reminder shared with the tenant')
+    } catch (error) {
+      toast.error(mapDbError(error).message)
+    }
+  }
 
   return (
     <Sheet open={invoice !== null} onOpenChange={(open) => !open && onClose()}>
@@ -87,16 +100,28 @@ export function InvoiceDetailSheet({ invoice, onClose }: InvoiceDetailSheetProps
               : ''}
           </SheetDescription>
           {shown ? (
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              className="mt-2"
-              disabled={downloadPdf.isPending}
-              onClick={() => downloadPdf.mutate(shown.invoice_id)}
-            >
-              {downloadPdf.isPending ? 'Preparing PDF…' : 'Download tax invoice'}
-            </Button>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                disabled={downloadPdf.isPending}
+                onClick={() => downloadPdf.mutate(shown.invoice_id)}
+              >
+                {downloadPdf.isPending ? 'Preparing PDF…' : 'Download tax invoice'}
+              </Button>
+              {canRemind ? (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="secondary"
+                  disabled={sendReminder.isPending}
+                  onClick={() => void onSendReminder()}
+                >
+                  {sendReminder.isPending ? 'Sharing…' : 'Share bill reminder'}
+                </Button>
+              ) : null}
+            </div>
           ) : null}
         </SheetHeader>
 
