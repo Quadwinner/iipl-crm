@@ -1,14 +1,16 @@
-import { NavLink, Outlet } from 'react-router-dom'
-import { Building2, LogOut } from 'lucide-react'
+import { Link, NavLink, Outlet } from 'react-router-dom'
+import { Bell, Building2, LogOut } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/auth/use-auth'
+import { useOwnerReminders } from '@/features/notifications/api'
 import { cn } from '@/lib/utils'
 
 const NAV_ITEMS = [
   { to: '/home', label: 'Home' },
   { to: '/lease', label: 'My lease' },
   { to: '/invoices', label: 'Invoices' },
+  { to: '/reminders', label: 'Reminders' },
   { to: '/receipts', label: 'Receipts' },
   { to: '/complaints', label: 'Complaints' },
   { to: '/documents', label: 'Documents' },
@@ -17,6 +19,8 @@ const NAV_ITEMS = [
 
 export function AppShell() {
   const { owner, signOut } = useAuth()
+  const reminders = useOwnerReminders()
+  const reminderCount = reminders.data?.length ?? 0
 
   return (
     <div className="flex min-h-svh flex-col">
@@ -49,6 +53,17 @@ export function AppShell() {
                 <p className="text-muted-foreground text-xs">Office tenant</p>
               </div>
             ) : null}
+            <Button type="button" variant="outline" size="sm" asChild>
+              <Link to="/reminders" aria-label={`Reminders${reminderCount ? `, ${reminderCount}` : ''}`}>
+                <Bell aria-hidden="true" />
+                <span className="hidden sm:inline">Reminders</span>
+                {reminderCount > 0 ? (
+                  <span className="bg-primary text-primary-foreground ml-0.5 inline-flex min-w-5 items-center justify-center rounded-full px-1.5 text-[0.65rem] font-semibold tabular-nums">
+                    {reminderCount > 9 ? '9+' : reminderCount}
+                  </span>
+                ) : null}
+              </Link>
+            </Button>
             <Button variant="outline" size="sm" onClick={() => void signOut()}>
               <LogOut aria-hidden="true" />
               <span className="hidden sm:inline">Sign out</span>

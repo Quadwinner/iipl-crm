@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, FileText, IndianRupee, Wrench } from 'lucide-react'
+import { ArrowRight, Bell, FileText, IndianRupee, Wrench } from 'lucide-react'
 import { useMemo } from 'react'
 import { KpiCard, KpiGrid } from '@/components/kpi-card'
 import { PageHeader } from '@/components/page-header'
@@ -10,6 +10,11 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useAuth } from '@/auth/use-auth'
 import { useOwnerInvoices } from '@/features/invoices/api'
 import { daysUntil, useOwnerLeases } from '@/features/lease/api'
+import {
+  reminderAmount,
+  reminderTitle,
+  useOwnerReminders,
+} from '@/features/notifications/api'
 import { formatCurrency, formatDate } from '@/lib/format'
 
 const QUICK_ACTIONS = [
@@ -22,6 +27,8 @@ export function HomeScreen() {
   const { owner } = useAuth()
   const invoices = useOwnerInvoices()
   const leases = useOwnerLeases()
+  const reminders = useOwnerReminders()
+  const latestReminders = (reminders.data ?? []).slice(0, 3)
 
   const totals = useMemo(() => {
     const rows = invoices.data ?? []
@@ -91,6 +98,54 @@ export function HomeScreen() {
           </Link>
         ))}
       </div>
+
+      {latestReminders.length > 0 ? (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="section-label">Payment reminders</h2>
+            <Button type="button" variant="ghost" size="sm" asChild>
+              <Link to="/reminders">View all</Link>
+            </Button>
+          </div>
+          <ul className="space-y-2">
+            {latestReminders.map((row) => {
+              const amount = reminderAmount(row)
+              const overdue = row.notification_type === 'REMINDER_OVERDUE'
+              return (
+                <li key={row.id}>
+                  <Link
+                    to="/invoices"
+                    className="surface-card flex items-center gap-3 p-4 transition-all hover:border-primary/25 hover:shadow-md"
+                  >
+                    <div
+                      className={
+                        overdue
+                          ? 'bg-destructive/10 text-destructive flex size-10 shrink-0 items-center justify-center rounded-xl'
+                          : 'bg-primary/10 text-primary flex size-10 shrink-0 items-center justify-center rounded-xl'
+                      }
+                    >
+                      <Bell className="size-5" aria-hidden="true" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="text-sm font-medium">{reminderTitle(row)}</p>
+                        <Badge variant={overdue ? 'destructive' : 'secondary'}>
+                          {overdue ? 'Overdue' : 'Upcoming'}
+                        </Badge>
+                      </div>
+                      <p className="text-muted-foreground text-xs">
+                        {amount != null ? formatCurrency(amount) : 'Amount due'}
+                        {row.payload.due_date ? ` · Due ${formatDate(row.payload.due_date)}` : ''}
+                      </p>
+                    </div>
+                    <ArrowRight className="text-muted-foreground size-4 shrink-0" aria-hidden="true" />
+                  </Link>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+      ) : null}
 
       <div className="space-y-3">
         <div className="flex items-center justify-between gap-2">

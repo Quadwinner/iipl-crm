@@ -14,6 +14,7 @@ import { LeaseScreen } from '@/routes/lease'
 import { LoginScreen } from '@/routes/login'
 import { ProfileScreen } from '@/routes/profile'
 import { ReceiptsScreen } from '@/routes/receipts'
+import { RemindersScreen } from '@/routes/reminders'
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
                 <Route path="/home" element={<HomeScreen />} />
                 <Route path="/lease" element={<LeaseScreen />} />
                 <Route path="/invoices" element={<InvoicesScreen />} />
+                <Route path="/reminders" element={<RemindersScreen />} />
                 <Route path="/receipts" element={<ReceiptsScreen />} />
                 <Route path="/complaints" element={<ComplaintsScreen />} />
                 <Route path="/documents" element={<DocumentsScreen />} />
