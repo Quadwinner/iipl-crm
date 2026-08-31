@@ -11,6 +11,8 @@
     "dev:admin": "pnpm --filter admin-portal dev",
     "dev:owner": "pnpm --filter owner-portal dev",
     "dev:web": "pnpm --filter web dev",
+    "sync:rental": "node scripts/sync-rental.mjs",
+    "sync:rental:check": "node scripts/sync-rental.mjs --check",
     "build": "pnpm -r --sequential build",
     "typecheck": "pnpm -r --sequential typecheck",
     "lint": "pnpm -r lint",
