@@ -59,6 +59,63 @@ export type Database = {
           },
         ]
       }
+      app_modules: {
+        Row: {
+          accent: string
+          allowed_roles: Database["public"]["Enums"]["role"][]
+          base_path: string | null
+          created_at: string
+          features: Json
+          icon: string
+          id: string
+          key: string
+          listed_publicly: boolean
+          marketing_slug: string | null
+          name: string
+          sort_order: number
+          status: Database["public"]["Enums"]["module_status"]
+          summary: string
+          tagline: string
+          updated_at: string
+        }
+        Insert: {
+          accent?: string
+          allowed_roles?: Database["public"]["Enums"]["role"][]
+          base_path?: string | null
+          created_at?: string
+          features?: Json
+          icon?: string
+          id?: string
+          key: string
+          listed_publicly?: boolean
+          marketing_slug?: string | null
+          name: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["module_status"]
+          summary?: string
+          tagline?: string
+          updated_at?: string
+        }
+        Update: {
+          accent?: string
+          allowed_roles?: Database["public"]["Enums"]["role"][]
+          base_path?: string | null
+          created_at?: string
+          features?: Json
+          icon?: string
+          id?: string
+          key?: string
+          listed_publicly?: boolean
+          marketing_slug?: string | null
+          name?: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["module_status"]
+          summary?: string
+          tagline?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       audit_log_entries: {
         Row: {
           action_type: string
@@ -92,6 +149,51 @@ export type Database = {
           id?: string
           new_value?: string | null
           old_value?: string | null
+        }
+        Relationships: []
+      }
+      blog_posts: {
+        Row: {
+          author_name: string
+          body: string
+          cover_image_url: string | null
+          created_at: string
+          excerpt: string
+          id: string
+          is_published: boolean
+          published_at: string | null
+          slug: string
+          tags: Json
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_name?: string
+          body?: string
+          cover_image_url?: string | null
+          created_at?: string
+          excerpt?: string
+          id?: string
+          is_published?: boolean
+          published_at?: string | null
+          slug: string
+          tags?: Json
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_name?: string
+          body?: string
+          cover_image_url?: string | null
+          created_at?: string
+          excerpt?: string
+          id?: string
+          is_published?: boolean
+          published_at?: string | null
+          slug?: string
+          tags?: Json
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -437,6 +539,42 @@ export type Database = {
         }
         Relationships: []
       }
+      industries: {
+        Row: {
+          created_at: string
+          icon: string
+          id: string
+          is_published: boolean
+          name: string
+          slug: string
+          sort_order: number
+          summary: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          icon?: string
+          id?: string
+          is_published?: boolean
+          name: string
+          slug: string
+          sort_order?: number
+          summary?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          icon?: string
+          id?: string
+          is_published?: boolean
+          name?: string
+          slug?: string
+          sort_order?: number
+          summary?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       invoice: {
         Row: {
           additional_charges: number
@@ -542,6 +680,78 @@ export type Database = {
           last_number?: number
         }
         Relationships: []
+      }
+      leads: {
+        Row: {
+          assigned_to: string | null
+          budget_range: string
+          company: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          message: string
+          module_key: string | null
+          page_path: string
+          phone: string
+          service_interest: string
+          source: Database["public"]["Enums"]["lead_source"]
+          staff_notes: string
+          status: Database["public"]["Enums"]["lead_status"]
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          budget_range?: string
+          company?: string
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          message?: string
+          module_key?: string | null
+          page_path?: string
+          phone?: string
+          service_interest?: string
+          source?: Database["public"]["Enums"]["lead_source"]
+          staff_notes?: string
+          status?: Database["public"]["Enums"]["lead_status"]
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          budget_range?: string
+          company?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          message?: string
+          module_key?: string | null
+          page_path?: string
+          phone?: string
+          service_interest?: string
+          source?: Database["public"]["Enums"]["lead_source"]
+          staff_notes?: string
+          status?: Database["public"]["Enums"]["lead_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "leads_module_key_fkey"
+            columns: ["module_key"]
+            isOneToOne: false
+            referencedRelation: "app_modules"
+            referencedColumns: ["key"]
+          },
+        ]
       }
       lease: {
         Row: {
@@ -843,6 +1053,54 @@ export type Database = {
         }
         Relationships: []
       }
+      portfolio_items: {
+        Row: {
+          body: string
+          category: string
+          client_name: string
+          created_at: string
+          id: string
+          image_url: string | null
+          is_published: boolean
+          slug: string
+          sort_order: number
+          summary: string
+          tags: Json
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string
+          category?: string
+          client_name?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_published?: boolean
+          slug: string
+          sort_order?: number
+          summary?: string
+          tags?: Json
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          category?: string
+          client_name?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_published?: boolean
+          slug?: string
+          sort_order?: number
+          summary?: string
+          tags?: Json
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           failed_login_count: number
@@ -958,6 +1216,132 @@ export type Database = {
         Update: {
           permission_key?: string
           role?: Database["public"]["Enums"]["role"]
+        }
+        Relationships: []
+      }
+      service_offerings: {
+        Row: {
+          body: string
+          category: string
+          created_at: string
+          highlights: Json
+          icon: string
+          id: string
+          is_published: boolean
+          slug: string
+          sort_order: number
+          summary: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string
+          category?: string
+          created_at?: string
+          highlights?: Json
+          icon?: string
+          id?: string
+          is_published?: boolean
+          slug: string
+          sort_order?: number
+          summary?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          category?: string
+          created_at?: string
+          highlights?: Json
+          icon?: string
+          id?: string
+          is_published?: boolean
+          slug?: string
+          sort_order?: number
+          summary?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          address: string
+          business_hours: string
+          company_name: string
+          email: string
+          id: number
+          intro: string
+          phone: string
+          socials: Json
+          tagline: string
+          updated_at: string
+          whatsapp: string
+        }
+        Insert: {
+          address?: string
+          business_hours?: string
+          company_name?: string
+          email?: string
+          id?: number
+          intro?: string
+          phone?: string
+          socials?: Json
+          tagline?: string
+          updated_at?: string
+          whatsapp?: string
+        }
+        Update: {
+          address?: string
+          business_hours?: string
+          company_name?: string
+          email?: string
+          id?: number
+          intro?: string
+          phone?: string
+          socials?: Json
+          tagline?: string
+          updated_at?: string
+          whatsapp?: string
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          author_name: string
+          author_title: string
+          company: string
+          created_at: string
+          id: string
+          is_published: boolean
+          quote: string
+          rating: number | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          author_name: string
+          author_title?: string
+          company?: string
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          quote: string
+          rating?: number | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          author_name?: string
+          author_title?: string
+          company?: string
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          quote?: string
+          rating?: number | null
+          sort_order?: number
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1674,6 +2058,33 @@ export type Database = {
         }[]
       }
       mark_overdue_job: { Args: { p_as_of?: string }; Returns: number }
+      modules_for_current_user: {
+        Args: never
+        Returns: {
+          accent: string
+          allowed_roles: Database["public"]["Enums"]["role"][]
+          base_path: string | null
+          created_at: string
+          features: Json
+          icon: string
+          id: string
+          key: string
+          listed_publicly: boolean
+          marketing_slug: string | null
+          name: string
+          sort_order: number
+          status: Database["public"]["Enums"]["module_status"]
+          summary: string
+          tagline: string
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "app_modules"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       next_invoice_number: { Args: { p_date?: string }; Returns: string }
       occupancy_summary: {
         Args: { p_building_id?: string }
@@ -1892,6 +2303,21 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      submit_lead: {
+        Args: {
+          p_budget_range?: string
+          p_company?: string
+          p_email: string
+          p_full_name: string
+          p_message?: string
+          p_module_key?: string
+          p_page_path?: string
+          p_phone?: string
+          p_service_interest?: string
+          p_source?: Database["public"]["Enums"]["lead_source"]
+        }
+        Returns: string
+      }
       touch_session: { Args: never; Returns: boolean }
       transition_allotment: {
         Args: {
@@ -1967,6 +2393,38 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "maintenance_complaint"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      update_lead_status: {
+        Args: {
+          p_assigned_to?: string
+          p_lead_id: string
+          p_staff_notes?: string
+          p_status: Database["public"]["Enums"]["lead_status"]
+        }
+        Returns: {
+          assigned_to: string | null
+          budget_range: string
+          company: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          message: string
+          module_key: string | null
+          page_path: string
+          phone: string
+          service_interest: string
+          source: Database["public"]["Enums"]["lead_source"]
+          staff_notes: string
+          status: Database["public"]["Enums"]["lead_status"]
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "leads"
           isOneToOne: true
           isSetofReturn: false
         }
@@ -2060,6 +2518,14 @@ export type Database = {
         | "OTHER"
       gateway_type: "UPI" | "RAZORPAY"
       invoice_status: "DUE" | "PARTIALLY_PAID" | "PAID" | "OVERDUE"
+      lead_source:
+        | "CONTACT_FORM"
+        | "QUOTE_REQUEST"
+        | "PRODUCT_INQUIRY"
+        | "SERVICE_INQUIRY"
+        | "OTHER"
+      lead_status: "NEW" | "CONTACTED" | "QUALIFIED" | "CONVERTED" | "CLOSED"
+      module_status: "ACTIVE" | "BETA" | "COMING_SOON" | "DISABLED"
       notification_channel: "EMAIL" | "SMS" | "IN_APP"
       notification_status: "PENDING" | "SENT" | "FAILED"
       occupancy_status: "VACANT" | "OCCUPIED"
@@ -2210,6 +2676,15 @@ export const Constants = {
       ],
       gateway_type: ["UPI", "RAZORPAY"],
       invoice_status: ["DUE", "PARTIALLY_PAID", "PAID", "OVERDUE"],
+      lead_source: [
+        "CONTACT_FORM",
+        "QUOTE_REQUEST",
+        "PRODUCT_INQUIRY",
+        "SERVICE_INQUIRY",
+        "OTHER",
+      ],
+      lead_status: ["NEW", "CONTACTED", "QUALIFIED", "CONVERTED", "CLOSED"],
+      module_status: ["ACTIVE", "BETA", "COMING_SOON", "DISABLED"],
       notification_channel: ["EMAIL", "SMS", "IN_APP"],
       notification_status: ["PENDING", "SENT", "FAILED"],
       occupancy_status: ["VACANT", "OCCUPIED"],

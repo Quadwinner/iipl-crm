@@ -29,3 +29,6 @@ supabase/.temp
 .vercel
 *.log
 .env*
+
+# Data backups (contain PII — never commit)
+backups/

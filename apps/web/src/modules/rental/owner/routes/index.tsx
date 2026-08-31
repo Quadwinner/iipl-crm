@@ -1,0 +1,37 @@
+import { Navigate, Route, Routes } from 'react-router-dom'
+
+import { ProtectedRoute } from '@rental-owner/auth/protected-route'
+import { AppShell } from '@rental-owner/components/app-shell'
+import { ComplaintsScreen } from './complaints'
+import { DocumentsScreen } from './documents'
+import { HomeScreen } from './home'
+import { InvoicesScreen } from './invoices'
+import { LeaseScreen } from './lease'
+import { ProfileScreen } from './profile'
+import { ReceiptsScreen } from './receipts'
+import { RemindersScreen } from './reminders'
+
+/**
+ * The owner tree's routes, lifted out of the deleted App.tsx. The superapp owns
+ * the router, the QueryClientProvider and the Toaster; this file contributes
+ * only the route table. Paths are RELATIVE to the /app/rental/* splat.
+ */
+export function OwnerRoutes() {
+  return (
+    <Routes>
+      <Route element={<ProtectedRoute />}>
+        <Route element={<AppShell />}>
+          <Route path="home" element={<HomeScreen />} />
+          <Route path="lease" element={<LeaseScreen />} />
+          <Route path="invoices" element={<InvoicesScreen />} />
+          <Route path="reminders" element={<RemindersScreen />} />
+          <Route path="receipts" element={<ReceiptsScreen />} />
+          <Route path="complaints" element={<ComplaintsScreen />} />
+          <Route path="documents" element={<DocumentsScreen />} />
+          <Route path="profile" element={<ProfileScreen />} />
+        </Route>
+      </Route>
+      <Route path="*" element={<Navigate to="/app/rental/home" replace />} />
+    </Routes>
+  )
+}

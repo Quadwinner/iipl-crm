@@ -36,9 +36,13 @@ async function api(path, options = {}) {
   return body
 }
 
+// iipl-owner-portal now serves the Itoby superapp (public site + launcher +
+// the rental CRM for both staff and owners) rather than the standalone owner
+// portal. apps/owner-portal is still built and deployable — it is the rollback
+// path; point this entry back at it to revert.
 const PROJECTS = [
   { name: 'iipl-admin-portal', rootDirectory: 'apps/admin-portal' },
-  { name: 'iipl-owner-portal', rootDirectory: 'apps/owner-portal' },
+  { name: 'iipl-owner-portal', rootDirectory: 'apps/web' },
 ]
 
 const settings = (rootDirectory) => ({

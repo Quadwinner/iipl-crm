@@ -10,6 +10,7 @@
   "scripts": {
     "dev:admin": "pnpm --filter admin-portal dev",
     "dev:owner": "pnpm --filter owner-portal dev",
+    "dev:web": "pnpm --filter web dev",
     "build": "pnpm -r --sequential build",
     "typecheck": "pnpm -r --sequential typecheck",
     "lint": "pnpm -r lint",
