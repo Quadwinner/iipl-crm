@@ -298,7 +298,7 @@ export const Header = ({ onOpenSearch }: HeaderProps) => {
                 </button>
               )}
               <Link
-                to="/admin"
+                to="/login"
                 className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-accent transition-colors"
                 aria-label="Admin Login"
               >

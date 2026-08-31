@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Check, ChevronDown, LayoutGrid, LogOut } from 'lucide-react'
+import { Check, ChevronDown, LayoutGrid, LogOut, Settings2 } from 'lucide-react'
 
 import { useAuth } from '@/auth/use-auth'
 import { useMyModules } from '@/features/modules/use-modules'
@@ -90,6 +90,17 @@ export function SuperappBar() {
                   <LayoutGrid className="size-4 opacity-70" aria-hidden="true" />
                   All products
                 </Link>
+                {role === 'ADMINISTRATOR' ? (
+                  <Link
+                    to="/app/admin/leads"
+                    role="menuitem"
+                    className="hover:bg-accent flex items-center gap-2.5 rounded-md px-2 py-2 text-sm"
+                    onClick={() => setSwitcherOpen(false)}
+                  >
+                    <Settings2 className="size-4 opacity-70" aria-hidden="true" />
+                    Leads &amp; site content
+                  </Link>
+                ) : null}
                 <div className="my-1 border-t" />
                 {(modules.data ?? []).map((m) => {
                   const Icon = iconByName(m.icon)
