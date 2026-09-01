@@ -279,3 +279,107 @@
   .frame, .frame-float, .frame-shine, .row-in, .bar { animation: none !important; }
   .frame { transform: none; }
 }
+
+/* ── Section markers: mono numerals on a hairline ────────────────────────── */
+.marker {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.marker::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+
+/* ── Capability strip ────────────────────────────────────────────────────── */
+.strip {
+  display: grid;
+  gap: 1px;
+  background: var(--border);
+  border-block: 1px solid var(--border);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (min-width: 900px) { .strip { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.strip > * { background: var(--background); padding: 1.75rem 1.5rem; }
+
+/* ── Feature tiles: accent hairline that draws on hover ──────────────────── */
+.tile { position: relative; transition: background-color 0.3s ease; }
+.tile::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: -1px;
+  height: 1px;
+  background: var(--primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.tile:hover { background: color-mix(in oklch, var(--primary) 3%, transparent); }
+.tile:hover::before { transform: scaleX(1); }
+
+/* ── Role columns ────────────────────────────────────────────────────────── */
+.role { position: relative; padding-top: 1.5rem; }
+.role::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 2px;
+  background: var(--role-accent, var(--primary));
+  transform-origin: left;
+  animation: draw 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+@keyframes draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* ── Flow steps, connected by a rule ─────────────────────────────────────── */
+.flow { position: relative; }
+.flow::before {
+  content: '';
+  position: absolute;
+  left: 1.125rem;
+  top: 2.25rem;
+  bottom: 2.25rem;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--border) 12%, var(--border) 88%, transparent);
+}
+@media (min-width: 900px) {
+  .flow::before {
+    left: 0; right: 0; top: 1.125rem; bottom: auto; width: auto; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border) 12%, var(--border) 88%, transparent);
+  }
+}
+
+/* ── Closing band ────────────────────────────────────────────────────────── */
+.band {
+  position: relative;
+  overflow: hidden;
+  background: var(--ink);
+  color: oklch(0.97 0.005 250);
+  isolation: isolate;
+}
+.band::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -30% -10% auto -10%;
+  height: 34rem;
+  background: radial-gradient(ellipse at 50% 0%, var(--glow-a), transparent 66%);
+  opacity: 0.34;
+  filter: blur(80px);
+  animation: home-drift-a 30s ease-in-out infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .role::before { animation: none; transform: none; }
+  .band::before { animation: none; }
+  .tile::before { transition: none; }
+}

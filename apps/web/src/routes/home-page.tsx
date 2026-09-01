@@ -7,6 +7,7 @@ import { useSiteSettings } from '@/features/site/use-site-settings'
 import { iconByName } from '@/lib/icons'
 import { useReveal } from '@/lib/use-reveal'
 import { DashboardPreview } from './home-preview'
+import { Capabilities, ClosingBand, Flow, Marker, Roles, Trust } from './home-sections'
 import './home-page.css'
 
 const MARKETING_SITE = 'https://itobyinfotech.com'
@@ -229,10 +230,10 @@ export function HomePage() {
 
       {/* ── Products ───────────────────────────────────────────────────── */}
       <section className="mx-auto w-full max-w-6xl px-6 py-20 sm:py-24">
-        <div className="reveal flex flex-wrap items-end justify-between gap-4">
+        <Marker n="00">The suite</Marker>
+        <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="section-label">The suite</p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
+            <h2 className="reveal text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
               Five products, one account.
             </h2>
           </div>
@@ -257,6 +258,12 @@ export function HomePage() {
           </div>
         )}
       </section>
+
+      <Capabilities />
+      <Roles />
+      <Flow />
+      <Trust />
+      <ClosingBand marketingSite={MARKETING_SITE} />
 
       {/* ── Footer ─────────────────────────────────────────────────────── */}
       <footer className="border-t">
