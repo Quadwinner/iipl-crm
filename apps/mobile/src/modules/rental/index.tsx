@@ -9,7 +9,6 @@ import {
   MessageSquare,
   MoreHorizontal,
 } from 'lucide-react-native'
-import type { InvoiceRow } from '@itoby/shared/owner'
 import { useAuth } from '../../auth/auth'
 import { RentalAdmin } from './admin'
 import { NoAccessScreen } from '../../screens/no-access'

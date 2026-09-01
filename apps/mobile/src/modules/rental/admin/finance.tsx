@@ -1,7 +1,6 @@
-import { FlatList, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { FlatList, StyleSheet, Text, View } from 'react-native'
 import { formatCurrency, formatDate, formatTimestamp } from '@itoby/shared/owner'
 import { Badge, Card, Empty, ErrorState, Field, Loading } from '../../../components/ui'
-import { SectionHeader } from '../../../components/section'
 import {
   billingTotals,
   expenseTotals,

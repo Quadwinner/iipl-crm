@@ -10,7 +10,6 @@ import {
   LEAD_STATUSES,
   listLeads,
   updateLeadStatus,
-  type Lead,
   type LeadStatus,
 } from '@itoby/shared/site'
 import { formatDate } from '@itoby/shared/owner'

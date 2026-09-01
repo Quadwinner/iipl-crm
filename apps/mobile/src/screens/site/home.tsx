@@ -4,6 +4,7 @@ import { readProcess, readStats, type AppModule } from '@itoby/shared/site'
 import { Badge, Button, Card } from '../../components/ui'
 import { SectionHeader } from '../../components/section'
 import { Hero } from './hero'
+import { ServicesSection } from './services-section'
 import { iconByName } from '../../lib/icons'
 import { usePublicModules, useServices, useSiteSettings } from '../../features/site'
 import { theme } from '../../theme/theme'
@@ -47,18 +48,7 @@ export function HomeScreen() {
         onExplore={() => navigation.navigate('Services')}
       />
 
-      <View style={styles.section}>
-        <SectionHeader eyebrow="What we do" title="Services" />
-        {(services.data ?? []).slice(0, 4).map((service) => (
-          <Card key={service.id}>
-            <Text style={styles.cardTitle}>{service.title}</Text>
-            {service.summary ? <Text style={styles.cardBody}>{service.summary}</Text> : null}
-          </Card>
-        ))}
-        {services.data && services.data.length > 4 ? (
-          <Button label="All services" variant="ghost" onPress={() => navigation.navigate('Services')} />
-        ) : null}
-      </View>
+      <ServicesSection services={services.data ?? []} />
 
       <View style={styles.section}>
         <SectionHeader eyebrow="Our products" title="One account, every tool" />

@@ -2,7 +2,7 @@ import { useRoute } from '@react-navigation/native'
 import type { RouteProp } from '@react-navigation/native'
 import type { RootParamList } from '../../navigation/types'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
-import { formatTimestamp, type ComplaintRow } from '@itoby/shared/owner'
+import { formatTimestamp } from '@itoby/shared/owner'
 import { Badge, Card, Empty, ErrorState, Field, Loading } from '../../components/ui'
 import { useComplaintHistory } from '../../features/queries'
 import { theme } from '../../theme/theme'
@@ -41,7 +41,7 @@ export function ComplaintDetailScreen() {
       ) : null}
       {history.data?.length === 0 ? <Empty title="No status changes yet" /> : null}
 
-      {(history.data ?? []).map((event, index) => (
+      {(history.data ?? []).map((event) => (
         <View key={event.id} style={styles.event}>
           <View style={styles.dot} />
           <View style={styles.eventBody}>
