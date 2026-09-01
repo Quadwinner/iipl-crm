@@ -1,6 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   addComplaintComment,
+  allotmentKeys,
+  auditKeys,
+  billingKeys,
+  billingTotals,
+  EMPTY_AUDIT_FILTERS,
+  EMPTY_BILLING_FILTERS,
+  EMPTY_EXPENSE_FILTERS,
+  expenseKeys,
+  expenseTotals,
+  getAuditPage,
+  getBillingReport,
+  listAllotments,
+  listExpenses,
   adminComplaintKeys,
   assignComplaint,
   buildingKeys,
@@ -84,6 +97,38 @@ function useComplaintMutation<TInput>(run: (input: TInput) => Promise<void>) {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: adminComplaintKeys.all }),
   })
 }
+
+export function useAllotments() {
+  const filters = { status: null, ownerId: null }
+  return useQuery({
+    queryKey: allotmentKeys.list(filters),
+    queryFn: () => listAllotments(supabase(), filters),
+  })
+}
+
+export function useBillingReport() {
+  return useQuery({
+    queryKey: billingKeys.report(EMPTY_BILLING_FILTERS),
+    queryFn: () => getBillingReport(supabase(), EMPTY_BILLING_FILTERS),
+  })
+}
+
+export function useExpenses() {
+  return useQuery({
+    queryKey: expenseKeys.list(EMPTY_EXPENSE_FILTERS),
+    queryFn: () => listExpenses(supabase(), EMPTY_EXPENSE_FILTERS),
+  })
+}
+
+/** The audit log is append-only; the first page is what a phone is good for. */
+export function useAuditPage() {
+  return useQuery({
+    queryKey: auditKeys.list(EMPTY_AUDIT_FILTERS),
+    queryFn: () => getAuditPage(supabase(), EMPTY_AUDIT_FILTERS),
+  })
+}
+
+export { billingTotals, expenseTotals }
 
 export function useAssignComplaint() {
   return useComplaintMutation((input: { complaintId: Uuid; staffId: Uuid }) =>

@@ -1,62 +1,29 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { downloadInvoice, type Database, type InvoiceStatus, type Uuid } from '@itoby/shared'
+import {
+  billingKeys,
+  downloadInvoice,
+  getBillingReport,
+  type BillingFilters,
+  type Uuid,
+} from '@itoby/shared'
 import { dbError } from '@rental-admin/lib/db-error'
 import { invokeEdgeFunction } from '@rental-admin/lib/edge-function'
 import { supabase } from '@rental-admin/lib/supabase'
 
-export type BillingRow = Database['public']['Functions']['get_billing_report']['Returns'][number]
-
-export interface BillingFilters {
-  buildingId: Uuid | null
-  officeOwnerId: Uuid | null
-  status: InvoiceStatus | null
-}
-
-export const EMPTY_BILLING_FILTERS: BillingFilters = {
-  buildingId: null,
-  officeOwnerId: null,
-  status: null,
-}
-
-export const billingKeys = {
-  all: ['billing'] as const,
-  report: (filters: BillingFilters) =>
-    ['billing', 'report', filters.buildingId, filters.officeOwnerId, filters.status] as const,
-}
+export {
+  billingKeys,
+  billingTotals,
+  EMPTY_BILLING_FILTERS,
+  type BillingFilters,
+  type BillingRow,
+  type BillingTotals,
+} from '@itoby/shared'
 
 export function useBillingReport(filters: BillingFilters) {
   return useQuery({
     queryKey: billingKeys.report(filters),
-    queryFn: async (): Promise<BillingRow[]> => {
-      const { data, error } = await supabase().rpc('get_billing_report', {
-        p_building_id: filters.buildingId ?? undefined,
-        p_office_owner_id: filters.officeOwnerId ?? undefined,
-        p_status: filters.status ?? undefined,
-      })
-      if (error) throw dbError(error, 'The billing report could not be loaded.')
-      return data ?? []
-    },
+    queryFn: () => getBillingReport(supabase(), filters),
   })
-}
-
-export interface BillingTotals {
-  invoiceCount: number
-  invoicedTotal: number
-  outstandingTotal: number
-  overdueTotal: number
-}
-
-/** Anything not fully Paid is still owed, so dues sum every other status. */
-export function billingTotals(rows: BillingRow[]): BillingTotals {
-  return rows.reduce<BillingTotals>(
-    (totals, row) => ({
-      invoiceCount: totals.invoiceCount + 1,
-      invoicedTotal: totals.invoicedTotal + row.total_amount,
-      outstandingTotal: totals.outstandingTotal + (row.status === 'PAID' ? 0 : row.total_amount),
-      overdueTotal: totals.overdueTotal + (row.status === 'OVERDUE' ? row.total_amount : 0),
-    }),
-    { invoiceCount: 0, invoicedTotal: 0, outstandingTotal: 0, overdueTotal: 0 },
-  )
 }
 
 export function useSetElectricityCharge() {

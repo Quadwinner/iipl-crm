@@ -1,23 +1,21 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { Database, ExpenseCategory, Uuid } from '@itoby/shared'
+import {
+  expenseKeys,
+  listExpenses,
+  type ExpenseCategory,
+  type ExpenseFilters,
+  type Uuid,
+} from '@itoby/shared'
 import { dbError } from '@/lib/db-error'
 import { supabase } from '@/lib/supabase'
 
-export type ExpenseRow = Database['public']['Functions']['list_building_expenses']['Returns'][number]
-
-export interface ExpenseFilters {
-  buildingId: Uuid | null
-  category: ExpenseCategory | null
-  startDate: string
-  endDate: string
-}
-
-export const EMPTY_EXPENSE_FILTERS: ExpenseFilters = {
-  buildingId: null,
-  category: null,
-  startDate: '',
-  endDate: '',
-}
+export {
+  EMPTY_EXPENSE_FILTERS,
+  expenseKeys,
+  expenseTotals,
+  type ExpenseFilters,
+  type ExpenseRow,
+} from '@itoby/shared'
 
 export interface ExpenseInput {
   buildingId: Uuid
@@ -30,43 +28,11 @@ export interface ExpenseInput {
   referenceNote?: string
 }
 
-export const expenseKeys = {
-  all: ['expenses'] as const,
-  list: (filters: ExpenseFilters) =>
-    [
-      'expenses',
-      'list',
-      filters.buildingId,
-      filters.category,
-      filters.startDate,
-      filters.endDate,
-    ] as const,
-}
-
 export function useExpenseList(filters: ExpenseFilters) {
   return useQuery({
     queryKey: expenseKeys.list(filters),
-    queryFn: async (): Promise<ExpenseRow[]> => {
-      const { data, error } = await supabase().rpc('list_building_expenses', {
-        p_building_id: filters.buildingId ?? undefined,
-        p_category: filters.category ?? undefined,
-        p_start_date: filters.startDate || undefined,
-        p_end_date: filters.endDate || undefined,
-      })
-      if (error) throw dbError(error, 'Expenses could not be loaded.')
-      return data ?? []
-    },
+    queryFn: () => listExpenses(supabase(), filters),
   })
-}
-
-export function expenseTotals(rows: ExpenseRow[]): { count: number; total: number } {
-  return rows.reduce(
-    (acc, row) => ({
-      count: acc.count + 1,
-      total: acc.total + Number(row.amount),
-    }),
-    { count: 0, total: 0 },
-  )
 }
 
 export function useCreateExpense() {

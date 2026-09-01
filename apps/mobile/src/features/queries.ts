@@ -5,6 +5,7 @@ import {
   getOwnerProfile,
   listAllottedUnits,
   listComplaintCategories,
+  listFileTypeRules,
   profileKeys,
   documentKeys,
   invoiceKeys,
@@ -66,6 +67,14 @@ export function useAllottedUnits() {
   return useQuery({
     queryKey: complaintKeys.allottedUnits,
     queryFn: () => listAllottedUnits(supabase()),
+  })
+}
+
+export function useFileTypeRules() {
+  return useQuery({
+    queryKey: complaintKeys.fileTypes,
+    staleTime: 5 * 60_000,
+    queryFn: () => listFileTypeRules(supabase()),
   })
 }
 

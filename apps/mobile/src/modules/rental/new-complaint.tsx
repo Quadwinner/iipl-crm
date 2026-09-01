@@ -1,9 +1,17 @@
 import { useState } from 'react'
 import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { complaintKeys, submitComplaint } from '@itoby/shared/owner'
+import * as DocumentPicker from 'expo-document-picker'
+import {
+  acceptedTypesSummary,
+  attachmentCountRejection,
+  attachmentRejection,
+  complaintKeys,
+  submitComplaint,
+  type ComplaintAttachment,
+} from '@itoby/shared/owner'
 import { Button, Empty, Loading } from '../../components/ui'
-import { useAllottedUnits, useComplaintCategories } from '../../features/queries'
+import { useAllottedUnits, useComplaintCategories, useFileTypeRules } from '../../features/queries'
 import { supabase } from '../../lib/supabase'
 import { theme } from '../../theme/theme'
 
@@ -11,10 +19,13 @@ import { theme } from '../../theme/theme'
  * Raising a maintenance request.
  *
  * `submit_complaint` re-checks that the unit is actually allotted to the caller,
- * so the unit picker is a convenience rather than the control. Attachments are
- * deliberately left out for now — the shared layer accepts them, but a file
- * picker is a separate dependency and the web form is the place to attach
- * photos today.
+ * so the unit picker is a convenience rather than the control.
+ *
+ * Attachments are checked here against the same rules the server enforces, so
+ * the owner is told before a slow upload rather than after it. The Edge Function
+ * re-validates count, size and type regardless — this is a courtesy, not the
+ * gate. React Native's FormData takes a `{ uri, name, type }` object where the
+ * web hands it a File; the shared layer treats both as opaque parts.
  */
 export function NewComplaintScreen({ onDone }: { onDone: () => void }) {
   const queryClient = useQueryClient()
@@ -25,6 +36,32 @@ export function NewComplaintScreen({ onDone }: { onDone: () => void }) {
   const [category, setCategory] = useState<string | null>(null)
   const [description, setDescription] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [attachments, setAttachments] = useState<ComplaintAttachment[]>([])
+  const fileRules = useFileTypeRules()
+
+  async function pickAttachment() {
+    setError(null)
+    const picked = await DocumentPicker.getDocumentAsync({ copyToCacheDirectory: true })
+    if (picked.canceled) return
+
+    const file = picked.assets[0]
+    const candidate = { name: file.name, size: file.size ?? 0 }
+
+    const countProblem = attachmentCountRejection(attachments.length + 1)
+    if (countProblem) return setError(countProblem)
+
+    const problem = attachmentRejection(candidate, fileRules.data ?? [])
+    if (problem) return setError(problem)
+
+    setAttachments((current) => [
+      ...current,
+      {
+        name: file.name,
+        size: file.size ?? 0,
+        part: { uri: file.uri, name: file.name, type: file.mimeType ?? 'application/octet-stream' },
+      },
+    ])
+  }
 
   const submit = useMutation({
     mutationFn: () =>
@@ -32,10 +69,16 @@ export function NewComplaintScreen({ onDone }: { onDone: () => void }) {
         office_unit_id: unitId as string,
         category: category as string,
         description: description.trim(),
-        attachments: [],
+        attachments,
       }),
-    onSuccess: () => {
+    onSuccess: (result) => {
       void queryClient.invalidateQueries({ queryKey: complaintKeys.all })
+      // The complaint exists either way; a rejected file must not read as a
+      // failed submission, so per-file errors are reported and the screen stays.
+      if (result.attachmentErrors.length > 0) {
+        setError(`Complaint raised, but: ${result.attachmentErrors.join('; ')}`)
+        return
+      }
       onDone()
     },
     onError: (cause) => setError(cause instanceof Error ? cause.message : String(cause)),
@@ -96,6 +139,21 @@ export function NewComplaintScreen({ onDone }: { onDone: () => void }) {
           : ' '}
       </Text>
 
+      <Text style={styles.label}>Attachments</Text>
+      {attachments.map((file) => (
+        <Text
+          key={file.name}
+          onPress={() => setAttachments((c) => c.filter((f) => f.name !== file.name))}
+          style={styles.attachment}
+        >
+          {file.name}  ✕
+        </Text>
+      ))}
+      <Button label="Add a file" variant="ghost" onPress={() => void pickAttachment()} />
+      <Text style={styles.hint}>
+        {fileRules.data ? acceptedTypesSummary(fileRules.data) : ' '}
+      </Text>
+
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
       <Button
@@ -145,4 +203,9 @@ const styles = StyleSheet.create({
   inputMultiline: { minHeight: 130, textAlignVertical: 'top' },
   hint: { color: theme.color.muted, fontSize: 11, marginTop: theme.space(1), marginBottom: theme.space(4) },
   error: { color: theme.color.danger, fontSize: 13, marginBottom: theme.space(4), lineHeight: 20 },
+  attachment: {
+    color: theme.color.accent,
+    fontSize: 13,
+    paddingVertical: theme.space(2),
+  },
 })

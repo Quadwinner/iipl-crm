@@ -1,36 +1,27 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type {
-  Database,
-  FileTypeConfigInput,
-  PaymentGracePeriodInput,
-  ReminderSettingsInput,
-  SecurityPolicyInput,
+import {
+  getGlobalConfig,
+  listFileStorageConfig,
+  settingsKeys,
+  type FileTypeConfigInput,
+  type PaymentGracePeriodInput,
+  type ReminderSettingsInput,
+  type SecurityPolicyInput,
 } from '@itoby/shared'
 import { dbError } from '@/lib/db-error'
 import { supabase } from '@/lib/supabase'
 
-export type GlobalConfigRow = Database['public']['Tables']['global_config']['Row']
-export type FileStorageConfigRow = Database['public']['Tables']['file_storage_config']['Row']
-
-export const settingsKeys = {
-  all: ['config'] as const,
-  globalConfig: ['config', 'global'] as const,
-  fileStorage: ['config', 'file-storage'] as const,
-}
+export {
+  settingsKeys,
+  type FileStorageConfigRow,
+  type GlobalConfigRow,
+} from '@itoby/shared'
 
 /** Tunables live in the single-row `global_config` (Requirements 5.8, 8.2, 11.6, 11.9). */
 export function useGlobalConfig() {
   return useQuery({
     queryKey: settingsKeys.globalConfig,
-    queryFn: async (): Promise<GlobalConfigRow> => {
-      const { data, error } = await supabase()
-        .from('global_config')
-        .select('*')
-        .eq('id', 1)
-        .single()
-      if (error) throw dbError(error, 'System configuration could not be loaded.')
-      return data
-    },
+    queryFn: () => getGlobalConfig(supabase()),
   })
 }
 
@@ -39,14 +30,7 @@ export function useFileStorageConfig() {
   return useQuery({
     queryKey: settingsKeys.fileStorage,
     staleTime: 5 * 60_000,
-    queryFn: async (): Promise<FileStorageConfigRow[]> => {
-      const { data, error } = await supabase()
-        .from('file_storage_config')
-        .select('*')
-        .order('file_extension')
-      if (error) throw dbError(error, 'File type settings could not be loaded.')
-      return data ?? []
-    },
+    queryFn: () => listFileStorageConfig(supabase()),
   })
 }
 

@@ -1,7 +1,14 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { Building2, LayoutDashboard, Users, Wrench } from 'lucide-react-native'
+import { Building2, LayoutDashboard, Settings2, Users, Wrench } from 'lucide-react-native'
 import { AdminComplaintDetailScreen } from './complaint-detail'
+import {
+  AdminAllotmentsScreen,
+  AdminAuditScreen,
+  AdminBillingScreen,
+  AdminExpensesScreen,
+} from './finance'
+import { AdminManageScreen, AdminSettingsScreen } from './manage'
 import {
   AdminBuildingsScreen,
   AdminComplaintsScreen,
@@ -53,6 +60,11 @@ function AdminTabs() {
         component={AdminTenantsScreen}
         options={{ tabBarIcon: ({ color, size }) => <Users color={color} size={size} /> }}
       />
+      <Tab.Screen
+        name="Manage"
+        component={AdminManageScreen}
+        options={{ tabBarIcon: ({ color, size }) => <Settings2 color={color} size={size} /> }}
+      />
     </Tab.Navigator>
   )
 }
@@ -76,6 +88,27 @@ export function RentalAdmin() {
         options={{ title: 'Complaint' }}
       />
       <Stack.Screen name="AdminStaff" component={AdminStaffScreen} options={{ title: 'Staff' }} />
+      <Stack.Screen
+        name="AdminAllotments"
+        component={AdminAllotmentsScreen}
+        options={{ title: 'Allotments' }}
+      />
+      <Stack.Screen
+        name="AdminBilling"
+        component={AdminBillingScreen}
+        options={{ title: 'Billing' }}
+      />
+      <Stack.Screen
+        name="AdminExpenses"
+        component={AdminExpensesScreen}
+        options={{ title: 'Expenses' }}
+      />
+      <Stack.Screen name="AdminAudit" component={AdminAuditScreen} options={{ title: 'Audit log' }} />
+      <Stack.Screen
+        name="AdminSettings"
+        component={AdminSettingsScreen}
+        options={{ title: 'Settings' }}
+      />
     </Stack.Navigator>
   )
 }

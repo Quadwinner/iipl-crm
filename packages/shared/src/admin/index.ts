@@ -7,6 +7,10 @@
  * every one of these calls is gated by RLS and, for the RPCs, by
  * `require_permission()` inside the function.
  */
+export * from './allotment'
+export * from './audit'
+export * from './billing'
 export * from './complaint'
+export * from './config'
 export * from './inventory'
 export * from './people'
