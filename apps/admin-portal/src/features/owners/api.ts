@@ -1,44 +1,23 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { OwnerCreateInput, OwnerStatus, Uuid } from '@itoby/shared'
+import {
+  listOwners,
+  ownerKeys,
+  type OwnerCreateInput,
+  type OwnerFilters,
+  type OwnerRow,
+  type OwnerStatus,
+  type Uuid,
+} from '@itoby/shared'
 import { dbError } from '@/lib/db-error'
 import { invokeEdgeFunction } from '@/lib/edge-function'
 import { supabase } from '@/lib/supabase'
 
-export interface OwnerRow {
-  id: Uuid
-  user_id: Uuid
-  name: string
-  contact_email: string
-  phone: string
-  status: OwnerStatus
-  created_at: string
-  updated_at: string
-}
-
-export interface OwnerFilters {
-  status: OwnerStatus | null
-}
-
-export const ownerKeys = {
-  all: ['owners'] as const,
-  list: (filters: OwnerFilters) => ['owners', 'list', filters.status] as const,
-}
+export { ownerKeys, type OwnerFilters, type OwnerRow } from '@itoby/shared'
 
 export function useOwners(filters: OwnerFilters) {
   return useQuery({
     queryKey: ownerKeys.list(filters),
-    queryFn: async (): Promise<OwnerRow[]> => {
-      let query = supabase()
-        .from('office_owners')
-        .select('id, user_id, name, contact_email, phone, status, created_at, updated_at')
-        .order('name')
-
-      if (filters.status !== null) query = query.eq('status', filters.status)
-
-      const { data, error } = await query
-      if (error) throw dbError(error, 'Office owners could not be loaded.')
-      return data ?? []
-    },
+    queryFn: () => listOwners(supabase(), filters),
   })
 }
 

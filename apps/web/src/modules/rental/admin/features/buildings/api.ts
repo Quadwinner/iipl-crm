@@ -1,54 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { Uuid } from '@itoby/shared'
+import { buildingKeys, listBuildings, type Uuid } from '@itoby/shared'
 import { dbError } from '@rental-admin/lib/db-error'
 import { supabase } from '@rental-admin/lib/supabase'
 import { unitKeys } from '@rental-admin/features/units/api'
 
-export interface BuildingRow {
-  id: Uuid
-  name: string
-  address: string
-  created_at: string
-  updated_at: string
-  unit_count: number
-}
+export { buildingKeys, type BuildingRow } from '@itoby/shared'
 
 export interface BuildingInput {
   name: string
   address: string
 }
 
-export const buildingKeys = {
-  all: ['buildings', 'full'] as const,
-  list: ['buildings', 'full', 'list'] as const,
-}
-
 export function useBuildingList() {
   return useQuery({
     queryKey: buildingKeys.list,
-    queryFn: async (): Promise<BuildingRow[]> => {
-      const [{ data: buildings, error: buildingsError }, { data: units, error: unitsError }] =
-        await Promise.all([
-          supabase()
-            .from('building')
-            .select('id, name, address, created_at, updated_at')
-            .order('name'),
-          supabase().from('office_unit').select('building_id'),
-        ])
-
-      if (buildingsError) throw dbError(buildingsError, 'Buildings could not be loaded.')
-      if (unitsError) throw dbError(unitsError, 'Unit counts could not be loaded.')
-
-      const counts = new Map<string, number>()
-      for (const unit of units ?? []) {
-        counts.set(unit.building_id, (counts.get(unit.building_id) ?? 0) + 1)
-      }
-
-      return (buildings ?? []).map((building) => ({
-        ...building,
-        unit_count: counts.get(building.id) ?? 0,
-      }))
-    },
+    queryFn: () => listBuildings(supabase()),
   })
 }
 

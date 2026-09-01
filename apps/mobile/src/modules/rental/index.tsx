@@ -9,6 +9,7 @@ import {
 } from 'lucide-react-native'
 import type { InvoiceRow } from '@itoby/shared/owner'
 import { useAuth } from '../../auth/auth'
+import { RentalAdmin } from './admin'
 import { NoAccessScreen } from '../../screens/no-access'
 import { ComplaintsScreen } from './complaints'
 import { ComplaintDetailScreen } from './complaint-detail'
@@ -83,14 +84,16 @@ function NewComplaintRoute() {
 /**
  * IIPL Renting, mounted inside the superapp.
  *
- * The role branch happens before any owner screen renders. Every query in here
- * is owner-scoped by RLS resolved from the session, so an administrator would
- * see empty lists rather than an error — saying so is more useful than four
- * blank tabs. The web module has the same branch for a sharper reason: its owner
- * auth provider signs out non-owner sessions.
+ * The role branch happens before any screen renders: staff get the admin side,
+ * owners get theirs. This matters beyond routing — owner queries are scoped by
+ * RLS from the session, so an administrator opening the owner tabs would see
+ * four empty lists rather than an error. The web module branches for a sharper
+ * reason still: its owner auth provider signs out non-owner sessions.
  */
 export function RentalModule() {
   const { role } = useAuth()
+
+  if (role === 'ADMINISTRATOR' || role === 'MAINTENANCE_STAFF') return <RentalAdmin />
   if (role !== 'OFFICE_OWNER') return <NoAccessScreen />
 
   return (

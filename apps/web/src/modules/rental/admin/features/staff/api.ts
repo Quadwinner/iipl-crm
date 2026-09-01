@@ -1,29 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { Database, StaffCreateInput, Uuid } from '@itoby/shared'
+import { listStaff, staffKeys, type StaffCreateInput, type Uuid } from '@itoby/shared'
 import { dbError } from '@rental-admin/lib/db-error'
 import { invokeEdgeFunction } from '@rental-admin/lib/edge-function'
 import { supabase } from '@rental-admin/lib/supabase'
 
-export type StaffRow = Database['public']['Functions']['list_staff']['Returns'][number]
+export { staffKeys, type StaffRow } from '@itoby/shared'
 
-export const staffKeys = {
-  all: ['staff'] as const,
-  list: (includeInactive: boolean) => ['staff', 'list', includeInactive] as const,
-}
-
-export function useStaff(includeInactive = true) {
-  return useQuery({
-    queryKey: staffKeys.list(includeInactive),
-    queryFn: async (): Promise<StaffRow[]> => {
-      const { data, error } = await supabase().rpc('list_staff', {
-        p_include_inactive: includeInactive,
-      })
-      if (error) throw dbError(error, 'Maintenance staff could not be loaded.')
-      return data ?? []
-    },
-  })
-}
-
+/** `create-staff` needs the Auth admin API, so it runs in an Edge Function. */
 interface CreateStaffResponse {
   success: boolean
   data?: {
@@ -34,7 +17,13 @@ interface CreateStaffResponse {
   }
 }
 
-/** Account creation needs the Auth admin API, so it runs in the `create-staff` Edge Function. */
+export function useStaff(includeInactive = true) {
+  return useQuery({
+    queryKey: staffKeys.list(includeInactive),
+    queryFn: () => listStaff(supabase(), includeInactive),
+  })
+}
+
 export function useCreateStaff() {
   const queryClient = useQueryClient()
 

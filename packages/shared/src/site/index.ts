@@ -7,3 +7,4 @@
  */
 export * from './content'
 export * from './lead'
+export * from './lead-admin'

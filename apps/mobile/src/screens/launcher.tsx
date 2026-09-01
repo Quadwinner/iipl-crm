@@ -4,6 +4,7 @@ import type { AppModule } from '@itoby/shared/site'
 import { Badge, Empty, ErrorState, Loading } from '../components/ui'
 import { SectionHeader } from '../components/section'
 import { iconByName } from '../lib/icons'
+import { Inbox } from 'lucide-react-native'
 import { useAuth } from '../auth/auth'
 import { useMyModules } from '../features/site'
 import { theme } from '../theme/theme'
@@ -17,7 +18,7 @@ import { theme } from '../theme/theme'
  */
 export function LauncherScreen() {
   const navigation = useNavigation<any>()
-  const { email } = useAuth()
+  const { email, role } = useAuth()
   const modules = useMyModules()
 
   if (modules.isPending) return <Loading />
@@ -43,6 +44,24 @@ export function LauncherScreen() {
       ) : null}
 
       <View style={styles.grid}>
+        {/* Leads is the superapp's own admin, not an app_modules row, so it is
+            added here rather than coming back from modules_for_current_user(). */}
+        {role === 'ADMINISTRATOR' ? (
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => navigation.navigate('Workspace')}
+            style={({ pressed }) => [styles.tile, pressed && styles.tilePressed]}
+          >
+            <View style={[styles.tileIcon, { backgroundColor: `${theme.color.cyan}22` }]}>
+              <Inbox size={24} color={theme.color.cyan} />
+            </View>
+            <Text style={styles.tileName}>Leads</Text>
+            <Text style={styles.tileTagline} numberOfLines={2}>
+              Website enquiries
+            </Text>
+          </Pressable>
+        ) : null}
+
         {(modules.data ?? []).map((module) => (
           <ModuleTile
             key={module.id}

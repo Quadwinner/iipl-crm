@@ -7,6 +7,7 @@ import { useAuth } from '../auth/auth'
 import { Loading } from '../components/ui'
 import { LauncherScreen } from '../screens/launcher'
 import { ModuleComingSoonScreen } from '../screens/module-coming-soon'
+import { AdminModule } from '../modules/admin'
 import { RentalModule } from '../modules/rental'
 import { SignInScreen } from '../screens/sign-in'
 import { StartupFailure } from '../screens/startup-failure'
@@ -143,6 +144,11 @@ export function RootNavigator() {
               name="Rental"
               component={RentalModule}
               options={{ title: 'IIPL Renting' }}
+            />
+            <RootStack.Screen
+              name="Workspace"
+              component={AdminModule}
+              options={{ headerShown: false }}
             />
           </>
         ) : (

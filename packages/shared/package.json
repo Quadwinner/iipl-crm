@@ -18,7 +18,8 @@
     "./owner": "./src/owner/index.ts",
     "./billing": "./src/billing/index.ts",
     "./site": "./src/site/index.ts",
-    "./theme": "./src/theme/index.ts"
+    "./theme": "./src/theme/index.ts",
+    "./admin": "./src/admin/index.ts"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
