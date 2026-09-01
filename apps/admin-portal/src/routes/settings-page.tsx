@@ -1,5 +1,5 @@
-import { Separator } from '@/components/ui/separator'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Separator } from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import { useGlobalConfig } from '@/features/settings/api'
 import { CompanyBillingForm } from '@/features/settings/company-billing-form'
 import { FileTypeSection } from '@/features/settings/file-type-section'

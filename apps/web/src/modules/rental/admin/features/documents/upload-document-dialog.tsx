@@ -3,7 +3,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import { documentLinkSchema, type DocumentLinkInput } from '@itoby/shared'
-import { Button } from '@rental-admin/components/ui/button'
+import { Button } from '@itoby/ui'
 import {
   Dialog,
   DialogClose,
@@ -13,16 +13,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@rental-admin/components/ui/dialog'
-import { Input } from '@rental-admin/components/ui/input'
-import { Label } from '@rental-admin/components/ui/label'
+} from '@itoby/ui'
+import { Input } from '@itoby/ui'
+import { Label } from '@itoby/ui'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@rental-admin/components/ui/select'
+} from '@itoby/ui'
 import { useOwnerOptions } from '@rental-admin/features/lookups/api'
 import { useFileStorageConfig } from '@rental-admin/features/settings/api'
 import { EdgeFunctionError } from '@rental-admin/lib/edge-function'

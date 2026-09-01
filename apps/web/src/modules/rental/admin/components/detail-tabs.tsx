@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@rental-admin/components/ui/tabs'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@itoby/ui'
 import { cn } from '@rental-admin/lib/utils'
 
 export interface DetailTab {

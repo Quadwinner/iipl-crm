@@ -8,9 +8,9 @@ import {
 import { Building2, Plus } from 'lucide-react'
 import { DataToolbar } from '@rental-admin/components/data-toolbar'
 import { PageHeader } from '@rental-admin/components/page-header'
-import { Button } from '@rental-admin/components/ui/button'
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@rental-admin/components/ui/empty'
-import { Skeleton } from '@rental-admin/components/ui/skeleton'
+import { Button } from '@itoby/ui'
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import {
   Table,
   TableBody,
@@ -18,7 +18,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@rental-admin/components/ui/table'
+} from '@itoby/ui'
 import {
   BuildingFormDialog,
   type BuildingFormTarget,

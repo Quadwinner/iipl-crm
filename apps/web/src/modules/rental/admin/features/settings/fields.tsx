@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import type { UseFormRegisterReturn } from 'react-hook-form'
-import { Input } from '@rental-admin/components/ui/input'
-import { Label } from '@rental-admin/components/ui/label'
+import { Input } from '@itoby/ui'
+import { Label } from '@itoby/ui'
 
 export function SettingsSection({
   title,

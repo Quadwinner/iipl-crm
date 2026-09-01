@@ -2,7 +2,7 @@ import { NavLink, Navigate, Outlet } from 'react-router-dom'
 import { Inbox, Settings2 } from 'lucide-react'
 
 import { useAuth } from '@/auth/use-auth'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Skeleton } from '@itoby/ui'
 import { cn } from '@/lib/utils'
 
 const TABS = [

@@ -1,4 +1,4 @@
-import { Separator } from '@/components/ui/separator'
+import { Separator } from '@itoby/ui'
 import { MyProfileForm } from '@/features/profile/my-profile-form'
 
 export function ProfilePage() {

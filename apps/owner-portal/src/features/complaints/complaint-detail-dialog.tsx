@@ -4,9 +4,9 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Separator } from '@/components/ui/separator'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@itoby/ui'
+import { Separator } from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import { useAuth } from '@/auth/use-auth'
 import { formatTimestamp } from '@/lib/format'
 import { useComplaintEvents, type ComplaintRow } from './api'

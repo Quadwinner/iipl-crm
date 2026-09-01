@@ -1,4 +1,4 @@
-import { Skeleton } from '@rental-owner/components/ui/skeleton'
+import { Skeleton } from '@itoby/ui'
 
 export interface StatItem {
   label: string

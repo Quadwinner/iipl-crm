@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { Wrench } from 'lucide-react'
 
 import { PageHeader } from '@rental-owner/components/page-header'
-import { Button } from '@rental-owner/components/ui/button'
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@rental-owner/components/ui/empty'
-import { Separator } from '@rental-owner/components/ui/separator'
-import { Skeleton } from '@rental-owner/components/ui/skeleton'
+import { Button } from '@itoby/ui'
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@itoby/ui'
+import { Separator } from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import {
   Table,
   TableBody,
@@ -13,7 +13,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@rental-owner/components/ui/table'
+} from '@itoby/ui'
 import { useOwnerComplaints, type ComplaintRow } from '@rental-owner/features/complaints/api'
 import { ComplaintDetailDialog } from '@rental-owner/features/complaints/complaint-detail-dialog'
 import { ComplaintStatusBadge } from '@rental-owner/features/complaints/status-badge'

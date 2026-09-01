@@ -9,25 +9,25 @@ import {
   type ComplaintUpdatableStatus,
   type Uuid,
 } from '@itoby/shared'
-import { Button } from '@/components/ui/button'
+import { Button } from '@itoby/ui'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Label } from '@/components/ui/label'
+} from '@itoby/ui'
+import { Label } from '@itoby/ui'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Textarea } from '@/components/ui/textarea'
+} from '@itoby/ui'
+import { Separator } from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
+import { Textarea } from '@itoby/ui'
 import { useAuth } from '@/auth/use-auth'
 import { mapDbError } from '@/lib/db-error'
 import {

@@ -14,19 +14,19 @@ import { Plus, Wallet } from 'lucide-react'
 import { DataToolbar } from '@/components/data-toolbar'
 import { KpiCard, KpiGrid } from '@/components/kpi-card'
 import { PageHeader } from '@/components/page-header'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Badge } from '@itoby/ui'
+import { Button } from '@itoby/ui'
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@itoby/ui'
+import { Input } from '@itoby/ui'
+import { Label } from '@itoby/ui'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import {
   Table,
   TableBody,
@@ -34,7 +34,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@itoby/ui'
 import {
   EMPTY_EXPENSE_FILTERS,
   expenseTotals,

@@ -12,17 +12,17 @@ import { DataToolbar } from '@rental-admin/components/data-toolbar'
 import { KpiCard, KpiGrid } from '@rental-admin/components/kpi-card'
 import { PageHeader } from '@rental-admin/components/page-header'
 import { StatusTabs } from '@rental-admin/components/status-tabs'
-import { Button } from '@rental-admin/components/ui/button'
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@rental-admin/components/ui/empty'
-import { Label } from '@rental-admin/components/ui/label'
+import { Button } from '@itoby/ui'
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@itoby/ui'
+import { Label } from '@itoby/ui'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@rental-admin/components/ui/select'
-import { Skeleton } from '@rental-admin/components/ui/skeleton'
+} from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import {
   Table,
   TableBody,
@@ -30,7 +30,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@rental-admin/components/ui/table'
+} from '@itoby/ui'
 import {
   billingTotals,
   EMPTY_BILLING_FILTERS,

@@ -6,17 +6,17 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { ALLOTMENT_STATUSES, type AllotmentStatus, type Uuid } from '@itoby/shared'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { Separator } from '@/components/ui/separator'
+import { Button } from '@itoby/ui'
+import { Label } from '@itoby/ui'
+import { Separator } from '@itoby/ui'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import {
   Table,
   TableBody,
@@ -24,7 +24,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@itoby/ui'
 import {
   useAllotments,
   type AllotmentListRow,

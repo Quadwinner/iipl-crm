@@ -5,8 +5,8 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Badge } from '@itoby/ui'
+import { Button } from '@itoby/ui'
 import {
   Table,
   TableBody,
@@ -14,7 +14,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@itoby/ui'
 import { OCCUPANCY_LABELS, currencyFormat, sizeFormat } from './labels'
 import type { UnitRow } from './api'
 

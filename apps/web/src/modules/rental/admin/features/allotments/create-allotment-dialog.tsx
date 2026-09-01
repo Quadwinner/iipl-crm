@@ -8,7 +8,7 @@ import {
   type AllotmentCreateInput,
   type BillingCycle,
 } from '@itoby/shared'
-import { Button } from '@rental-admin/components/ui/button'
+import { Button } from '@itoby/ui'
 import {
   Dialog,
   DialogClose,
@@ -18,16 +18,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@rental-admin/components/ui/dialog'
-import { Input } from '@rental-admin/components/ui/input'
-import { Label } from '@rental-admin/components/ui/label'
+} from '@itoby/ui'
+import { Input } from '@itoby/ui'
+import { Label } from '@itoby/ui'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@rental-admin/components/ui/select'
+} from '@itoby/ui'
 import { DbError } from '@rental-admin/lib/db-error'
 import { todayIsoDate } from '@rental-admin/lib/format'
 import { useCreateAllotment, useVacantUnits, type OwnerOption } from './api'

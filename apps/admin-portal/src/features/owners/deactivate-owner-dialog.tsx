@@ -1,5 +1,5 @@
 import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
+import { Button } from '@itoby/ui'
 import {
   Dialog,
   DialogClose,
@@ -8,7 +8,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from '@itoby/ui'
 import { mapDbError } from '@/lib/db-error'
 import { unlockBodyScroll } from '@/lib/scroll-lock'
 import { useDeactivateOwner, type OwnerRow } from './api'

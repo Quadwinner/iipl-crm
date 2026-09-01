@@ -1,6 +1,6 @@
 import type { LucideIcon } from 'lucide-react'
-import { Card, CardContent } from '@rental-owner/components/ui/card'
-import { Skeleton } from '@rental-owner/components/ui/skeleton'
+import { Card, CardContent } from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import { cn } from '@rental-owner/lib/utils'
 
 interface KpiCardProps {

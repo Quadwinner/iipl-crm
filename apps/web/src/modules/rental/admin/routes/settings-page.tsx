@@ -1,5 +1,5 @@
-import { Separator } from '@rental-admin/components/ui/separator'
-import { Skeleton } from '@rental-admin/components/ui/skeleton'
+import { Separator } from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import { useGlobalConfig } from '@rental-admin/features/settings/api'
 import { CompanyBillingForm } from '@rental-admin/features/settings/company-billing-form'
 import { FileTypeSection } from '@rental-admin/features/settings/file-type-section'

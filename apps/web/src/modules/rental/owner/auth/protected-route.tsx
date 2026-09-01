@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 
-import { Skeleton } from '@rental-owner/components/ui/skeleton'
+import { Skeleton } from '@itoby/ui'
 import { useAuth } from './use-auth'
 
 export function ProtectedRoute() {

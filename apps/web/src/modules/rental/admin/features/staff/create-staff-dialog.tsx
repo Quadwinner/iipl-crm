@@ -9,7 +9,7 @@ import {
   OWNER_PHONE_MIN_DIGITS,
   type StaffCreateInput,
 } from '@itoby/shared'
-import { Button } from '@rental-admin/components/ui/button'
+import { Button } from '@itoby/ui'
 import {
   Dialog,
   DialogClose,
@@ -19,9 +19,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@rental-admin/components/ui/dialog'
-import { Input } from '@rental-admin/components/ui/input'
-import { Label } from '@rental-admin/components/ui/label'
+} from '@itoby/ui'
+import { Input } from '@itoby/ui'
+import { Label } from '@itoby/ui'
 import { EdgeFunctionError } from '@rental-admin/lib/edge-function'
 import { useCreateStaff } from './api'
 

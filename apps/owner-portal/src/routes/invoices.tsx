@@ -5,9 +5,9 @@ import type { InvoiceStatus } from '@itoby/shared'
 import { KpiCard, KpiGrid } from '@/components/kpi-card'
 import { PageHeader } from '@/components/page-header'
 import { StatusTabs } from '@/components/status-tabs'
-import { Button } from '@/components/ui/button'
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Button } from '@itoby/ui'
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import {
   Table,
   TableBody,
@@ -15,7 +15,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@itoby/ui'
 import { useOwnerInvoices, type InvoiceRow } from '@/features/invoices/api'
 import { InvoiceDetailDialog } from '@/features/invoices/invoice-detail-dialog'
 import { PayInvoiceDialog } from '@/features/invoices/pay-invoice-dialog'

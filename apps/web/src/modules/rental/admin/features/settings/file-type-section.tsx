@@ -5,9 +5,9 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { Badge } from '@rental-admin/components/ui/badge'
-import { Button } from '@rental-admin/components/ui/button'
-import { Skeleton } from '@rental-admin/components/ui/skeleton'
+import { Badge } from '@itoby/ui'
+import { Button } from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import {
   Table,
   TableBody,
@@ -15,7 +15,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@rental-admin/components/ui/table'
+} from '@itoby/ui'
 import { useFileStorageConfig, type FileStorageConfigRow } from './api'
 import { FileTypeDialog, type FileTypeTarget } from './file-type-dialog'
 import { SettingsSection } from './fields'

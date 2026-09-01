@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
-import { Skeleton } from '@rental-admin/components/ui/skeleton'
+import { Skeleton } from '@itoby/ui'
 import { canAccessRoute, homeRouteForRole, isAdminPortalRole } from '@rental-admin/lib/navigation'
 import { useAuth } from './use-auth'
 

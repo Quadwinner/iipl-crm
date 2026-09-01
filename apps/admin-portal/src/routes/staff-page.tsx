@@ -6,10 +6,10 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { toast } from 'sonner'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Badge } from '@itoby/ui'
+import { Button } from '@itoby/ui'
+import { Separator } from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import {
   Table,
   TableBody,
@@ -17,7 +17,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@itoby/ui'
 import { useSetStaffActive, useStaff, type StaffRow } from '@/features/staff/api'
 import { CreateStaffDialog } from '@/features/staff/create-staff-dialog'
 import { DeactivateStaffDialog } from '@/features/staff/deactivate-staff-dialog'

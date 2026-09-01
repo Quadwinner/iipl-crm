@@ -8,18 +8,18 @@ import {
   type ComplaintSubmissionInput,
 } from '@itoby/shared'
 
-import { Button } from '@rental-owner/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@rental-owner/components/ui/card'
-import { Input } from '@rental-owner/components/ui/input'
-import { Label } from '@rental-owner/components/ui/label'
+import { Button } from '@itoby/ui'
+import { Card, CardContent, CardHeader, CardTitle } from '@itoby/ui'
+import { Input } from '@itoby/ui'
+import { Label } from '@itoby/ui'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@rental-owner/components/ui/select'
-import { Textarea } from '@rental-owner/components/ui/textarea'
+} from '@itoby/ui'
+import { Textarea } from '@itoby/ui'
 import { mapDbError } from '@rental-owner/lib/db-error'
 import { formatFileSize } from '@rental-owner/lib/format'
 import {

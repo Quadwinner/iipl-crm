@@ -8,10 +8,10 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from '@/components/ui/sheet'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@itoby/ui'
+import { Badge } from '@itoby/ui'
+import { Separator } from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import {
   Table,
   TableBody,
@@ -19,14 +19,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@itoby/ui'
 import { InvoiceStatusBadge } from '@/features/billing/status-badge'
 import { ElectricityChargeForm } from '@/features/billing/electricity-charge-form'
 import { MaintenanceChargeForm } from '@/features/billing/maintenance-charge-form'
 import { billingKeys, useDownloadInvoicePdf, useSendInvoiceReminder, type BillingRow } from '@/features/billing/api'
 import { InvoiceGstSummary } from '@/features/billing/invoice-gst-summary'
 import { useGlobalConfig } from '@/features/settings/api'
-import { Button } from '@/components/ui/button'
+import { Button } from '@itoby/ui'
 import { dbError, mapDbError } from '@/lib/db-error'
 import { formatCurrency, formatDate, formatDateTime } from '@/lib/format'
 import { supabase } from '@/lib/supabase'

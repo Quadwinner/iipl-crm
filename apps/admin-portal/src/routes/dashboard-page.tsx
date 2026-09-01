@@ -32,19 +32,19 @@ import {
 import { useAuth } from '@/auth/use-auth'
 import { KpiCard, KpiGrid } from '@/components/kpi-card'
 import { PageHeader } from '@/components/page-header'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Button } from '@itoby/ui'
+import { Card, CardContent, CardHeader, CardTitle } from '@itoby/ui'
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@itoby/ui'
+import { Input } from '@itoby/ui'
+import { Label } from '@itoby/ui'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import {
   Table,
   TableBody,
@@ -52,7 +52,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@itoby/ui'
 import { useAuditLog, EMPTY_AUDIT_FILTERS } from '@/features/audit/api'
 import { InvoiceStatusBadge } from '@/features/billing/status-badge'
 import { ComplaintStatusBadge } from '@/features/complaints/status-badge'

@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
-import { Button } from '@rental-admin/components/ui/button'
+import { Button } from '@itoby/ui'
 import {
   Dialog,
   DialogContent,
@@ -11,9 +11,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@rental-admin/components/ui/dialog'
-import { Input } from '@rental-admin/components/ui/input'
-import { Label } from '@rental-admin/components/ui/label'
+} from '@itoby/ui'
+import { Input } from '@itoby/ui'
+import { Label } from '@itoby/ui'
 import { mapDbError } from '@rental-admin/lib/db-error'
 import {
   useCreateBuilding,

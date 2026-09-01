@@ -3,7 +3,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import { fileTypeConfigSchema, type FileTypeConfigInput } from '@itoby/shared'
-import { Button } from '@/components/ui/button'
+import { Button } from '@itoby/ui'
 import {
   Dialog,
   DialogContent,
@@ -11,16 +11,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+} from '@itoby/ui'
+import { Input } from '@itoby/ui'
+import { Label } from '@itoby/ui'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@itoby/ui'
 import { mapDbError } from '@/lib/db-error'
 import { useConfigureFileType, type FileStorageConfigRow } from './api'
 import { NumberField } from './fields'

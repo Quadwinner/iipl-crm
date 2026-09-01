@@ -9,25 +9,25 @@ import {
   type ComplaintUpdatableStatus,
   type Uuid,
 } from '@itoby/shared'
-import { Button } from '@rental-admin/components/ui/button'
+import { Button } from '@itoby/ui'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@rental-admin/components/ui/dialog'
-import { Label } from '@rental-admin/components/ui/label'
+} from '@itoby/ui'
+import { Label } from '@itoby/ui'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@rental-admin/components/ui/select'
-import { Separator } from '@rental-admin/components/ui/separator'
-import { Skeleton } from '@rental-admin/components/ui/skeleton'
-import { Textarea } from '@rental-admin/components/ui/textarea'
+} from '@itoby/ui'
+import { Separator } from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
+import { Textarea } from '@itoby/ui'
 import { useAuth } from '@rental-admin/auth/use-auth'
 import { mapDbError } from '@rental-admin/lib/db-error'
 import {

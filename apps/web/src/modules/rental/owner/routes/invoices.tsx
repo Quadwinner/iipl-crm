@@ -5,9 +5,9 @@ import type { InvoiceStatus } from '@itoby/shared'
 import { KpiCard, KpiGrid } from '@rental-owner/components/kpi-card'
 import { PageHeader } from '@rental-owner/components/page-header'
 import { StatusTabs } from '@rental-owner/components/status-tabs'
-import { Button } from '@rental-owner/components/ui/button'
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@rental-owner/components/ui/empty'
-import { Skeleton } from '@rental-owner/components/ui/skeleton'
+import { Button } from '@itoby/ui'
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import {
   Table,
   TableBody,
@@ -15,7 +15,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@rental-owner/components/ui/table'
+} from '@itoby/ui'
 import { useOwnerInvoices, type InvoiceRow } from '@rental-owner/features/invoices/api'
 import { InvoiceDetailDialog } from '@rental-owner/features/invoices/invoice-detail-dialog'
 import { PayInvoiceDialog } from '@rental-owner/features/invoices/pay-invoice-dialog'

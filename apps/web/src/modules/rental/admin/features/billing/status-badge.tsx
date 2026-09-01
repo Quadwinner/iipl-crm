@@ -1,5 +1,5 @@
 import type { InvoiceStatus } from '@itoby/shared'
-import { Badge } from '@rental-admin/components/ui/badge'
+import { Badge } from '@itoby/ui'
 
 const LABELS: Record<InvoiceStatus, string> = {
   DUE: 'Due',

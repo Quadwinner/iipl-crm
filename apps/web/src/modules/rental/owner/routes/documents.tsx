@@ -1,10 +1,10 @@
 import { FolderOpen } from 'lucide-react'
 
 import { PageHeader } from '@rental-owner/components/page-header'
-import { Badge } from '@rental-owner/components/ui/badge'
-import { Button } from '@rental-owner/components/ui/button'
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@rental-owner/components/ui/empty'
-import { Skeleton } from '@rental-owner/components/ui/skeleton'
+import { Badge } from '@itoby/ui'
+import { Button } from '@itoby/ui'
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import {
   Table,
   TableBody,
@@ -12,7 +12,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@rental-owner/components/ui/table'
+} from '@itoby/ui'
 import { useAuth } from '@rental-owner/auth/use-auth'
 import {
   useDownloadOwnerDocument,

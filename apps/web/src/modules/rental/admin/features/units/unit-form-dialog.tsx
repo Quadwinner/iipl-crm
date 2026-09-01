@@ -3,7 +3,7 @@ import { Controller, useForm, type DefaultValues } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import { officeUnitInputSchema, type OfficeUnitInput } from '@itoby/shared'
-import { Button } from '@rental-admin/components/ui/button'
+import { Button } from '@itoby/ui'
 import {
   Dialog,
   DialogContent,
@@ -11,16 +11,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@rental-admin/components/ui/dialog'
-import { Input } from '@rental-admin/components/ui/input'
-import { Label } from '@rental-admin/components/ui/label'
+} from '@itoby/ui'
+import { Input } from '@itoby/ui'
+import { Label } from '@itoby/ui'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@rental-admin/components/ui/select'
+} from '@itoby/ui'
 import { mapDbError } from '@rental-admin/lib/db-error'
 import { OCCUPANCY_LABELS } from './labels'
 import { useCreateUnit, useUpdateUnit, type BuildingOption, type UnitRow } from './api'

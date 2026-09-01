@@ -1,7 +1,7 @@
 import { Navigate } from 'react-router-dom'
 
 import { useAuth } from '@/auth/use-auth'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Skeleton } from '@itoby/ui'
 import { AuthProvider as RentalAdminAuthProvider } from '@rental-admin/auth/auth-provider'
 import { AppRoutes as RentalAdminRoutes } from '@rental-admin/routes'
 import { AuthProvider as RentalOwnerAuthProvider } from '@rental-owner/auth/auth-provider'

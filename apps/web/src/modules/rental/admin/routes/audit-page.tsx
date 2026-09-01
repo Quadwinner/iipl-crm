@@ -6,19 +6,19 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { ScrollText } from 'lucide-react'
-import { Button } from '@rental-admin/components/ui/button'
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@rental-admin/components/ui/empty'
-import { Input } from '@rental-admin/components/ui/input'
-import { Label } from '@rental-admin/components/ui/label'
+import { Button } from '@itoby/ui'
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@itoby/ui'
+import { Input } from '@itoby/ui'
+import { Label } from '@itoby/ui'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@rental-admin/components/ui/select'
-import { Separator } from '@rental-admin/components/ui/separator'
-import { Skeleton } from '@rental-admin/components/ui/skeleton'
+} from '@itoby/ui'
+import { Separator } from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import {
   Table,
   TableBody,
@@ -26,7 +26,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@rental-admin/components/ui/table'
+} from '@itoby/ui'
 import {
   AUDIT_PAGE_SIZE,
   EMPTY_AUDIT_FILTERS,

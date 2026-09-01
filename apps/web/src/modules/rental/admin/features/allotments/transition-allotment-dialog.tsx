@@ -10,9 +10,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@rental-admin/components/ui/alert-dialog'
-import { Label } from '@rental-admin/components/ui/label'
-import { Textarea } from '@rental-admin/components/ui/textarea'
+} from '@itoby/ui'
+import { Label } from '@itoby/ui'
+import { Textarea } from '@itoby/ui'
 import { DbError } from '@rental-admin/lib/db-error'
 import { formatDate, isPastDate } from '@rental-admin/lib/format'
 import { useTransitionAllotment, type AllotmentListRow } from './api'

@@ -1,5 +1,5 @@
 import type { ComplaintStatus } from '@itoby/shared'
-import { Badge } from '@rental-owner/components/ui/badge'
+import { Badge } from '@itoby/ui'
 
 const LABELS: Record<ComplaintStatus, string> = {
   OPEN: 'Open',

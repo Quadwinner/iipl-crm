@@ -1,12 +1,12 @@
-import { Badge } from '@rental-admin/components/ui/badge'
+import { Badge } from '@itoby/ui'
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from '@rental-admin/components/ui/sheet'
-import { Skeleton } from '@rental-admin/components/ui/skeleton'
+} from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import { useAllotments } from '@rental-admin/features/allotments/api'
 import { AllotmentStatusBadge } from '@rental-admin/features/allotments/allotment-status-badge'
 import { formatCurrency, formatDate, formatDateTime } from '@rental-admin/lib/format'

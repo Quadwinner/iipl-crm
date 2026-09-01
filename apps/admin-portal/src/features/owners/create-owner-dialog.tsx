@@ -9,7 +9,7 @@ import {
   OWNER_PHONE_MIN_DIGITS,
   type OwnerCreateInput,
 } from '@itoby/shared'
-import { Button } from '@/components/ui/button'
+import { Button } from '@itoby/ui'
 import {
   Dialog,
   DialogClose,
@@ -19,9 +19,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+} from '@itoby/ui'
+import { Input } from '@itoby/ui'
+import { Label } from '@itoby/ui'
 import { EdgeFunctionError } from '@/lib/edge-function'
 import { useCreateOwner } from './api'
 

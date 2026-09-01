@@ -1,5 +1,5 @@
 import type { AllotmentStatus } from '@itoby/shared'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@itoby/ui'
 
 const LABELS: Record<AllotmentStatus, string> = {
   ACTIVE: 'Active',

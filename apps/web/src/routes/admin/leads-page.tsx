@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Textarea } from '@/components/ui/textarea'
+import { Badge } from '@itoby/ui'
+import { Button } from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
+import { Textarea } from '@itoby/ui'
 import { LEAD_STATUSES, useLeads, useUpdateLeadStatus, type Lead, type LeadStatus } from '@/features/leads/api'
 
 const STATUS_TONE: Record<LeadStatus, string> = {

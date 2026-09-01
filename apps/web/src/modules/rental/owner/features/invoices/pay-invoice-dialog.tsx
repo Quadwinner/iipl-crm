@@ -9,7 +9,7 @@ import {
   type PaymentInitiationInput,
 } from '@itoby/shared'
 
-import { Button } from '@rental-owner/components/ui/button'
+import { Button } from '@itoby/ui'
 import {
   Dialog,
   DialogContent,
@@ -17,9 +17,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@rental-owner/components/ui/dialog'
-import { Input } from '@rental-owner/components/ui/input'
-import { Label } from '@rental-owner/components/ui/label'
+} from '@itoby/ui'
+import { Input } from '@itoby/ui'
+import { Label } from '@itoby/ui'
 import { useAuth } from '@rental-owner/auth/use-auth'
 import { EdgeFunctionError } from '@rental-owner/lib/edge-function'
 import { formatCurrency, formatDate } from '@rental-owner/lib/format'

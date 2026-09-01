@@ -2,18 +2,18 @@ import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import { OCCUPANCY_STATUSES, type OccupancyStatus } from '@itoby/shared'
 import { useAuth } from '@rental-admin/auth/use-auth'
-import { Button } from '@rental-admin/components/ui/button'
-import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@rental-admin/components/ui/empty'
-import { Label } from '@rental-admin/components/ui/label'
+import { Button } from '@itoby/ui'
+import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@itoby/ui'
+import { Label } from '@itoby/ui'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@rental-admin/components/ui/select'
-import { Separator } from '@rental-admin/components/ui/separator'
-import { Skeleton } from '@rental-admin/components/ui/skeleton'
+} from '@itoby/ui'
+import { Separator } from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import { useBuildings, useUnits, type UnitFilters } from '@rental-admin/features/units/api'
 import { OCCUPANCY_LABELS } from '@rental-admin/features/units/labels'
 import { OccupancySummaryRow } from '@rental-admin/features/units/occupancy-summary'

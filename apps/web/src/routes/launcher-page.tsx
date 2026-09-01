@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 
 import { useAuth } from '@/auth/use-auth'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Skeleton } from '@itoby/ui'
 import { useMyModules } from '@/features/modules/use-modules'
 import { iconByName } from '@/lib/icons'
 

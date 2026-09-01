@@ -21,10 +21,10 @@ import {
   useTenantInvoices,
   useTenantPayments,
 } from '@/features/tenants/api'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Badge } from '@itoby/ui'
+import { Button } from '@itoby/ui'
+import { Card, CardContent, CardHeader, CardTitle } from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import {
   Table,
   TableBody,
@@ -32,7 +32,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@itoby/ui'
 import { formatCurrency, formatDate, formatDateTime } from '@/lib/format'
 import type { Uuid } from '@itoby/shared'
 

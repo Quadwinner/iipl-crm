@@ -2,18 +2,18 @@ import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import { OCCUPANCY_STATUSES, type OccupancyStatus } from '@itoby/shared'
 import { useAuth } from '@/auth/use-auth'
-import { Button } from '@/components/ui/button'
-import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
-import { Label } from '@/components/ui/label'
+import { Button } from '@itoby/ui'
+import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@itoby/ui'
+import { Label } from '@itoby/ui'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@itoby/ui'
+import { Separator } from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import { useBuildings, useUnits, type UnitFilters } from '@/features/units/api'
 import { OCCUPANCY_LABELS } from '@/features/units/labels'
 import { OccupancySummaryRow } from '@/features/units/occupancy-summary'

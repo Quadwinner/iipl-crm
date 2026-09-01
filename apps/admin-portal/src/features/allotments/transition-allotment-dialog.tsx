@@ -10,9 +10,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
+} from '@itoby/ui'
+import { Label } from '@itoby/ui'
+import { Textarea } from '@itoby/ui'
 import { DbError } from '@/lib/db-error'
 import { formatDate, isPastDate } from '@/lib/format'
 import { useTransitionAllotment, type AllotmentListRow } from './api'

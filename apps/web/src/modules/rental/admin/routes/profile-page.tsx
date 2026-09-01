@@ -1,4 +1,4 @@
-import { Separator } from '@rental-admin/components/ui/separator'
+import { Separator } from '@itoby/ui'
 import { MyProfileForm } from '@rental-admin/features/profile/my-profile-form'
 
 export function ProfilePage() {

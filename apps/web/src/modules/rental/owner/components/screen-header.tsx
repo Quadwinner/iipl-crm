@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 
-import { Separator } from '@rental-owner/components/ui/separator'
+import { Separator } from '@itoby/ui'
 
 export function ScreenHeader({ title, children }: { title: string; children?: ReactNode }) {
   return (

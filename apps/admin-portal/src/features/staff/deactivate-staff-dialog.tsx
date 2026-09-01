@@ -9,7 +9,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
+} from '@itoby/ui'
 import { mapDbError } from '@/lib/db-error'
 import { useSetStaffActive, type StaffRow } from './api'
 

@@ -9,7 +9,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@rental-admin/components/ui/alert-dialog'
+} from '@itoby/ui'
 import { mapDbError } from '@rental-admin/lib/db-error'
 import { useSetStaffActive, type StaffRow } from './api'
 

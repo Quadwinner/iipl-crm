@@ -1,12 +1,12 @@
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@itoby/ui'
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from '@/components/ui/sheet'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import { useAllotments } from '@/features/allotments/api'
 import { AllotmentStatusBadge } from '@/features/allotments/allotment-status-badge'
 import { formatCurrency, formatDate, formatDateTime } from '@/lib/format'

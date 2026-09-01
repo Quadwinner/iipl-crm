@@ -5,8 +5,8 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from '@/components/ui/sheet'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import { formatCurrency, formatDate } from '@/lib/format'
 import { AllotmentStatusBadge } from './allotment-status-badge'
 import { useAllotmentHistory } from './api'

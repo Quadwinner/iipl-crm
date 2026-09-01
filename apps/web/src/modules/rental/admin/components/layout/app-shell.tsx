@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { Building2, LogOut, Menu } from 'lucide-react'
-import { Button } from '@rental-admin/components/ui/button'
+import { Button } from '@itoby/ui'
 import { useAuth } from '@rental-admin/auth/use-auth'
 import { unlockBodyScroll } from '@rental-admin/lib/scroll-lock'
 import { cn } from '@rental-admin/lib/utils'

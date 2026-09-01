@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import type { GatewayType, PaymentStatus, Uuid } from '@itoby/shared'
-import { Button } from '@/components/ui/button'
+import { Button } from '@itoby/ui'
 import {
   Dialog,
   DialogContent,
@@ -8,9 +8,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Badge } from '@/components/ui/badge'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@itoby/ui'
+import { Badge } from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import {
   Table,
   TableBody,
@@ -18,7 +18,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@itoby/ui'
 import { dbError } from '@/lib/db-error'
 import { formatCurrency, formatDate, formatTimestamp } from '@/lib/format'
 import { supabase } from '@/lib/supabase'

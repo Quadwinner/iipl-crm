@@ -4,9 +4,9 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@rental-owner/components/ui/dialog'
-import { Separator } from '@rental-owner/components/ui/separator'
-import { Skeleton } from '@rental-owner/components/ui/skeleton'
+} from '@itoby/ui'
+import { Separator } from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import { useAuth } from '@rental-owner/auth/use-auth'
 import { formatTimestamp } from '@rental-owner/lib/format'
 import { useComplaintEvents, type ComplaintRow } from './api'

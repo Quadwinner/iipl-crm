@@ -7,19 +7,19 @@ import {
 } from '@tanstack/react-table'
 import type { Uuid } from '@itoby/shared'
 import { FolderOpen } from 'lucide-react'
-import { Badge } from '@rental-admin/components/ui/badge'
-import { Button } from '@rental-admin/components/ui/button'
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@rental-admin/components/ui/empty'
-import { Label } from '@rental-admin/components/ui/label'
+import { Badge } from '@itoby/ui'
+import { Button } from '@itoby/ui'
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@itoby/ui'
+import { Label } from '@itoby/ui'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@rental-admin/components/ui/select'
-import { Separator } from '@rental-admin/components/ui/separator'
-import { Skeleton } from '@rental-admin/components/ui/skeleton'
+} from '@itoby/ui'
+import { Separator } from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import {
   Table,
   TableBody,
@@ -27,7 +27,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@rental-admin/components/ui/table'
+} from '@itoby/ui'
 import {
   formatMegabytes,
   useDocuments,

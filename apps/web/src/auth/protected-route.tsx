@@ -1,5 +1,5 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Skeleton } from '@itoby/ui'
 import { useAuth } from './use-auth'
 
 function SessionLoading() {

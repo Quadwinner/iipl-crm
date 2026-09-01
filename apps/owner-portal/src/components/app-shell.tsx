@@ -1,7 +1,7 @@
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { Bell, Building2, LogOut } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@itoby/ui'
 import { useAuth } from '@/auth/use-auth'
 import { useOwnerReminders } from '@/features/notifications/api'
 import { cn } from '@/lib/utils'

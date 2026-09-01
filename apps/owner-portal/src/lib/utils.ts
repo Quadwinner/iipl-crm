@@ -1,7 +1,2 @@
-import { clsx, type ClassValue } from 'clsx'
-import { twMerge } from 'tailwind-merge'
-
-/** shadcn/ui class merge helper. */
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
+/** Re-exported so app code keeps one import path; the implementation lives in @itoby/ui. */
+export { cn } from '@itoby/ui'

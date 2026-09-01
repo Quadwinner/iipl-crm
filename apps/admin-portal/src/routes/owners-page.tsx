@@ -11,18 +11,18 @@ import { Users } from 'lucide-react'
 import { DataToolbar } from '@/components/data-toolbar'
 import { KpiCard, KpiGrid } from '@/components/kpi-card'
 import { PageHeader } from '@/components/page-header'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
-import { Label } from '@/components/ui/label'
+import { Badge } from '@itoby/ui'
+import { Button } from '@itoby/ui'
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@itoby/ui'
+import { Label } from '@itoby/ui'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import {
   Table,
   TableBody,
@@ -30,7 +30,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@itoby/ui'
 import { CreateOwnerDialog } from '@/features/owners/create-owner-dialog'
 import { DeactivateOwnerDialog } from '@/features/owners/deactivate-owner-dialog'
 import { useEnrichedTenants, type TenantListRow } from '@/features/tenants/api'

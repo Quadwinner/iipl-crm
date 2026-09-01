@@ -8,10 +8,10 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from '@rental-admin/components/ui/sheet'
-import { Badge } from '@rental-admin/components/ui/badge'
-import { Separator } from '@rental-admin/components/ui/separator'
-import { Skeleton } from '@rental-admin/components/ui/skeleton'
+} from '@itoby/ui'
+import { Badge } from '@itoby/ui'
+import { Separator } from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import {
   Table,
   TableBody,
@@ -19,14 +19,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@rental-admin/components/ui/table'
+} from '@itoby/ui'
 import { InvoiceStatusBadge } from '@rental-admin/features/billing/status-badge'
 import { ElectricityChargeForm } from '@rental-admin/features/billing/electricity-charge-form'
 import { MaintenanceChargeForm } from '@rental-admin/features/billing/maintenance-charge-form'
 import { billingKeys, useDownloadInvoicePdf, useSendInvoiceReminder, type BillingRow } from '@rental-admin/features/billing/api'
 import { InvoiceGstSummary } from '@rental-admin/features/billing/invoice-gst-summary'
 import { useGlobalConfig } from '@rental-admin/features/settings/api'
-import { Button } from '@rental-admin/components/ui/button'
+import { Button } from '@itoby/ui'
 import { dbError, mapDbError } from '@rental-admin/lib/db-error'
 import { formatCurrency, formatDate, formatDateTime } from '@rental-admin/lib/format'
 import { supabase } from '@rental-admin/lib/supabase'

@@ -17,18 +17,18 @@ import { CreditCard } from 'lucide-react'
 import { DataToolbar } from '@rental-admin/components/data-toolbar'
 import { KpiCard, KpiGrid } from '@rental-admin/components/kpi-card'
 import { PageHeader } from '@rental-admin/components/page-header'
-import { Badge } from '@rental-admin/components/ui/badge'
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@rental-admin/components/ui/empty'
-import { Input } from '@rental-admin/components/ui/input'
-import { Label } from '@rental-admin/components/ui/label'
+import { Badge } from '@itoby/ui'
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@itoby/ui'
+import { Input } from '@itoby/ui'
+import { Label } from '@itoby/ui'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@rental-admin/components/ui/select'
-import { Skeleton } from '@rental-admin/components/ui/skeleton'
+} from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import {
   Table,
   TableBody,
@@ -36,7 +36,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@rental-admin/components/ui/table'
+} from '@itoby/ui'
 import { useOwnerOptions } from '@rental-admin/features/lookups/api'
 import { useAllPayments, type LedgerPaymentRow } from '@rental-admin/features/tenants/api'
 import { formatCurrency, formatDateTime } from '@rental-admin/lib/format'

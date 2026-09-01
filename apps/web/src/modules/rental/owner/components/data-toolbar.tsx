@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Search, X } from 'lucide-react'
-import { Button } from '@rental-owner/components/ui/button'
-import { Input } from '@rental-owner/components/ui/input'
+import { Button } from '@itoby/ui'
+import { Input } from '@itoby/ui'
 import { cn } from '@rental-owner/lib/utils'
 
 interface DataToolbarProps {

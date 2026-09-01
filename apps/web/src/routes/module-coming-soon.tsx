@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 
-import { Skeleton } from '@/components/ui/skeleton'
+import { Skeleton } from '@itoby/ui'
 import { useMyModules } from '@/features/modules/use-modules'
 import { iconByName } from '@/lib/icons'
 

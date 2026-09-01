@@ -32,19 +32,19 @@ import {
 import { useAuth } from '@rental-admin/auth/use-auth'
 import { KpiCard, KpiGrid } from '@rental-admin/components/kpi-card'
 import { PageHeader } from '@rental-admin/components/page-header'
-import { Button } from '@rental-admin/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@rental-admin/components/ui/card'
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@rental-admin/components/ui/empty'
-import { Input } from '@rental-admin/components/ui/input'
-import { Label } from '@rental-admin/components/ui/label'
+import { Button } from '@itoby/ui'
+import { Card, CardContent, CardHeader, CardTitle } from '@itoby/ui'
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@itoby/ui'
+import { Input } from '@itoby/ui'
+import { Label } from '@itoby/ui'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@rental-admin/components/ui/select'
-import { Skeleton } from '@rental-admin/components/ui/skeleton'
+} from '@itoby/ui'
+import { Skeleton } from '@itoby/ui'
 import {
   Table,
   TableBody,
@@ -52,7 +52,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@rental-admin/components/ui/table'
+} from '@itoby/ui'
 import { useAuditLog, EMPTY_AUDIT_FILTERS } from '@rental-admin/features/audit/api'
 import { InvoiceStatusBadge } from '@rental-admin/features/billing/status-badge'
 import { ComplaintStatusBadge } from '@rental-admin/features/complaints/status-badge'

@@ -9,7 +9,7 @@ import {
   type PaymentInitiationInput,
 } from '@itoby/shared'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@itoby/ui'
 import {
   Dialog,
   DialogContent,
@@ -17,9 +17,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+} from '@itoby/ui'
+import { Input } from '@itoby/ui'
+import { Label } from '@itoby/ui'
 import { useAuth } from '@/auth/use-auth'
 import { EdgeFunctionError } from '@/lib/edge-function'
 import { formatCurrency, formatDate } from '@/lib/format'

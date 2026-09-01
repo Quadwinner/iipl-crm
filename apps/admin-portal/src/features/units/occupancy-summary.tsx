@@ -1,5 +1,5 @@
 import type { Uuid } from '@itoby/shared'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Skeleton } from '@itoby/ui'
 import { useOccupancySummary } from './api'
 
 interface OccupancySummaryRowProps {
