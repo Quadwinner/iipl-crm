@@ -11,10 +11,16 @@ const { width: SCREEN } = Dimensions.get('window')
  * type. React Native has no CSS gradients, so the same effect is drawn as SVG —
  * one lime glow behind the headline, one cyan lower and to the right, both at
  * low opacity so the type stays the brightest thing on screen.
+ *
+ * The size is measured rather than given as "100%": an Svg laid out with
+ * absoluteFill and percentage dimensions collapses to a small box in the corner
+ * instead of covering its parent.
  */
-function Aura() {
+function Aura({ width, height }: { width: number; height: number }) {
+  if (width === 0 || height === 0) return null
+
   return (
-    <Svg style={StyleSheet.absoluteFill} pointerEvents="none">
+    <Svg width={width} height={height} style={StyleSheet.absoluteFill} pointerEvents="none">
       <Defs>
         <RadialGradient id="lime" cx="18%" cy="12%" r="62%">
           <Stop offset="0" stopColor={theme.color.accent} stopOpacity="0.20" />
@@ -25,8 +31,8 @@ function Aura() {
           <Stop offset="1" stopColor={theme.color.cyan} stopOpacity="0" />
         </RadialGradient>
       </Defs>
-      <Rect x="0" y="0" width="100%" height="100%" fill="url(#lime)" />
-      <Rect x="0" y="0" width="100%" height="100%" fill="url(#cyan)" />
+      <Rect x="0" y="0" width={width} height={height} fill="url(#lime)" />
+      <Rect x="0" y="0" width={width} height={height} fill="url(#cyan)" />
     </Svg>
   )
 }
@@ -157,10 +163,19 @@ export function Hero({
   onExplore: () => void
 }) {
   const [expanded, setExpanded] = useState(false)
+  const [size, setSize] = useState({ width: 0, height: 0 })
 
   return (
-    <View style={styles.hero}>
-      <Aura />
+    <View
+      style={styles.hero}
+      onLayout={(event) => {
+        const { width, height } = event.nativeEvent.layout
+        setSize((current) =>
+          current.width === width && current.height === height ? current : { width, height },
+        )
+      }}
+    >
+      <Aura width={size.width} height={size.height} />
 
       <View style={styles.heroInner}>
         <Enter delay={0}>
