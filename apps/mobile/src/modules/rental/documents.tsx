@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { FlatList, Linking, StyleSheet, Text, View } from 'react-native'
-import { downloadDocument, formatDate, formatFileSize } from '@itoby/shared'
+import { formatDate, formatFileSize } from '@itoby/shared/owner'
+import { downloadDocument } from '@itoby/shared/storage'
 import { Button, Card, Empty, ErrorState, Field, Loading } from '../../components/ui'
 import { useDocuments } from '../../features/queries'
 import { supabase } from '../../lib/supabase'
