@@ -8,6 +8,7 @@ import { theme } from '../../theme/theme'
 
 const NODE = 34
 const RAIL_X = NODE / 2 - 1
+const PULSE = 60
 
 /**
  * How we work, as a sequence rather than four equal boxes.
@@ -18,6 +19,9 @@ const RAIL_X = NODE / 2 - 1
  * through the steps in the order they happen.
  */
 export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
+  // The rail runs between the first and last nodes, not the height of the
+  // container: the last step still has text below its node, and a rail measured
+  // from the container would run past the sequence into empty space.
   const [railHeight, setRailHeight] = useState(0)
 
   // Height rather than scaleY: React Native has no transform-origin, so a scaled
@@ -67,13 +71,7 @@ export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
         <SectionHeader eyebrow="How we work" title="Process" />
       </Enter>
 
-      <View
-        style={styles.timeline}
-        onLayout={(event) => {
-          const { height } = event.nativeEvent.layout
-          setRailHeight((current) => (current === height ? current : height))
-        }}
-      >
+      <View style={styles.timeline}>
         {/* The rail: a dim full-height track, the accent drawn over it, and a
             brighter segment travelling down once the draw finishes. */}
         <View style={[styles.rail, { height: railHeight }]} pointerEvents="none" />
@@ -83,6 +81,7 @@ export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
             pointerEvents="none"
             style={[
               styles.pulse,
+              { height: Math.min(PULSE, railHeight) },
               {
                 opacity: pulse.interpolate({
                   inputRange: [0, 0.12, 0.88, 1],
@@ -92,7 +91,9 @@ export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
                   {
                     translateY: pulse.interpolate({
                       inputRange: [0, 1],
-                      outputRange: [0, railHeight - 60],
+                      // Never negative: a two-step process has a rail shorter
+                      // than the pulse itself.
+                      outputRange: [0, Math.max(0, railHeight - PULSE)],
                     }),
                   },
                 ],
@@ -102,18 +103,42 @@ export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
         ) : null}
 
         {steps.map((step, index) => (
-          <Step key={step.title} step={step} index={index} />
+          <Step
+            key={step.title}
+            step={step}
+            index={index}
+            last={index === steps.length - 1}
+            onNodeY={
+              index === steps.length - 1
+                ? (y) => setRailHeight((current) => (current === y ? current : y))
+                : undefined
+            }
+          />
         ))}
-      </View>
 
-      <View style={styles.tail}>
-        <ArrowDown size={18} color={theme.color.accent} />
+        {/* The arrow closes the sequence at the last node rather than floating
+            below the section. */}
+        {railHeight > 0 ? (
+          <View style={[styles.tail, { top: railHeight + NODE / 2 + 2 }]} pointerEvents="none">
+            <ArrowDown size={16} color={theme.color.accent} />
+          </View>
+        ) : null}
       </View>
     </View>
   )
 }
 
-function Step({ step, index }: { step: ProcessStep; index: number }) {
+function Step({
+  step,
+  index,
+  last,
+  onNodeY,
+}: {
+  step: ProcessStep
+  index: number
+  last: boolean
+  onNodeY?: (y: number) => void
+}) {
   // Each node lights as the rail reaches it, which is what makes the drawing read
   // as progress through the steps rather than a line appearing.
   const lit = useRef(new Animated.Value(0)).current
@@ -130,7 +155,10 @@ function Step({ step, index }: { step: ProcessStep; index: number }) {
 
   return (
     <Enter delay={200 + index * 120} distance={12}>
-      <View style={styles.step}>
+      <View
+        style={[styles.step, last && styles.stepLast]}
+        onLayout={(event) => onNodeY?.(event.nativeEvent.layout.y)}
+      >
         <Animated.View
           style={[
             styles.node,
@@ -193,11 +221,12 @@ const styles = StyleSheet.create({
     left: RAIL_X - 1,
     top: NODE / 2,
     width: 4,
-    height: 60,
     borderRadius: 2,
     backgroundColor: theme.color.accent,
   },
   step: { flexDirection: 'row', gap: theme.space(4), paddingBottom: theme.space(7) },
+  // The last step needs room for the arrow under its node, not a full gap.
+  stepLast: { paddingBottom: theme.space(6) },
   node: {
     width: NODE,
     height: NODE,
@@ -210,5 +239,5 @@ const styles = StyleSheet.create({
   stepBody: { flex: 1, paddingTop: theme.space(1) },
   stepTitle: { color: theme.color.text, fontSize: 17, fontWeight: '800', letterSpacing: -0.3 },
   stepText: { color: theme.color.muted, fontSize: 14, lineHeight: 22, marginTop: theme.space(2) },
-  tail: { alignItems: 'flex-start', paddingLeft: RAIL_X - 8 },
+  tail: { position: 'absolute', left: RAIL_X - 7 },
 })
