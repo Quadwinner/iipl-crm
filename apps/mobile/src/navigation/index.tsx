@@ -158,8 +158,19 @@ export function RootNavigator() {
           </>
         )}
 
-        {/* Reachable from either stack. */}
+        {/*
+          Reachable from either stack.
+
+          Contact and Services are also tabs when signed out. Registering them
+          here as well is what makes the home screen work in both places: it is
+          the Explore tab once signed in, where those tabs do not exist, and
+          navigate() resolves to the nearest match — the tab when there is one,
+          this stack screen otherwise.
+        */}
         <RootStack.Screen name="About" component={AboutScreen} options={{ title: 'About' }} />
+        <RootStack.Screen name="Contact" component={ContactScreen} options={{ title: 'Contact' }} />
+        <RootStack.Screen name="Services" component={ServicesScreen} options={{ title: 'Services' }} />
+        <RootStack.Screen name="Products" component={ProductsScreen} options={{ title: 'Products' }} />
         <RootStack.Screen
           name="ServiceDetail"
           component={ServiceDetailScreen}
