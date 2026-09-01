@@ -1,6 +1,19 @@
 import { useEffect } from 'react'
 
-export const SITE_ORIGIN = 'https://itobyinfotech.com'
+/**
+ * The origin canonical URLs point at.
+ *
+ * Hardcoding itobyinfotech.com was wrong once this app became the company site:
+ * every page told search engines the real version lived on a domain that is
+ * being retired, which is a request to not index this one.
+ *
+ * `VITE_SITE_ORIGIN` lets a deployment declare where it actually lives. Falling
+ * back to the browser's own origin is the safe default — a preview deployment
+ * then claims itself rather than a domain it is not.
+ */
+export const SITE_ORIGIN =
+  import.meta.env.VITE_SITE_ORIGIN?.trim() ||
+  (typeof window === 'undefined' ? '' : window.location.origin)
 
 interface Seo {
   title: string

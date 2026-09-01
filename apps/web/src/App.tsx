@@ -1,26 +1,56 @@
+import { Suspense, lazy } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 
 import { AppLayout } from '@/components/app-layout'
 import { ProtectedRoute } from '@/auth/protected-route'
-import { RentalModule } from '@/modules/rental'
-import { AdminShell } from '@/routes/admin/admin-shell'
-import { ContentPage } from '@/routes/admin/content-page'
-import { LeadsPage } from '@/routes/admin/leads-page'
 import { HomePage } from '@/routes/home-page'
-import {
-  AboutPage,
-  BlogPage,
-  ContactPage,
-  IndustriesPage,
-  PortfolioPage,
-  ProductsPage,
-  QuotePage,
-  ServiceDetailPage,
-  ServicesPage,
-} from '@/routes/site/pages'
-import { LauncherPage } from '@/routes/launcher-page'
 import { LoginPage } from '@/routes/login-page'
-import { ModuleComingSoonPage } from '@/routes/module-coming-soon'
+
+/**
+ * Everything behind sign-in is split out.
+ *
+ * The whole app was one 1.9 MB chunk, so a visitor reading the marketing site
+ * downloaded the entire rental CRM and the content editor before the home page
+ * could paint — code that most visitors never run. The public routes stay eager
+ * because they are the first paint; the rest arrives when a route asks for it.
+ */
+const RentalModule = lazy(() =>
+  import('@/modules/rental').then((m) => ({ default: m.RentalModule })),
+)
+const AdminShell = lazy(() =>
+  import('@/routes/admin/admin-shell').then((m) => ({ default: m.AdminShell })),
+)
+const ContentPage = lazy(() =>
+  import('@/routes/admin/content-page').then((m) => ({ default: m.ContentPage })),
+)
+const LeadsPage = lazy(() =>
+  import('@/routes/admin/leads-page').then((m) => ({ default: m.LeadsPage })),
+)
+const LauncherPage = lazy(() =>
+  import('@/routes/launcher-page').then((m) => ({ default: m.LauncherPage })),
+)
+const ModuleComingSoonPage = lazy(() =>
+  import('@/routes/module-coming-soon').then((m) => ({ default: m.ModuleComingSoonPage })),
+)
+
+// The marketing pages share one chunk: a visitor on any of them is likely to
+// open another, and splitting each would trade one download for several.
+const sitePages = () => import('@/routes/site/pages')
+const AboutPage = lazy(() => sitePages().then((m) => ({ default: m.AboutPage })))
+const BlogPage = lazy(() => sitePages().then((m) => ({ default: m.BlogPage })))
+const ContactPage = lazy(() => sitePages().then((m) => ({ default: m.ContactPage })))
+const IndustriesPage = lazy(() => sitePages().then((m) => ({ default: m.IndustriesPage })))
+const PortfolioPage = lazy(() => sitePages().then((m) => ({ default: m.PortfolioPage })))
+const ProductsPage = lazy(() => sitePages().then((m) => ({ default: m.ProductsPage })))
+const QuotePage = lazy(() => sitePages().then((m) => ({ default: m.QuotePage })))
+const ServiceDetailPage = lazy(() => sitePages().then((m) => ({ default: m.ServiceDetailPage })))
+const ServicesPage = lazy(() => sitePages().then((m) => ({ default: m.ServicesPage })))
+
+/** Shown while a route chunk loads. Deliberately quiet — a spinner that flashes
+ *  for 80ms is worse than a moment of nothing. */
+function RouteFallback() {
+  return <div className="min-h-svh" aria-busy="true" />
+}
 
 /**
  * Superapp route table.
@@ -42,7 +72,8 @@ import { ModuleComingSoonPage } from '@/routes/module-coming-soon'
  */
 export function App() {
   return (
-    <Routes>
+    <Suspense fallback={<RouteFallback />}>
+      <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/services" element={<ServicesPage />} />
@@ -69,7 +100,8 @@ export function App() {
         </Route>
       </Route>
 
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Suspense>
   )
 }

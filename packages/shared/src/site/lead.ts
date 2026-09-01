@@ -26,14 +26,26 @@ export const BUDGET_RANGES = [
   'Not sure yet',
 ] as const
 
+/** Carries the Postgres error code, so callers can tell a deliberate rejection
+ *  from a fault instead of echoing every database message to a visitor. */
+export class LeadSubmitError extends Error {
+  code: string | undefined
+
+  constructor(message: string, code: string | undefined) {
+    super(message)
+    this.name = 'LeadSubmitError'
+    this.code = code
+  }
+}
+
 /**
  * The only public write path into `leads`.
  *
  * `submit_lead` is security definer and rate limited to five per email per
  * hour; the table itself has no INSERT policy, so nothing can reach it another
- * way. A 53400 comes back with a message written for the visitor, so the error
- * is thrown with the server's own wording rather than a generic failure — the
- * caller should show `error.message` as-is.
+ * way. It raises 22023 for a bad field and 53400 for the rate limit, both with
+ * wording meant for a visitor — `leadErrorMessage` in ../validation/lead decides
+ * which are safe to show.
  */
 export async function submitLead(
   client: TypedSupabaseClient,
@@ -51,5 +63,5 @@ export async function submitLead(
     p_source: input.source,
     p_page_path: input.page_path ?? '',
   })
-  if (error) throw new Error(error.message)
+  if (error) throw new LeadSubmitError(error.message, error.code)
 }

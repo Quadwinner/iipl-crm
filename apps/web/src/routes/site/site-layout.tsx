@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react'
-import { Link, NavLink } from 'react-router-dom'
-import { ArrowRight } from 'lucide-react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { Link, NavLink, useLocation } from 'react-router-dom'
+import { ArrowRight, Menu, X } from 'lucide-react'
 
 import { useSiteSettings } from '@/features/site/use-site-settings'
 import '../home-page.css'
@@ -16,36 +16,112 @@ const NAV = [
 ]
 
 export function SiteNav({ company }: { company: string }) {
+  const [open, setOpen] = useState(false)
+  const { pathname } = useLocation()
+  const panelRef = useRef<HTMLDivElement>(null)
+
+  // Any navigation closes the menu — otherwise it stays open over the new page.
+  useEffect(() => setOpen(false), [pathname])
+
+  useEffect(() => {
+    if (!open) return
+    function onKey(event: KeyboardEvent) {
+      if (event.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('keydown', onKey)
+    // Focus moves into the panel so a keyboard user is not left behind the
+    // trigger, and the page underneath cannot be scrolled past.
+    panelRef.current?.focus()
+    const { overflow } = document.body.style
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = overflow
+    }
+  }, [open])
+
   return (
-    <header className="relative z-20 mx-auto flex h-20 w-full max-w-7xl items-center gap-3 px-6">
-      <Link to="/" className="flex items-center gap-3">
-        <span className="text-[color:var(--ink)] flex size-8 items-center justify-center rounded-lg bg-[color:var(--lime)] text-[11px] font-bold">
-          IT
-        </span>
-        <span className="font-semibold tracking-tight">{company}</span>
-      </Link>
-
-      <nav className="ml-auto hidden items-center gap-7 text-sm text-[color:var(--fg-2)] xl:flex">
-        {NAV.map((n) => (
-          <NavLink
-            key={n.to}
-            to={n.to}
-            className={({ isActive }) =>
-              `transition-colors hover:text-[color:var(--fg)] ${isActive ? 'text-[color:var(--fg)]' : ''}`
-            }
-          >
-            {n.label}
-          </NavLink>
-        ))}
-      </nav>
-
-      <Link
-        to="/login"
-        className="text-[color:var(--ink)] ml-6 rounded-lg bg-[color:var(--lime)] px-5 py-2.5 text-sm font-semibold transition-transform hover:scale-[1.03]"
+    <>
+      {/*
+        The nav was xl:flex only, so every phone and tablet had no navigation at
+        all beyond Sign in — on a site whose visitors are mostly on phones.
+      */}
+      <a
+        href="#main"
+        className="text-[color:var(--ink)] sr-only rounded-lg bg-[color:var(--lime)] px-4 py-2 text-sm font-semibold focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50"
       >
-        Sign in
-      </Link>
-    </header>
+        Skip to content
+      </a>
+
+      <header className="relative z-20 mx-auto flex h-20 w-full max-w-7xl items-center gap-3 px-6">
+        <Link to="/" className="flex items-center gap-3">
+          <span className="text-[color:var(--ink)] flex size-8 items-center justify-center rounded-lg bg-[color:var(--lime)] text-[11px] font-bold">
+            IT
+          </span>
+          <span className="font-semibold tracking-tight">{company}</span>
+        </Link>
+
+        <nav className="ml-auto hidden items-center gap-7 text-sm text-[color:var(--fg-2)] xl:flex">
+          {NAV.map((n) => (
+            <NavLink
+              key={n.to}
+              to={n.to}
+              className={({ isActive }) =>
+                `transition-colors hover:text-[color:var(--fg)] ${isActive ? 'text-[color:var(--fg)]' : ''}`
+              }
+            >
+              {n.label}
+            </NavLink>
+          ))}
+        </nav>
+
+        <Link
+          to="/login"
+          className="text-[color:var(--ink)] ml-auto rounded-lg bg-[color:var(--lime)] px-5 py-2.5 text-sm font-semibold transition-transform hover:scale-[1.03] xl:ml-6"
+        >
+          Sign in
+        </Link>
+
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          aria-controls="site-menu"
+          aria-label={open ? 'Close menu' : 'Open menu'}
+          className="ml-1 rounded-lg border border-[color:var(--line)] p-2.5 xl:hidden"
+        >
+          {open ? <X className="size-5" aria-hidden="true" /> : <Menu className="size-5" aria-hidden="true" />}
+        </button>
+      </header>
+
+      {open ? (
+        <div
+          id="site-menu"
+          ref={panelRef}
+          tabIndex={-1}
+          className="fixed inset-0 z-30 bg-[color:var(--ink)] px-6 pt-24 outline-none xl:hidden"
+        >
+          <nav className="flex flex-col gap-1">
+            {NAV.map((n) => (
+              <NavLink
+                key={n.to}
+                to={n.to}
+                className={({ isActive }) =>
+                  `border-b border-[color:var(--line)] py-4 text-lg transition-colors ${
+                    isActive ? 'text-[color:var(--lime)]' : 'text-[color:var(--fg)]'
+                  }`
+                }
+              >
+                {n.label}
+              </NavLink>
+            ))}
+            <Link to="/request-quote" className="py-4 text-lg text-[color:var(--fg-2)]">
+              Request a quote
+            </Link>
+          </nav>
+        </div>
+      ) : null}
+    </>
   )
 }
 

@@ -1,7 +1,14 @@
 import { useState } from 'react'
 import { Check, Loader2 } from 'lucide-react'
 
-import { BUDGET_RANGES, submitLead } from '@itoby/shared'
+import {
+  BUDGET_RANGES,
+  leadErrorMessage,
+  leadFieldErrors,
+  leadFormSchema,
+  submitLead,
+  type LeadFieldErrors,
+} from '@itoby/shared'
 import { useServices } from '@/features/site/use-content'
 import { supabase } from '@/lib/supabase'
 
@@ -22,6 +29,7 @@ export function LeadForm({ source, cta }: { source: Source; cta: string }) {
   const [sent, setSent] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<LeadFieldErrors>({})
   const [form, setForm] = useState({
     full_name: '',
     email: '',
@@ -38,20 +46,40 @@ export function LeadForm({ source, cta }: { source: Source; cta: string }) {
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
+    setFieldErrors({})
+
+    // The same bounds submit_lead enforces, checked before the round trip so a
+    // bad field lands next to the input rather than as one message at the top.
+    const parsed = leadFormSchema.safeParse(form)
+    if (!parsed.success) {
+      setFieldErrors(leadFieldErrors(parsed.error))
+      return
+    }
+
     setBusy(true)
     try {
       await submitLead(supabase(), {
-        ...form,
+        ...parsed.data,
         source,
         page_path: window.location.pathname,
       })
       setSent(true)
     } catch (cause) {
-      // submit_lead's rate-limit message is written for the visitor; show it as-is.
-      setError(cause instanceof Error ? cause.message : 'That could not be sent.')
+      // Only the codes submit_lead raises on purpose are shown; anything else is
+      // a fault, and a raw database message would leak schema and read as a crash.
+      setError(leadErrorMessage(cause))
     } finally {
       setBusy(false)
     }
+  }
+
+  /** Renders a field's message and wires the aria attributes that go with it. */
+  function fieldProps(name: keyof LeadFieldErrors) {
+    const message = fieldErrors[name]
+    return {
+      'aria-invalid': message ? true : undefined,
+      'aria-describedby': message ? `${name}-error` : undefined,
+    } as const
   }
 
   if (sent) {
@@ -82,11 +110,34 @@ export function LeadForm({ source, cta }: { source: Source; cta: string }) {
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block">
           <span className="eyebrow !text-[10px]">Name *</span>
-          <input required className={`${field} mt-2`} value={form.full_name} onChange={set('full_name')} placeholder="Your name" />
+          <input
+            className={`${field} mt-2`}
+            value={form.full_name}
+            onChange={set('full_name')}
+            placeholder="Your name"
+            {...fieldProps('full_name')}
+          />
+          {fieldErrors.full_name ? (
+            <p id="full_name-error" className="mt-1.5 text-xs text-red-300">
+              {fieldErrors.full_name}
+            </p>
+          ) : null}
         </label>
         <label className="block">
           <span className="eyebrow !text-[10px]">Email *</span>
-          <input required type="email" className={`${field} mt-2`} value={form.email} onChange={set('email')} placeholder="you@company.com" />
+          <input
+            type="email"
+            className={`${field} mt-2`}
+            value={form.email}
+            onChange={set('email')}
+            placeholder="you@company.com"
+            {...fieldProps('email')}
+          />
+          {fieldErrors.email ? (
+            <p id="email-error" className="mt-1.5 text-xs text-red-300">
+              {fieldErrors.email}
+            </p>
+          ) : null}
         </label>
         <label className="block">
           <span className="eyebrow !text-[10px]">Phone</span>

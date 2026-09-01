@@ -7,6 +7,7 @@ import { useSiteSettings } from '@/features/site/use-site-settings'
 import { iconByName } from '@/lib/icons'
 import { useReveal } from '@/lib/use-reveal'
 import { useSeo } from '@/lib/use-seo'
+import { QueryState } from './query-state'
 import { LeadForm } from './lead-form'
 import { PageHero, SiteLayout } from './site-layout'
 
@@ -99,6 +100,14 @@ export function ServicesPage() {
         lead="Web, mobile, custom software, SaaS platforms, AI systems and the marketing that fills them."
       />
       <section>
+        <QueryState
+          isPending={services.isPending}
+          error={services.error}
+          isEmpty={list.length === 0}
+          onRetry={() => void services.refetch()}
+          emptyTitle="No services published yet"
+          emptyHint="They will appear here once added in the content editor."
+        >
         <div className="mx-auto grid w-full max-w-7xl gap-5 px-6 py-20 md:grid-cols-2 lg:grid-cols-3">
           {list.map((s, i) => {
             const Icon = iconByName(s.icon)
@@ -119,6 +128,7 @@ export function ServicesPage() {
             )
           })}
         </div>
+        </QueryState>
       </section>
     </SiteLayout>
   )
@@ -241,6 +251,14 @@ export function IndustriesPage() {
         lead="Sector knowledge means fewer discovery cycles and fewer wrong assumptions baked into the build."
       />
       <section>
+        <QueryState
+          isPending={industries.isPending}
+          error={industries.error}
+          isEmpty={list.length === 0}
+          onRetry={() => void industries.refetch()}
+          emptyTitle="No industries published yet"
+          emptyHint="They will appear here once added in the content editor."
+        >
         <div className="mx-auto grid w-full max-w-7xl gap-5 px-6 py-20 sm:grid-cols-2 lg:grid-cols-3">
           {list.map((n, i) => {
             const Icon = iconByName(n.icon)
@@ -253,6 +271,7 @@ export function IndustriesPage() {
             )
           })}
         </div>
+        </QueryState>
       </section>
     </SiteLayout>
   )
@@ -274,6 +293,14 @@ export function ProductsPage() {
         lead="Five platforms under the IIPL name, on one account."
       />
       <section>
+        <QueryState
+          isPending={modules.isPending}
+          error={modules.error}
+          isEmpty={list.length === 0}
+          onRetry={() => void modules.refetch()}
+          emptyTitle="No products listed yet"
+          emptyHint="Products appear here once published."
+        >
         <div className="mx-auto grid w-full max-w-7xl gap-5 px-6 py-20 md:grid-cols-2 lg:grid-cols-3">
           {list.map((m, i) => {
             const Icon = iconByName(m.icon)
@@ -323,6 +350,7 @@ export function ProductsPage() {
             )
           })}
         </div>
+        </QueryState>
       </section>
     </SiteLayout>
   )

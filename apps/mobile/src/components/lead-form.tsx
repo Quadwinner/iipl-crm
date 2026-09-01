@@ -1,6 +1,12 @@
 import { useState } from 'react'
 import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import { BUDGET_RANGES, type LeadSource } from '@itoby/shared/site'
+import {
+  leadErrorMessage,
+  leadFieldErrors,
+  leadFormSchema,
+  type LeadFieldErrors,
+} from '@itoby/shared/validation'
 import { Button, Card } from './ui'
 import { useServices, useSubmitLead } from '../features/site'
 import { theme } from '../theme/theme'
@@ -18,6 +24,7 @@ export function LeadForm({ source, cta }: { source: LeadSource; cta: string }) {
   const submit = useSubmitLead()
   const [sent, setSent] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<LeadFieldErrors>({})
   const [form, setForm] = useState({
     full_name: '',
     email: '',
@@ -33,11 +40,22 @@ export function LeadForm({ source, cta }: { source: LeadSource; cta: string }) {
 
   async function send() {
     setError(null)
+    setFieldErrors({})
+
+    // The same bounds submit_lead enforces, checked here so a bad field lands
+    // next to its input instead of costing a round trip.
+    const parsed = leadFormSchema.safeParse(form)
+    if (!parsed.success) {
+      setFieldErrors(leadFieldErrors(parsed.error))
+      return
+    }
+
     try {
-      await submit.mutateAsync({ ...form, source })
+      await submit.mutateAsync({ ...parsed.data, source })
       setSent(true)
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'That could not be sent.')
+      // Only the codes submit_lead raises deliberately reach the visitor.
+      setError(leadErrorMessage(cause))
     }
   }
 
@@ -52,19 +70,24 @@ export function LeadForm({ source, cta }: { source: LeadSource; cta: string }) {
     )
   }
 
-  const valid = form.full_name.trim().length > 0 && form.email.trim().includes('@')
-
   return (
     <ScrollView keyboardShouldPersistTaps="handled">
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
-      <Field label="Name *" value={form.full_name} onChange={set('full_name')} placeholder="Your name" />
+      <Field
+        label="Name *"
+        value={form.full_name}
+        onChange={set('full_name')}
+        placeholder="Your name"
+        error={fieldErrors.full_name}
+      />
       <Field
         label="Email *"
         value={form.email}
         onChange={set('email')}
         placeholder="you@company.com"
         keyboardType="email-address"
+        error={fieldErrors.email}
       />
       <Field label="Phone" value={form.phone} onChange={set('phone')} keyboardType="phone-pad" />
       <Field label="Company" value={form.company} onChange={set('company')} />
@@ -91,14 +114,7 @@ export function LeadForm({ source, cta }: { source: LeadSource; cta: string }) {
       />
 
       <View style={styles.action}>
-        <Button
-          label={cta}
-          busy={submit.isPending}
-          onPress={() => {
-            if (valid) void send()
-            else setError('Add your name and a valid email first.')
-          }}
-        />
+        <Button label={cta} busy={submit.isPending} onPress={() => void send()} />
       </View>
     </ScrollView>
   )
@@ -111,6 +127,7 @@ function Field({
   placeholder,
   multiline,
   keyboardType,
+  error,
 }: {
   label: string
   value: string
@@ -118,12 +135,13 @@ function Field({
   placeholder?: string
   multiline?: boolean
   keyboardType?: 'email-address' | 'phone-pad'
+  error?: string
 }) {
   return (
     <View style={styles.field}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
-        style={[styles.input, multiline && styles.inputMultiline]}
+        style={[styles.input, multiline && styles.inputMultiline, error && styles.inputError]}
         value={value}
         onChangeText={onChange}
         placeholder={placeholder}
@@ -132,6 +150,7 @@ function Field({
         keyboardType={keyboardType}
         autoCapitalize={keyboardType === 'email-address' ? 'none' : 'sentences'}
       />
+      {error ? <Text style={styles.fieldError}>{error}</Text> : null}
     </View>
   )
 }
@@ -184,6 +203,8 @@ const styles = StyleSheet.create({
     paddingVertical: theme.space(3),
   },
   inputMultiline: { minHeight: 110, textAlignVertical: 'top' },
+  inputError: { borderColor: theme.color.danger },
+  fieldError: { color: theme.color.danger, fontSize: 12, marginTop: theme.space(1) },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: theme.space(2) },
   chip: {
     borderColor: theme.color.border,
