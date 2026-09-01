@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Animated, Easing, StyleSheet, Text, View } from 'react-native'
-import { ArrowDown } from 'lucide-react-native'
+import { ChevronDown } from 'lucide-react-native'
 import type { ProcessStep } from '@itoby/shared/site'
 import { Enter } from '../../components/motion'
 import { SectionHeader } from '../../components/section'
@@ -19,10 +19,21 @@ const PULSE = 60
  * through the steps in the order they happen.
  */
 export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
-  // The rail runs between the first and last nodes, not the height of the
-  // container: the last step still has text below its node, and a rail measured
-  // from the container would run past the sequence into empty space.
-  const [railHeight, setRailHeight] = useState(0)
+  /**
+   * Where each node sits, so the rail can run from the first to the last and
+   * stop there. Measured rather than assumed: the steps are different heights.
+   *
+   * A trailing arrow below the last node does not work — that step's text runs
+   * on beneath it, so the arrow lands in the gutter beside the paragraph and
+   * reads as the rail carrying on past the end. The direction is shown between
+   * the steps instead, where it is doing real work, and the sequence simply
+   * stops at the last node.
+   */
+  const [nodeTops, setNodeTops] = useState<number[]>([])
+
+  const first = nodeTops[0] ?? 0
+  const last = nodeTops.length === steps.length ? (nodeTops[steps.length - 1] ?? 0) : 0
+  const railHeight = Math.max(0, last - first)
 
   // Height rather than scaleY: React Native has no transform-origin, so a scaled
   // rail would grow from its middle in both directions.
@@ -72,10 +83,13 @@ export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
       </Enter>
 
       <View style={styles.timeline}>
-        {/* The rail: a dim full-height track, the accent drawn over it, and a
-            brighter segment travelling down once the draw finishes. */}
-        <View style={[styles.rail, { height: railHeight }]} pointerEvents="none" />
-        <Animated.View style={[styles.railFill, { height: draw }]} pointerEvents="none" />
+        {/* The rail: a dim track between the first and last nodes, the accent
+            drawn over it, and a brighter segment travelling down once drawn. */}
+        <View style={[styles.rail, { top: first + NODE / 2, height: railHeight }]} pointerEvents="none" />
+        <Animated.View
+          style={[styles.railFill, { top: first + NODE / 2, height: draw }]}
+          pointerEvents="none"
+        />
         {railHeight > 0 ? (
           <Animated.View
             pointerEvents="none"
@@ -83,6 +97,7 @@ export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
               styles.pulse,
               { height: Math.min(PULSE, railHeight) },
               {
+                top: first + NODE / 2,
                 opacity: pulse.interpolate({
                   inputRange: [0, 0.12, 0.88, 1],
                   outputRange: [0, 1, 1, 0],
@@ -102,27 +117,35 @@ export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
           />
         ) : null}
 
+        {/* One chevron per gap, halfway between the nodes it joins. */}
+        {nodeTops.length === steps.length
+          ? nodeTops.slice(0, -1).map((top, index) => {
+              const next = nodeTops[index + 1] ?? top
+              const middle = (top + NODE + next) / 2 - 8
+              return (
+                <View key={`flow-${index}`} style={[styles.flow, { top: middle }]} pointerEvents="none">
+                  <ChevronDown size={16} color={theme.color.accent} />
+                </View>
+              )
+            })
+          : null}
+
         {steps.map((step, index) => (
           <Step
             key={step.title}
             step={step}
             index={index}
             last={index === steps.length - 1}
-            onNodeY={
-              index === steps.length - 1
-                ? (y) => setRailHeight((current) => (current === y ? current : y))
-                : undefined
+            onNodeY={(y) =>
+              setNodeTops((current) => {
+                if (current[index] === y) return current
+                const next = [...current]
+                next[index] = y
+                return next
+              })
             }
           />
         ))}
-
-        {/* Below the last node, not at its centre — `railHeight` is the node's
-            top edge, so adding half its height puts the arrow inside it. */}
-        {railHeight > 0 ? (
-          <View style={[styles.tail, { top: railHeight + NODE + 6 }]} pointerEvents="none">
-            <ArrowDown size={16} color={theme.color.accent} />
-          </View>
-        ) : null}
       </View>
     </View>
   )
@@ -208,14 +231,12 @@ const styles = StyleSheet.create({
   rail: {
     position: 'absolute',
     left: RAIL_X,
-    top: NODE / 2,
     width: 2,
     backgroundColor: theme.color.border,
   },
   railFill: {
     position: 'absolute',
     left: RAIL_X,
-    top: NODE / 2,
     width: 2,
     backgroundColor: theme.color.accent,
     opacity: 0.45,
@@ -223,7 +244,6 @@ const styles = StyleSheet.create({
   pulse: {
     position: 'absolute',
     left: RAIL_X - 1,
-    top: NODE / 2,
     width: 4,
     borderRadius: 2,
     backgroundColor: theme.color.accent,
@@ -243,5 +263,10 @@ const styles = StyleSheet.create({
   stepBody: { flex: 1, paddingTop: theme.space(1) },
   stepTitle: { color: theme.color.text, fontSize: 17, fontWeight: '800', letterSpacing: -0.3 },
   stepText: { color: theme.color.muted, fontSize: 14, lineHeight: 22, marginTop: theme.space(2) },
-  tail: { position: 'absolute', left: RAIL_X - 7 },
+  flow: {
+    position: 'absolute',
+    left: RAIL_X - 7,
+    backgroundColor: theme.color.bg,
+    paddingVertical: 2,
+  },
 })
