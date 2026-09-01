@@ -5,7 +5,7 @@ import { Button } from '@itoby/ui'
 import { useAuth } from '@rental-admin/auth/use-auth'
 import { unlockBodyScroll } from '@rental-admin/lib/scroll-lock'
 import { cn } from '@rental-admin/lib/utils'
-import { navItemForPath, navItemsForRole, ROLE_LABELS } from '@rental-admin/lib/navigation'
+import { NAV_GROUPS, navItemForPath, navItemsForRole, ROLE_LABELS } from '@rental-admin/lib/navigation'
 
 export function AppShell() {
   const { email, role, signOut } = useAuth()
@@ -46,27 +46,43 @@ export function AppShell() {
               <p className="text-sidebar-foreground/70 text-xs">Office rentals CRM</p>
             </div>
           </div>
-          <ul className="flex flex-col gap-0.5">
-            {items.map(({ to, label, icon: Icon }) => (
-              <li key={to}>
-                <NavLink
-                  to={to}
-                  onClick={() => setNavOpen(false)}
-                  className={({ isActive }) =>
-                    cn(
-                      'focus-visible:ring-sidebar-ring flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm outline-none transition-colors focus-visible:ring-[3px]',
-                      isActive
-                        ? 'bg-sidebar-primary text-sidebar-primary-foreground font-medium shadow-sm'
-                        : 'text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
-                    )
-                  }
-                >
-                  <Icon aria-hidden="true" className="size-4" />
-                  {label}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
+          {/* Grouped so the rental product reads as one module rather than
+              eleven peers of Leads and Site content. A group with nothing the
+              role may see renders nothing at all. */}
+          {NAV_GROUPS.map((group) => {
+            const groupItems = items.filter((i) => i.group === group.id)
+            if (!groupItems.length) return null
+            return (
+              <div key={group.id} className="flex flex-col gap-1.5">
+                {group.label ? (
+                  <p className="text-sidebar-foreground/45 px-2.5 text-[0.6875rem] font-semibold tracking-[0.14em] uppercase">
+                    {group.label}
+                  </p>
+                ) : null}
+                <ul className="flex flex-col gap-0.5">
+                  {groupItems.map(({ to, label, icon: Icon }) => (
+                    <li key={to}>
+                      <NavLink
+                        to={to}
+                        onClick={() => setNavOpen(false)}
+                        className={({ isActive }) =>
+                          cn(
+                            'focus-visible:ring-sidebar-ring flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm outline-none transition-colors focus-visible:ring-[3px]',
+                            isActive
+                              ? 'bg-sidebar-primary text-sidebar-primary-foreground font-medium shadow-sm'
+                              : 'text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+                          )
+                        }
+                      >
+                        <Icon aria-hidden="true" className="size-4" />
+                        {label}
+                      </NavLink>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          })}
         </nav>
       </aside>
 

@@ -21,12 +21,22 @@ import {
 export const ADMIN_PORTAL_ROLES = ['ADMINISTRATOR', 'MAINTENANCE_STAFF'] as const
 export type AdminPortalRole = (typeof ADMIN_PORTAL_ROLES)[number]
 
+/** Sidebar sections. Everything in RENTAL belongs to the rental product; the
+ *  rest are workspace-wide and sit outside it. */
+export type NavGroup = 'RENTAL' | 'WORKSPACE'
+
 export interface NavItem {
   to: string
   label: string
   icon: LucideIcon
   roles: readonly Role[]
+  group: NavGroup
 }
+
+export const NAV_GROUPS: { id: NavGroup; label: string | null }[] = [
+  { id: 'RENTAL', label: 'Rental' },
+  { id: 'WORKSPACE', label: 'Workspace' },
+]
 
 const ALL_STAFF: readonly Role[] = ADMIN_PORTAL_ROLES
 const ADMIN_ONLY: readonly Role[] = ['ADMINISTRATOR']
@@ -36,20 +46,20 @@ const ADMIN_ONLY: readonly Role[] = ['ADMINISTRATOR']
  * every other area is Administrator-only.
  */
 export const NAV_ITEMS: readonly NavItem[] = [
-  { to: '/app/rental/dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ALL_STAFF },
-  { to: '/app/rental/buildings', label: 'Buildings', icon: LandPlot, roles: ADMIN_ONLY },
-  { to: '/app/rental/units', label: 'Office units', icon: Building2, roles: ADMIN_ONLY },
-  { to: '/app/rental/allotments', label: 'Allotments', icon: Handshake, roles: ADMIN_ONLY },
-  { to: '/app/rental/tenants', label: 'Tenants', icon: Users, roles: ADMIN_ONLY },
-  { to: '/app/rental/staff', label: 'Maintenance staff', icon: HardHat, roles: ADMIN_ONLY },
-  { to: '/app/rental/complaints', label: 'Complaints', icon: Wrench, roles: ALL_STAFF },
-  { to: '/app/rental/billing', label: 'Billing', icon: IndianRupee, roles: ADMIN_ONLY },
-  { to: '/app/rental/expenses', label: 'Expenses', icon: Wallet, roles: ADMIN_ONLY },
-  { to: '/app/rental/payments', label: 'Payments', icon: CreditCard, roles: ADMIN_ONLY },
-  { to: '/app/rental/documents', label: 'Documents', icon: FolderOpen, roles: ADMIN_ONLY },
-  { to: '/app/rental/audit', label: 'Audit log', icon: ScrollText, roles: ADMIN_ONLY },
-  { to: '/app/rental/settings', label: 'Settings', icon: Settings, roles: ADMIN_ONLY },
-  { to: '/app/rental/profile', label: 'Your profile', icon: UserCog, roles: ALL_STAFF },
+  { to: '/app/rental/dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ALL_STAFF, group: 'RENTAL' },
+  { to: '/app/rental/buildings', label: 'Buildings', icon: LandPlot, roles: ADMIN_ONLY, group: 'RENTAL' },
+  { to: '/app/rental/units', label: 'Office units', icon: Building2, roles: ADMIN_ONLY, group: 'RENTAL' },
+  { to: '/app/rental/allotments', label: 'Allotments', icon: Handshake, roles: ADMIN_ONLY, group: 'RENTAL' },
+  { to: '/app/rental/tenants', label: 'Tenants', icon: Users, roles: ADMIN_ONLY, group: 'RENTAL' },
+  { to: '/app/rental/staff', label: 'Maintenance staff', icon: HardHat, roles: ADMIN_ONLY, group: 'RENTAL' },
+  { to: '/app/rental/complaints', label: 'Complaints', icon: Wrench, roles: ALL_STAFF, group: 'RENTAL' },
+  { to: '/app/rental/billing', label: 'Billing', icon: IndianRupee, roles: ADMIN_ONLY, group: 'RENTAL' },
+  { to: '/app/rental/expenses', label: 'Expenses', icon: Wallet, roles: ADMIN_ONLY, group: 'RENTAL' },
+  { to: '/app/rental/payments', label: 'Payments', icon: CreditCard, roles: ADMIN_ONLY, group: 'RENTAL' },
+  { to: '/app/rental/documents', label: 'Documents', icon: FolderOpen, roles: ADMIN_ONLY, group: 'RENTAL' },
+  { to: '/app/rental/audit', label: 'Audit log', icon: ScrollText, roles: ADMIN_ONLY, group: 'WORKSPACE' },
+  { to: '/app/rental/settings', label: 'Settings', icon: Settings, roles: ADMIN_ONLY, group: 'WORKSPACE' },
+  { to: '/app/rental/profile', label: 'Your profile', icon: UserCog, roles: ALL_STAFF, group: 'WORKSPACE' },
 ]
 
 export const ROLE_LABELS: Record<Role, string> = {
