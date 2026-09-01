@@ -154,11 +154,15 @@ function Step({
   }, [lit, index])
 
   return (
-    <Enter delay={200 + index * 120} distance={12}>
-      <View
-        style={[styles.step, last && styles.stepLast]}
-        onLayout={(event) => onNodeY?.(event.nativeEvent.layout.y)}
-      >
+    <Enter
+      delay={200 + index * 120}
+      distance={12}
+      // The wrapper is what the timeline lays out, so its y is the node's
+      // position on the rail. Measuring the inner View instead always reports 0,
+      // because that View is positioned relative to this wrapper.
+      onLayout={(event) => onNodeY?.(event.nativeEvent.layout.y)}
+    >
+      <View style={[styles.step, last && styles.stepLast]}>
         <Animated.View
           style={[
             styles.node,

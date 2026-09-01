@@ -1,5 +1,5 @@
 import { useEffect, useRef, type ReactNode } from 'react'
-import { Animated, Easing } from 'react-native'
+import { Animated, Easing, type LayoutChangeEvent } from 'react-native'
 
 /**
  * Fades and lifts its children in, `delay` ms after mount.
@@ -10,10 +10,13 @@ import { Animated, Easing } from 'react-native'
 export function Enter({
   delay = 0,
   distance = 18,
+  onLayout,
   children,
 }: {
   delay?: number
   distance?: number
+  /** Fires on the animated wrapper, which is the child the parent lays out. */
+  onLayout?: (event: LayoutChangeEvent) => void
   children: ReactNode
 }) {
   const progress = useRef(new Animated.Value(0)).current
@@ -30,6 +33,7 @@ export function Enter({
 
   return (
     <Animated.View
+      onLayout={onLayout}
       style={{
         opacity: progress,
         transform: [
