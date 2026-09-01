@@ -83,8 +83,22 @@ CI while passing locally, because this filesystem makes pnpm fall back to
 copying and the local tree comes out flat. `node-linker=hoisted` in the root
 `.npmrc` keeps both the same.
 
-**The dev server needs port 8081 open.** `sudo ufw allow 8081/tcp`, or the phone
+**The dev server needs its port open.** `sudo ufw allow 8081/tcp`, or the phone
 reports "Failed to download remote update" with no clue that a firewall is why.
+The same message appears when the phone has simply dropped off the Wi-Fi, so
+`ping <phone-ip>` before changing anything — every check run on this machine
+loops back and passes regardless.
+
+**Start with `--offline` when Expo's API is down.** `expo start` calls home to
+sign the manifest for an EAS-linked project. When that call fails the manifest
+endpoint returns 500 with a JSON parse error, and the phone again reports
+"Failed to download remote update":
+
+```bash
+pnpm --filter @itoby/mobile exec expo start --offline
+```
+
+Offline mode only skips the signing; nothing about local development needs it.
 
 ## Build
 
