@@ -1,31 +1,43 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { Building2, FileText, MessageSquare, MoreHorizontal } from 'lucide-react-native'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import { useNavigation, useRoute } from '@react-navigation/native'
+import {
+  Building2,
+  FileText,
+  MessageSquare,
+  MoreHorizontal,
+} from 'lucide-react-native'
+import type { InvoiceRow } from '@itoby/shared/owner'
 import { useAuth } from '../../auth/auth'
 import { NoAccessScreen } from '../../screens/no-access'
 import { ComplaintsScreen } from './complaints'
+import { ComplaintDetailScreen } from './complaint-detail'
+import { DocumentsScreen } from './documents'
 import { InvoicesScreen } from './invoices'
 import { LeasesScreen } from './leases'
 import { MoreScreen } from './more'
+import { NewComplaintScreen } from './new-complaint'
+import { PayInvoiceScreen } from './pay-invoice'
+import { ProfileScreen } from './profile'
+import { ReceiptsScreen } from './receipts'
+import { RemindersScreen } from './reminders'
 import { theme } from '../../theme/theme'
 
 const Tab = createBottomTabNavigator()
+const Stack = createNativeStackNavigator()
 
-/**
- * IIPL Renting, mounted inside the superapp.
- *
- * The role branch happens before any owner screen renders. Every query in here
- * is owner-scoped by RLS resolved from the session, so an administrator would
- * see empty lists rather than an error — saying so is more useful than four
- * blank tabs. The web module has the same branch for a sharper reason: its owner
- * auth provider signs out non-owner sessions.
- */
-export function RentalModule() {
-  const { role } = useAuth()
-  if (role !== 'OFFICE_OWNER') return <NoAccessScreen />
+const screenOptions = {
+  headerStyle: { backgroundColor: theme.color.bg },
+  headerTitleStyle: { color: theme.color.text },
+  headerTintColor: theme.color.accent,
+  headerShadowVisible: false,
+} as const
 
+function RentalTabs() {
   return (
     <Tab.Navigator
       screenOptions={{
+        ...screenOptions,
         headerShown: false,
         tabBarActiveTintColor: theme.color.accent,
         tabBarInactiveTintColor: theme.color.muted,
@@ -53,5 +65,52 @@ export function RentalModule() {
         options={{ tabBarIcon: ({ color, size }) => <MoreHorizontal color={color} size={size} /> }}
       />
     </Tab.Navigator>
+  )
+}
+
+/** Payment is pushed rather than shown in a sheet: the WebView needs a full screen. */
+function PayInvoiceRoute() {
+  const navigation = useNavigation()
+  const route = useRoute<{ key: string; name: string; params: { invoice: InvoiceRow } }>()
+  return <PayInvoiceScreen invoice={route.params.invoice} onDone={() => navigation.goBack()} />
+}
+
+function NewComplaintRoute() {
+  const navigation = useNavigation()
+  return <NewComplaintScreen onDone={() => navigation.goBack()} />
+}
+
+/**
+ * IIPL Renting, mounted inside the superapp.
+ *
+ * The role branch happens before any owner screen renders. Every query in here
+ * is owner-scoped by RLS resolved from the session, so an administrator would
+ * see empty lists rather than an error — saying so is more useful than four
+ * blank tabs. The web module has the same branch for a sharper reason: its owner
+ * auth provider signs out non-owner sessions.
+ */
+export function RentalModule() {
+  const { role } = useAuth()
+  if (role !== 'OFFICE_OWNER') return <NoAccessScreen />
+
+  return (
+    <Stack.Navigator screenOptions={screenOptions}>
+      <Stack.Screen name="RentalTabs" component={RentalTabs} options={{ headerShown: false }} />
+      <Stack.Screen name="PayInvoice" component={PayInvoiceRoute} options={{ title: 'Pay invoice' }} />
+      <Stack.Screen
+        name="NewComplaint"
+        component={NewComplaintRoute}
+        options={{ title: 'Raise a complaint' }}
+      />
+      <Stack.Screen
+        name="ComplaintDetail"
+        component={ComplaintDetailScreen}
+        options={{ title: 'Complaint' }}
+      />
+      <Stack.Screen name="Receipts" component={ReceiptsScreen} options={{ title: 'Receipts' }} />
+      <Stack.Screen name="Documents" component={DocumentsScreen} options={{ title: 'Documents' }} />
+      <Stack.Screen name="Reminders" component={RemindersScreen} options={{ title: 'Reminders' }} />
+      <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Your profile' }} />
+    </Stack.Navigator>
   )
 }

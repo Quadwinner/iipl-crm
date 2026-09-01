@@ -1,72 +1,103 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
-import { formatCurrency, formatDate, formatFileSize } from '@itoby/shared/owner'
-import { Button, Card, Empty, ErrorState, Field, Loading } from '../../components/ui'
-import { useDocuments, useReceipts } from '../../features/queries'
+import { useNavigation } from '@react-navigation/native'
+import { ChevronRight } from 'lucide-react-native'
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { formatCurrency } from '@itoby/shared/owner'
+import { Card, Field } from '../../components/ui'
+import { useInvoices, useReminders } from '../../features/queries'
 import { useAuth } from '../../auth/auth'
 import { theme } from '../../theme/theme'
 
+/**
+ * The rental module's index of everything that does not need a tab of its own.
+ * Counts come from queries the other tabs already warmed, so this costs nothing
+ * extra to render.
+ */
 export function MoreScreen() {
-  const { email, role, signOut } = useAuth()
-  const receipts = useReceipts()
-  const documents = useDocuments()
+  const navigation = useNavigation<any>()
+  const { email } = useAuth()
+  const invoices = useInvoices()
+  const reminders = useReminders()
+
+  const outstanding = (invoices.data ?? []).reduce(
+    (sum, invoice) => sum + invoice.outstanding_amount,
+    0,
+  )
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
-      <Text style={styles.heading}>Account</Text>
       <Card>
-        <Field label="Email" value={email ?? '—'} />
-        <Field label="Role" value={role ?? '—'} />
+        <Field label="Signed in" value={email ?? '—'} />
+        <Field label="Outstanding" value={formatCurrency(outstanding)} />
       </Card>
 
-      <Text style={styles.heading}>Receipts</Text>
-      {receipts.isPending ? <Loading /> : null}
-      {receipts.error ? (
-        <ErrorState error={receipts.error} onRetry={() => void receipts.refetch()} />
-      ) : null}
-      {receipts.data?.length === 0 ? <Empty title="No receipts yet" /> : null}
-      {(receipts.data ?? []).slice(0, 10).map((receipt) => (
-        <Card key={receipt.id}>
-          <Text style={styles.title}>{receipt.invoice_period}</Text>
-          <Field label="Unit" value={receipt.office_unit_code} />
-          <Field label="Paid" value={formatCurrency(receipt.amount_paid)} />
-          <Field label="On" value={formatDate(receipt.completed_at)} />
-        </Card>
-      ))}
-
-      <Text style={styles.heading}>Documents</Text>
-      {documents.isPending ? <Loading /> : null}
-      {documents.error ? (
-        <ErrorState error={documents.error} onRetry={() => void documents.refetch()} />
-      ) : null}
-      {documents.data?.length === 0 ? <Empty title="No documents yet" /> : null}
-      {(documents.data ?? []).map((document) => (
-        <Card key={document.id}>
-          <Text style={styles.title}>{document.file_name}</Text>
-          <Field label="Size" value={formatFileSize(document.size_bytes)} />
-          {document.unit_code ? <Field label="Unit" value={document.unit_code} /> : null}
-          <Field label="Added" value={formatDate(document.created_at)} />
-        </Card>
-      ))}
-
-      <View style={styles.signOut}>
-        <Button label="Sign out" variant="ghost" onPress={() => void signOut()} />
+      <View style={styles.group}>
+        <Row label="Receipts" onPress={() => navigation.navigate('Receipts')} />
+        <Row label="Documents" onPress={() => navigation.navigate('Documents')} />
+        <Row
+          label="Reminders"
+          badge={reminders.data?.length ? String(reminders.data.length) : undefined}
+          onPress={() => navigation.navigate('Reminders')}
+        />
+        <Row label="Your profile" onPress={() => navigation.navigate('Profile')} />
       </View>
     </ScrollView>
+  )
+}
+
+function Row({
+  label,
+  badge,
+  onPress,
+}: {
+  label: string
+  badge?: string
+  onPress: () => void
+}) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      onPress={onPress}
+      style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
+    >
+      <Text style={styles.rowLabel}>{label}</Text>
+      <View style={styles.rowRight}>
+        {badge ? <Text style={styles.badge}>{badge}</Text> : null}
+        <ChevronRight size={18} color={theme.color.muted} />
+      </View>
+    </Pressable>
   )
 }
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.color.bg },
   content: { padding: theme.space(4), paddingBottom: theme.space(10) },
-  heading: {
-    color: theme.color.text,
-    fontSize: 13,
-    fontWeight: '700',
-    letterSpacing: 0.6,
-    textTransform: 'uppercase',
-    marginBottom: theme.space(3),
-    marginTop: theme.space(4),
+  group: {
+    backgroundColor: theme.color.surface,
+    borderColor: theme.color.border,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: theme.radius.md,
+    overflow: 'hidden',
   },
-  title: { color: theme.color.text, fontSize: 15, fontWeight: '700', marginBottom: theme.space(2) },
-  signOut: { marginTop: theme.space(8) },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: theme.space(4),
+    paddingVertical: theme.space(4),
+    borderBottomColor: theme.color.border,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  rowPressed: { backgroundColor: theme.color.surfaceAlt },
+  rowLabel: { color: theme.color.text, fontSize: 15 },
+  rowRight: { flexDirection: 'row', alignItems: 'center', gap: theme.space(2) },
+  badge: {
+    backgroundColor: theme.color.accent,
+    color: theme.color.accentText,
+    fontSize: 11,
+    fontWeight: '800',
+    borderRadius: theme.radius.pill,
+    paddingHorizontal: theme.space(2),
+    paddingVertical: 2,
+    overflow: 'hidden',
+  },
 })

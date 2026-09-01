@@ -1,10 +1,12 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native'
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
 import { formatCurrency, formatDate } from '@itoby/shared/owner'
 import { Badge, Card, Empty, ErrorState, Field, Loading } from '../../components/ui'
 import { useInvoices } from '../../features/queries'
 import { theme } from '../../theme/theme'
 
 export function InvoicesScreen() {
+  const navigation = useNavigation<any>()
   const invoices = useInvoices()
 
   if (invoices.isPending) return <Loading />
@@ -22,6 +24,12 @@ export function InvoicesScreen() {
       onRefresh={() => void invoices.refetch()}
       ListEmptyComponent={<Empty title="No invoices yet" hint="Bills appear here once raised." />}
       renderItem={({ item }) => (
+        <Pressable
+          accessibilityRole={item.outstanding_amount > 0 ? 'button' : undefined}
+          disabled={item.outstanding_amount <= 0}
+          onPress={() => navigation.navigate('PayInvoice', { invoice: item })}
+          style={({ pressed }) => (pressed ? { opacity: 0.7 } : undefined)}
+        >
         <Card>
           <View style={styles.header}>
             <Text style={styles.title}>{item.billing_cycle_key}</Text>
@@ -39,7 +47,9 @@ export function InvoicesScreen() {
               </Text>
             </View>
           ) : null}
+          {item.outstanding_amount > 0 ? <Text style={styles.payHint}>Tap to pay</Text> : null}
         </Card>
+        </Pressable>
       )}
     />
   )
@@ -66,4 +76,5 @@ const styles = StyleSheet.create({
   },
   outstandingLabel: { color: theme.color.muted, fontSize: 13 },
   outstandingValue: { color: theme.color.accent, fontSize: 17, fontWeight: '800' },
+  payHint: { color: theme.color.accent, fontSize: 12, marginTop: theme.space(3), fontWeight: '600' },
 })

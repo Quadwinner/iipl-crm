@@ -1,6 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import {
   complaintKeys,
+  getComplaintHistory,
+  getOwnerProfile,
+  listAllottedUnits,
+  listComplaintCategories,
+  profileKeys,
   documentKeys,
   invoiceKeys,
   leaseKeys,
@@ -39,6 +44,36 @@ export function useComplaints() {
 
 export function useDocuments() {
   return useQuery({ queryKey: documentKeys.all, queryFn: () => listOwnerDocuments(supabase()) })
+}
+
+export function useComplaintHistory(complaintId: string | null) {
+  return useQuery({
+    queryKey: complaintKeys.events(complaintId ?? 'none'),
+    enabled: complaintId !== null,
+    queryFn: () => getComplaintHistory(supabase(), complaintId as string),
+  })
+}
+
+export function useComplaintCategories() {
+  return useQuery({
+    queryKey: complaintKeys.categories,
+    staleTime: 5 * 60_000,
+    queryFn: () => listComplaintCategories(supabase()),
+  })
+}
+
+export function useAllottedUnits() {
+  return useQuery({
+    queryKey: complaintKeys.allottedUnits,
+    queryFn: () => listAllottedUnits(supabase()),
+  })
+}
+
+export function useOwnerProfile() {
+  return useQuery({
+    queryKey: profileKeys.all,
+    queryFn: () => getOwnerProfile(supabase()),
+  })
 }
 
 export function useReminders() {
