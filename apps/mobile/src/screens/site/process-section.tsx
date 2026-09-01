@@ -116,10 +116,10 @@ export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
           />
         ))}
 
-        {/* The arrow closes the sequence at the last node rather than floating
-            below the section. */}
+        {/* Below the last node, not at its centre — `railHeight` is the node's
+            top edge, so adding half its height puts the arrow inside it. */}
         {railHeight > 0 ? (
-          <View style={[styles.tail, { top: railHeight + NODE / 2 + 2 }]} pointerEvents="none">
+          <View style={[styles.tail, { top: railHeight + NODE + 6 }]} pointerEvents="none">
             <ArrowDown size={16} color={theme.color.accent} />
           </View>
         ) : null}
