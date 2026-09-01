@@ -7,6 +7,17 @@ import { AdminShell } from '@/routes/admin/admin-shell'
 import { ContentPage } from '@/routes/admin/content-page'
 import { LeadsPage } from '@/routes/admin/leads-page'
 import { HomePage } from '@/routes/home-page'
+import {
+  AboutPage,
+  BlogPage,
+  ContactPage,
+  IndustriesPage,
+  PortfolioPage,
+  ProductsPage,
+  QuotePage,
+  ServiceDetailPage,
+  ServicesPage,
+} from '@/routes/site/pages'
 import { LauncherPage } from '@/routes/launcher-page'
 import { LoginPage } from '@/routes/login-page'
 import { ModuleComingSoonPage } from '@/routes/module-coming-soon'
@@ -33,6 +44,16 @@ export function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/services" element={<ServicesPage />} />
+      <Route path="/services/:slug" element={<ServiceDetailPage />} />
+      <Route path="/products" element={<ProductsPage />} />
+      <Route path="/industries" element={<IndustriesPage />} />
+      <Route path="/portfolio" element={<PortfolioPage />} />
+      <Route path="/blog" element={<BlogPage />} />
+      <Route path="/contact" element={<ContactPage />} />
+      <Route path="/request-quote" element={<QuotePage />} />
+      <Route path="/quote" element={<Navigate to="/request-quote" replace />} />
       <Route path="/login" element={<LoginPage />} />
 
       <Route element={<ProtectedRoute />}>

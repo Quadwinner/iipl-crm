@@ -49,15 +49,6 @@
 @keyframes drift-a { to { transform: translate3d(8rem, 5rem, 0) scale(1.16); } }
 @keyframes drift-b { to { transform: translate3d(-7rem, 6rem, 0) scale(1.1); } }
 
-.mesh {
-  position: absolute; inset: 0; z-index: -1;
-  background-image:
-    linear-gradient(var(--line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--line) 1px, transparent 1px);
-  background-size: 72px 72px;
-  mask-image: radial-gradient(ellipse 80% 65% at 50% 30%, #000 35%, transparent 100%);
-}
-
 /* ── Entrance ────────────────────────────────────────────────────────────── */
 .up { animation: up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: var(--d, 0ms); }
 @keyframes up { from { opacity: 0; transform: translate3d(0, 1.5rem, 0); } to { opacity: 1; transform: none; } }
@@ -67,7 +58,7 @@
 @keyframes clip-up { from { transform: translate3d(0, 110%, 0); } to { transform: none; } }
 
 /* Rotating word in the headline. */
-.rotor { display: inline-grid; vertical-align: bottom; }
+.rotor { display: inline-grid; vertical-align: bottom; overflow: hidden; padding-bottom: 0.08em; }
 .rotor > span {
   grid-area: 1 / 1;
   color: var(--lime);

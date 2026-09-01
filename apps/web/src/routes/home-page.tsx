@@ -6,6 +6,7 @@ import { useIndustries, useServices } from '@/features/site/use-content'
 import { useSiteSettings } from '@/features/site/use-site-settings'
 import { iconByName } from '@/lib/icons'
 import { useReveal } from '@/lib/use-reveal'
+import { SiteFooter, SiteNav } from './site/site-layout'
 import './home-page.css'
 
 const ROTATING = ['Websites', 'Apps', 'SaaS', 'AI Agents']
@@ -17,41 +18,11 @@ function asArray<T>(v: unknown): T[] {
   return Array.isArray(v) ? (v as T[]) : []
 }
 
-/* ── Chrome ───────────────────────────────────────────────────────────────── */
-
-function Nav({ company }: { company: string }) {
-  return (
-    <header className="relative z-20 mx-auto flex h-20 w-full max-w-7xl items-center gap-3 px-6">
-      <span className="text-[color:var(--ink)] flex size-8 items-center justify-center rounded-lg bg-[color:var(--lime)] text-[11px] font-bold">
-        IT
-      </span>
-      <span className="font-semibold tracking-tight">{company}</span>
-
-      <nav className="ml-auto hidden items-center gap-8 text-sm text-[color:var(--fg-2)] lg:flex">
-        <a href="#services" className="transition-colors hover:text-[color:var(--fg)]">Services</a>
-        <a href="#products" className="transition-colors hover:text-[color:var(--fg)]">Products</a>
-        <a href="#industries" className="transition-colors hover:text-[color:var(--fg)]">Industries</a>
-        <a href="#process" className="transition-colors hover:text-[color:var(--fg)]">Process</a>
-        <a href="#contact" className="transition-colors hover:text-[color:var(--fg)]">Contact</a>
-      </nav>
-
-      <Link
-        to="/login"
-        className="text-[color:var(--ink)] ml-6 rounded-lg bg-[color:var(--lime)] px-5 py-2.5 text-sm font-semibold transition-transform hover:scale-[1.03]"
-      >
-        Sign in
-      </Link>
-    </header>
-  )
-}
-
 /* ── Hero ─────────────────────────────────────────────────────────────────── */
 
 function Hero({ intro, stats }: { intro: string; stats: Stat[] }) {
   return (
     <section className="aura">
-      <div className="mesh" aria-hidden="true" />
-
       <div className="relative mx-auto w-full max-w-7xl px-6 pt-16 pb-24 sm:pt-24 sm:pb-32">
         <p className="eyebrow up" style={{ ['--d' as string]: '60ms' }}>
           Global digital engineering &amp; SaaS lab
@@ -397,11 +368,10 @@ export function HomePage() {
   const company = s?.company_name ?? ''
   const stats = asArray<Stat>(s?.stats)
   const steps = asArray<Step>(s?.process)
-  const socials = (s?.socials ?? {}) as Record<string, string>
 
   return (
     <div className="itoby min-h-svh">
-      <Nav company={company} />
+      <SiteNav company={company} />
       <Hero intro={s?.intro ?? ''} stats={stats} />
 
       {/* The suite, always moving. */}
@@ -433,26 +403,7 @@ export function HomePage() {
         hours={s?.business_hours ?? ''}
       />
 
-      <footer className="border-t border-[color:var(--line)]">
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-6 py-10 text-sm text-[color:var(--fg-2)] sm:flex-row sm:items-center">
-          <span>
-            © {new Date().getFullYear()} {company}
-          </span>
-          <div className="flex flex-wrap gap-x-6 gap-y-2 sm:ml-auto">
-            {Object.entries(socials).map(([k, url]) => (
-              <a
-                key={k}
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="capitalize transition-colors hover:text-[color:var(--fg)]"
-              >
-                {k}
-              </a>
-            ))}
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   )
 }
