@@ -14,7 +14,9 @@
     "./storage": "./src/storage/index.ts",
     "./payments": "./src/payments/index.ts",
     "./reporting": "./src/reporting/index.ts",
-    "./validation": "./src/validation/index.ts"
+    "./validation": "./src/validation/index.ts",
+    "./owner": "./src/owner/index.ts",
+    "./billing": "./src/billing/index.ts"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
