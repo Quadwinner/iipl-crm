@@ -1,0 +1,33 @@
+{
+  "shape": "package",
+  "pkg": "@itoby/ui",
+  "projectId": "67e97c04-78f9-4f5c-bcee-f4cea5a59bb2",
+  "globalName": "ItobyUI",
+  "buildCmd": "pnpm --filter @itoby/ui build",
+  "cssEntry": "dist/styles.css",
+  "extraFonts": [
+    "node_modules/@fontsource-variable/geist/index.css",
+    "node_modules/@fontsource-variable/geist-mono/index.css"
+  ],
+  "overrides": {
+    "AlertDialog": {
+      "cardMode": "single",
+      "primaryStory": "DeactivateTenant"
+    },
+    "Dialog": {
+      "cardMode": "single",
+      "primaryStory": "RecordPayment"
+    },
+    "Sheet": {
+      "cardMode": "single",
+      "primaryStory": "TenantDetail"
+    },
+    "Toaster": {
+      "cardMode": "single",
+      "primaryStory": "Notification"
+    },
+    "Table": {
+      "cardMode": "column"
+    }
+  }
+}

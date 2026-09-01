@@ -32,3 +32,10 @@ supabase/.temp
 
 # Data backups (contain PII — never commit)
 backups/
+
+# design-sync (staged scripts, generated output, machine state)
+.ds-sync/
+ds-bundle/
+.design-sync/.cache/
+.design-sync/learnings/
+.design-sync/node_modules

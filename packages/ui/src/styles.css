@@ -6,14 +6,21 @@
 
      @import '@itoby/ui/styles.css';
 
-   Component styles are Tailwind utilities compiled by the consuming app, so
-   an app's Tailwind content globs must include @itoby/ui's dist.
+   The @source lines below make this sheet self-contained: compiling it alone
+   emits every utility the library's own components use, so @itoby/ui ships
+   real CSS rather than relying on the consumer to scan its source. Consuming
+   apps still declare their own @source for their app-level markup.
    ───────────────────────────────────────────────────────────────────────── */
 
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import '@fontsource-variable/geist';
 @import '@fontsource-variable/geist-mono';
+
+/* Scanned when this sheet is compiled on its own (pnpm --filter @itoby/ui build:css)
+   so dist/styles.css carries the library's utilities, not just its tokens. */
+@source './components';
+@source './lib';
 
 @custom-variant dark (&:is(.dark *));
 
