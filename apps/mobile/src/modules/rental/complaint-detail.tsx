@@ -5,7 +5,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { formatTimestamp } from '@itoby/shared/owner'
 import { Badge, Card, Empty, ErrorState, Field, Loading } from '../../components/ui'
 import { useComplaintHistory } from '../../features/queries'
-import { theme } from '../../theme/theme'
+import { useStyles, type Theme } from '../../theme/theme'
 
 /**
  * One complaint and its status history.
@@ -15,6 +15,7 @@ import { theme } from '../../theme/theme'
  * could not, because owners cannot read staff `profiles` rows.
  */
 export function ComplaintDetailScreen() {
+  const styles = useStyles(makeStyles)
   const route = useRoute<RouteProp<RootParamList, 'ComplaintDetail'>>()
   const complaint = route.params.complaint
   const history = useComplaintHistory(complaint.id)
@@ -60,7 +61,8 @@ export function ComplaintDetailScreen() {
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.color.bg },
   content: { padding: theme.space(5), paddingBottom: theme.space(12) },
   header: {

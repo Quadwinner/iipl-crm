@@ -5,13 +5,14 @@ import { profileKeys, updateOwnerProfile } from '@itoby/shared/owner'
 import { Badge, Button, Card, ErrorState, Field, Loading } from '../../components/ui'
 import { useOwnerProfile } from '../../features/queries'
 import { supabase } from '../../lib/supabase'
-import { theme } from '../../theme/theme'
+import { useStyles, useTheme, type Theme } from '../../theme/theme'
 
 /**
  * The owner's own contact details. `update_owner_profile` resolves the owner
  * from auth.uid(), so no owner id is sent and one owner cannot edit another.
  */
 export function ProfileScreen() {
+  const styles = useStyles(makeStyles)
   const queryClient = useQueryClient()
   const profile = useOwnerProfile()
   const [form, setForm] = useState({ name: '', contact_email: '', phone: '' })
@@ -89,6 +90,8 @@ function Input({
   onChange: (value: string) => void
   keyboardType?: 'email-address' | 'phone-pad'
 }) {
+  const { theme } = useTheme()
+  const styles = useStyles(makeStyles)
   return (
     <View style={styles.field}>
       <Text style={styles.label}>{label}</Text>
@@ -104,7 +107,8 @@ function Input({
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.color.bg },
   content: { padding: theme.space(5), paddingBottom: theme.space(12) },
   badge: { marginTop: theme.space(3) },

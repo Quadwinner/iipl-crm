@@ -9,10 +9,11 @@ import {
   useBillingReport,
   useExpenses,
 } from './queries'
-import { theme } from '../../../theme/theme'
+import { useStyles, useTheme, type Theme } from '../../../theme/theme'
 
 /** Every invoice raised, with the money summed at the top. */
 export function AdminBillingScreen() {
+  const styles = useStyles(makeStyles)
   const billing = useBillingReport()
 
   if (billing.isPending) return <Loading />
@@ -54,6 +55,7 @@ export function AdminBillingScreen() {
 }
 
 export function AdminExpensesScreen() {
+  const styles = useStyles(makeStyles)
   const expenses = useExpenses()
 
   if (expenses.isPending) return <Loading />
@@ -95,6 +97,7 @@ export function AdminExpensesScreen() {
 }
 
 export function AdminAllotmentsScreen() {
+  const styles = useStyles(makeStyles)
   const allotments = useAllotments()
 
   if (allotments.isPending) return <Loading />
@@ -138,6 +141,7 @@ export function AdminAllotmentsScreen() {
  * to manage.
  */
 export function AdminAuditScreen() {
+  const styles = useStyles(makeStyles)
   const audit = useAuditPage()
 
   if (audit.isPending) return <Loading />
@@ -180,6 +184,8 @@ function Tile({
   value: string
   tone?: 'warn' | 'danger'
 }) {
+  const { theme } = useTheme()
+  const styles = useStyles(makeStyles)
   const color =
     tone === 'warn' ? theme.color.warn : tone === 'danger' ? theme.color.danger : theme.color.accent
   return (
@@ -192,7 +198,8 @@ function Tile({
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.color.bg },
   content: { padding: theme.space(4), paddingBottom: theme.space(10) },
   header: {

@@ -14,7 +14,7 @@ import {
   useMaintenanceStaff,
   useUpdateComplaintStatus,
 } from './queries'
-import { theme } from '../../../theme/theme'
+import { useStyles, useTheme, type Theme } from '../../../theme/theme'
 
 /**
  * Working one complaint: change its status, assign it, add a comment.
@@ -25,6 +25,8 @@ import { theme } from '../../../theme/theme'
  * server-side either way.
  */
 export function AdminComplaintDetailScreen() {
+  const { theme } = useTheme()
+  const styles = useStyles(makeStyles)
   const route = useRoute<RouteProp<RootParamList, 'AdminComplaintDetail'>>()
   const complaint = route.params.complaint
   const { role } = useAuth()
@@ -140,7 +142,8 @@ export function AdminComplaintDetailScreen() {
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.color.bg },
   content: { padding: theme.space(5), paddingBottom: theme.space(12) },
   header: {

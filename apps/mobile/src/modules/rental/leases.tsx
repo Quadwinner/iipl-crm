@@ -3,9 +3,11 @@ import { formatCurrency, formatDate, daysUntil, reminderAmount, reminderTitle } 
 import { Badge, Card, Empty, ErrorState, Field, Loading } from '../../components/ui'
 import { useInvoices, useLeases, useReminders } from '../../features/queries'
 import { useAuth } from '../../auth/auth'
-import { theme } from '../../theme/theme'
+import { useStyles, useTheme, type Theme } from '../../theme/theme'
 
 export function LeasesScreen() {
+  const { theme } = useTheme()
+  const styles = useStyles(makeStyles)
   const { email } = useAuth()
   const leases = useLeases()
   const invoices = useInvoices()
@@ -104,7 +106,8 @@ export function LeasesScreen() {
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.color.bg },
   content: { padding: theme.space(4), paddingBottom: theme.space(10) },
   greeting: { color: theme.color.muted, fontSize: 13 },

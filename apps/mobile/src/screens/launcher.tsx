@@ -7,7 +7,7 @@ import { iconByName } from '../lib/icons'
 import { Inbox } from 'lucide-react-native'
 import { useAuth } from '../auth/auth'
 import { useMyModules } from '../features/site'
-import { theme } from '../theme/theme'
+import { useStyles, useTheme, type Theme } from '../theme/theme'
 
 /**
  * The launcher — the superapp's front door once signed in.
@@ -17,6 +17,8 @@ import { theme } from '../theme/theme'
  * get out of step with it.
  */
 export function LauncherScreen() {
+  const { theme } = useTheme()
+  const styles = useStyles(makeStyles)
   const navigation = useNavigation()
   const { email, role } = useAuth()
   const modules = useMyModules()
@@ -85,6 +87,7 @@ export function LauncherScreen() {
 }
 
 function ModuleTile({ module, onPress }: { module: AppModule; onPress: () => void }) {
+  const styles = useStyles(makeStyles)
   const Icon = iconByName(module.icon)
   const available = module.status === 'ACTIVE'
 
@@ -112,7 +115,8 @@ function ModuleTile({ module, onPress }: { module: AppModule; onPress: () => voi
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.color.bg },
   content: { padding: theme.space(5), paddingBottom: theme.space(12) },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: theme.space(3) },

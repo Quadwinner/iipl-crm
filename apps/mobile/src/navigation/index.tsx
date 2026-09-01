@@ -1,4 +1,4 @@
-import { DarkTheme, NavigationContainer, useNavigation } from '@react-navigation/native'
+import { DarkTheme, DefaultTheme, NavigationContainer, useNavigation } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { Pressable, Text } from 'react-native'
@@ -22,33 +22,42 @@ import {
   ServicesScreen,
 } from '../screens/site/pages'
 import { AccountScreen } from '../screens/account'
-import { theme } from '../theme/theme'
+import { useTheme, type Theme } from '../theme/theme'
 
-const navigationTheme = {
-  ...DarkTheme,
-  colors: {
-    ...DarkTheme.colors,
-    background: theme.color.bg,
-    card: theme.color.bg,
-    border: theme.color.border,
-    text: theme.color.text,
-    primary: theme.color.accent,
-  },
+/** React Navigation keeps its own theme; it has to agree with ours or the
+ *  screen background flashes the wrong colour during transitions. */
+function navigationTheme(theme: Theme, scheme: 'light' | 'dark') {
+  const base = scheme === 'light' ? DefaultTheme : DarkTheme
+  return {
+    ...base,
+    colors: {
+      ...base.colors,
+      background: theme.color.bg,
+      card: theme.color.bg,
+      border: theme.color.border,
+      text: theme.color.text,
+      primary: theme.color.accent,
+    },
+  }
 }
 
-const screenOptions = {
-  headerStyle: { backgroundColor: theme.color.bg },
-  headerTitleStyle: { color: theme.color.text },
-  headerTintColor: theme.color.accent,
-  headerShadowVisible: false,
-} as const
+/** Navigator options depend on the active theme, so they are built per render
+ *  rather than frozen at module scope. */
+const screenOptions = (theme: Theme) =>
+  ({
+    headerStyle: { backgroundColor: theme.color.bg },
+    headerTitleStyle: { color: theme.color.text },
+    headerTintColor: theme.color.accent,
+    headerShadowVisible: false,
+  }) as const
 
-const tabOptions = {
-  ...screenOptions,
-  tabBarActiveTintColor: theme.color.accent,
-  tabBarInactiveTintColor: theme.color.muted,
-  tabBarStyle: { backgroundColor: theme.color.surface, borderTopColor: theme.color.border },
-} as const
+const tabOptions = (theme: Theme) =>
+  ({
+    ...screenOptions(theme),
+    tabBarActiveTintColor: theme.color.accent,
+    tabBarInactiveTintColor: theme.color.muted,
+    tabBarStyle: { backgroundColor: theme.color.surface, borderTopColor: theme.color.border },
+  }) as const
 
 const PublicTab = createBottomTabNavigator()
 const AppTab = createBottomTabNavigator()
@@ -56,8 +65,9 @@ const RootStack = createNativeStackNavigator()
 
 /** The company site, browsable without an account — same as the website's front. */
 function PublicTabs() {
+  const { theme } = useTheme()
   return (
-    <PublicTab.Navigator screenOptions={tabOptions}>
+    <PublicTab.Navigator screenOptions={tabOptions(theme)}>
       <PublicTab.Screen
         name="Home"
         component={HomeScreen}
@@ -88,8 +98,9 @@ function PublicTabs() {
 
 /** Signed in: the launcher first, with the public site still reachable. */
 function AppTabs() {
+  const { theme } = useTheme()
   return (
-    <AppTab.Navigator screenOptions={tabOptions}>
+    <AppTab.Navigator screenOptions={tabOptions(theme)}>
       <AppTab.Screen
         name="Apps"
         component={LauncherScreen}
@@ -111,6 +122,7 @@ function AppTabs() {
 
 /** Header action on the public home tab. */
 function SignInLink() {
+  const { theme } = useTheme()
   const navigation = useNavigation()
   return (
     <Pressable
@@ -130,13 +142,14 @@ function SignInLink() {
  */
 export function RootNavigator() {
   const { status, failure } = useAuth()
+  const { theme, scheme } = useTheme()
 
   if (status === 'loading') return <Loading />
   if (status === 'broken') return <StartupFailure error={failure} />
 
   return (
-    <NavigationContainer theme={navigationTheme}>
-      <RootStack.Navigator screenOptions={screenOptions}>
+    <NavigationContainer theme={navigationTheme(theme, scheme)}>
+      <RootStack.Navigator screenOptions={screenOptions(theme)}>
         {status === 'authenticated' ? (
           <>
             <RootStack.Screen name="App" component={AppTabs} options={{ headerShown: false }} />

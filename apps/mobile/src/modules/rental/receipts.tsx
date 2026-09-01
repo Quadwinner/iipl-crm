@@ -6,7 +6,7 @@ import { supabase } from '../../lib/supabase'
 import { useOwnerProfile } from '../../features/queries'
 import { Badge, Button, Card, Empty, ErrorState, Field, Loading } from '../../components/ui'
 import { useReceipts } from '../../features/queries'
-import { theme } from '../../theme/theme'
+import { useStyles, type Theme } from '../../theme/theme'
 
 /**
  * Payment receipts. `document_ref` is null until the PDF render finishes, which
@@ -14,6 +14,7 @@ import { theme } from '../../theme/theme'
  * of payment, the PDF is a rendering of it.
  */
 export function ReceiptsScreen() {
+  const styles = useStyles(makeStyles)
   const receipts = useReceipts()
   const profile = useOwnerProfile()
   const [busyId, setBusyId] = useState<string | null>(null)
@@ -91,7 +92,8 @@ export function ReceiptsScreen() {
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.color.bg },
   content: { padding: theme.space(4), paddingBottom: theme.space(10) },
   header: {

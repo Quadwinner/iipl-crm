@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Animated, Dimensions, Easing, Pressable, StyleSheet, Text, View } from 'react-native'
 import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg'
 import { HERO_EYEBROW, HERO_ROTATING, type AppModule, type SiteStat } from '@itoby/shared/site'
-import { theme } from '../../theme/theme'
+import { useStyles, useTheme, type Theme } from '../../theme/theme'
 
 const { width: SCREEN } = Dimensions.get('window')
 
@@ -17,6 +17,7 @@ const { width: SCREEN } = Dimensions.get('window')
  * instead of covering its parent.
  */
 function Aura({ width, height }: { width: number; height: number }) {
+  const { theme } = useTheme()
   if (width === 0 || height === 0) return null
 
   return (
@@ -69,6 +70,7 @@ function Enter({ delay, children }: { delay: number; children: React.ReactNode }
  * transition rather than a flicker.
  */
 function Rotor() {
+  const styles = useStyles(makeStyles)
   const [index, setIndex] = useState(0)
   const anim = useRef(new Animated.Value(1)).current
 
@@ -113,6 +115,7 @@ function Rotor() {
  * scroll, and it is the one thing on the screen that moves on its own.
  */
 function Marquee({ modules }: { modules: AppModule[] }) {
+  const styles = useStyles(makeStyles)
   const offset = useRef(new Animated.Value(0)).current
   const width = modules.length * 168
 
@@ -162,6 +165,7 @@ export function Hero({
   onStart: () => void
   onExplore: () => void
 }) {
+  const styles = useStyles(makeStyles)
   const [expanded, setExpanded] = useState(false)
   const [size, setSize] = useState({ width: 0, height: 0 })
 
@@ -250,7 +254,8 @@ export function Hero({
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   hero: { overflow: 'hidden' },
   heroInner: { paddingHorizontal: theme.space(5), paddingTop: theme.space(6), paddingBottom: theme.space(7) },
   eyebrow: {

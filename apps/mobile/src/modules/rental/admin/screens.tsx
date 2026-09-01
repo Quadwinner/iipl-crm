@@ -15,10 +15,11 @@ import {
   useStaff,
   useUnits,
 } from './queries'
-import { theme } from '../../../theme/theme'
+import { useStyles, useTheme, type Theme } from '../../../theme/theme'
 
 /** Portfolio at a glance: occupancy across every building, then the buildings themselves. */
 export function AdminDashboardScreen() {
+  const styles = useStyles(makeStyles)
   const occupancy = useOccupancy(null)
   const buildings = useBuildings()
   const complaints = useAdminComplaints()
@@ -55,6 +56,8 @@ export function AdminDashboardScreen() {
 }
 
 function Tile({ label, value, tone }: { label: string; value: string; tone?: 'ok' | 'warn' }) {
+  const { theme } = useTheme()
+  const styles = useStyles(makeStyles)
   const color =
     tone === 'ok' ? theme.color.ok : tone === 'warn' ? theme.color.warn : theme.color.accent
   return (
@@ -66,6 +69,7 @@ function Tile({ label, value, tone }: { label: string; value: string; tone?: 'ok
 }
 
 export function AdminBuildingsScreen() {
+  const styles = useStyles(makeStyles)
   const navigation = useNavigation()
   const buildings = useBuildings()
 
@@ -99,6 +103,7 @@ export function AdminBuildingsScreen() {
 }
 
 export function AdminUnitsScreen() {
+  const styles = useStyles(makeStyles)
   const route = useRoute<RouteProp<RootParamList, 'AdminUnits'>>()
   const buildingId = route.params?.buildingId ?? null
   const units = useUnits(buildingId)
@@ -132,6 +137,7 @@ export function AdminUnitsScreen() {
 }
 
 export function AdminTenantsScreen() {
+  const styles = useStyles(makeStyles)
   const owners = useOwners()
 
   if (owners.isPending) return <Loading />
@@ -162,6 +168,7 @@ export function AdminTenantsScreen() {
 }
 
 export function AdminStaffScreen() {
+  const styles = useStyles(makeStyles)
   const staff = useStaff()
 
   if (staff.isPending) return <Loading />
@@ -192,6 +199,7 @@ export function AdminStaffScreen() {
 
 /** The complaints queue. Tapping one opens the screen where it can be worked. */
 export function AdminComplaintsScreen() {
+  const styles = useStyles(makeStyles)
   const navigation = useNavigation()
   const [status, setStatus] = useState<'OPEN' | 'IN_PROGRESS' | null>(null)
   const complaints = useAdminComplaints({
@@ -254,7 +262,8 @@ export function AdminComplaintsScreen() {
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.color.bg },
   content: { padding: theme.space(4), paddingBottom: theme.space(10) },
   header: {

@@ -9,7 +9,7 @@ import {
 } from '@itoby/shared/validation'
 import { Button, Card } from './ui'
 import { useServices, useSubmitLead } from '../features/site'
-import { theme } from '../theme/theme'
+import { useStyles, useTheme, type Theme } from '../theme/theme'
 
 /**
  * Contact and Request-a-quote share this form, as they do on the website — the
@@ -20,6 +20,7 @@ import { theme } from '../theme/theme'
  * them rather than replaced with something generic.
  */
 export function LeadForm({ source, cta }: { source: LeadSource; cta: string }) {
+  const styles = useStyles(makeStyles)
   const services = useServices()
   const submit = useSubmitLead()
   const [sent, setSent] = useState(false)
@@ -137,6 +138,8 @@ function Field({
   keyboardType?: 'email-address' | 'phone-pad'
   error?: string
 }) {
+  const { theme } = useTheme()
+  const styles = useStyles(makeStyles)
   return (
     <View style={styles.field}>
       <Text style={styles.label}>{label}</Text>
@@ -167,6 +170,7 @@ function Chips({
   value: string
   onChange: (value: string) => void
 }) {
+  const styles = useStyles(makeStyles)
   if (options.length === 0) return null
   return (
     <View style={styles.field}>
@@ -189,7 +193,8 @@ function Chips({
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   field: { marginBottom: theme.space(4) },
   label: { color: theme.color.muted, fontSize: 12, marginBottom: theme.space(2) },
   input: {

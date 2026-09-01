@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-import { theme } from '../theme/theme'
+import { useStyles, type Theme } from '../theme/theme'
 
 /** The site's section header: a small uppercase eyebrow over a display heading. */
 export function SectionHeader({
@@ -12,6 +12,7 @@ export function SectionHeader({
   title: string
   body?: string | null
 }) {
+  const styles = useStyles(makeStyles)
   return (
     <View style={styles.header}>
       {eyebrow ? <Text style={styles.eyebrow}>{eyebrow}</Text> : null}
@@ -22,10 +23,12 @@ export function SectionHeader({
 }
 
 export function Screen({ children }: { children: ReactNode }) {
+  const styles = useStyles(makeStyles)
   return <View style={styles.screen}>{children}</View>
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.color.bg },
   header: { marginBottom: theme.space(6) },
   eyebrow: {

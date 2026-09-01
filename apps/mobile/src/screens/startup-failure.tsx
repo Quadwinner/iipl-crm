@@ -1,5 +1,5 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
-import { theme } from '../theme/theme'
+import { useStyles, type Theme } from '../theme/theme'
 
 /**
  * Shown when the app cannot even work out whether someone is signed in — a bad
@@ -7,6 +7,7 @@ import { theme } from '../theme/theme'
  * own crash screen names none of those, so this one prints the real message.
  */
 export function StartupFailure({ error }: { error: Error | null }) {
+  const styles = useStyles(makeStyles)
   return (
     <View style={styles.screen}>
       <Text style={styles.title}>Could not start</Text>
@@ -22,7 +23,8 @@ export function StartupFailure({ error }: { error: Error | null }) {
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: theme.color.bg,

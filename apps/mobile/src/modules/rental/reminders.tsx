@@ -2,10 +2,11 @@ import { FlatList, StyleSheet, Text } from 'react-native'
 import { formatCurrency, formatDate, reminderAmount, reminderTitle } from '@itoby/shared/owner'
 import { Card, Empty, ErrorState, Field, Loading } from '../../components/ui'
 import { useReminders } from '../../features/queries'
-import { theme } from '../../theme/theme'
+import { useStyles, type Theme } from '../../theme/theme'
 
 /** In-app bill reminders, scoped to the signed-in owner by RLS. */
 export function RemindersScreen() {
+  const styles = useStyles(makeStyles)
   const reminders = useReminders()
 
   if (reminders.isPending) return <Loading />
@@ -39,7 +40,8 @@ export function RemindersScreen() {
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.color.bg },
   content: { padding: theme.space(4), paddingBottom: theme.space(10) },
   title: { color: theme.color.text, fontSize: 15, fontWeight: '700', marginBottom: theme.space(2) },

@@ -6,9 +6,10 @@ import { downloadInvoice } from '@itoby/shared/storage'
 import { supabase } from '../../lib/supabase'
 import { Badge, Button, Card, Empty, ErrorState, Field, Loading } from '../../components/ui'
 import { useInvoices } from '../../features/queries'
-import { theme } from '../../theme/theme'
+import { useStyles, type Theme } from '../../theme/theme'
 
 export function InvoicesScreen() {
+  const styles = useStyles(makeStyles)
   const navigation = useNavigation()
   const invoices = useInvoices()
   const [busyId, setBusyId] = useState<string | null>(null)
@@ -100,7 +101,8 @@ export function InvoicesScreen() {
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.color.bg },
   content: { padding: theme.space(4), paddingBottom: theme.space(10) },
   header: {

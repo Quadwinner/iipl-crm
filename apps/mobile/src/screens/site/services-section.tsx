@@ -17,7 +17,7 @@ import type { Service } from '@itoby/shared/site'
 import { Enter } from '../../components/motion'
 import { SectionHeader } from '../../components/section'
 import { iconByName } from '../../lib/icons'
-import { theme } from '../../theme/theme'
+import { useStyles, useTheme, type Theme } from '../../theme/theme'
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true)
@@ -45,6 +45,7 @@ function highlightsOf(service: Service): string[] {
  * like a choice.
  */
 export function ServicesSection({ services }: { services: Service[] }) {
+  const styles = useStyles(makeStyles)
   const navigation = useNavigation()
   const [category, setCategory] = useState<string>(ALL)
   const [openId, setOpenId] = useState<string | null>(null)
@@ -132,6 +133,8 @@ function ServiceRow({
   onToggle: () => void
   onOpen: () => void
 }) {
+  const { theme } = useTheme()
+  const styles = useStyles(makeStyles)
   const Icon = iconByName(service.icon)
   const spin = useRef(new Animated.Value(0)).current
   const highlights = highlightsOf(service)
@@ -195,7 +198,8 @@ function ServiceRow({
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   section: { marginBottom: theme.space(8), paddingHorizontal: theme.space(5) },
   filters: { gap: theme.space(2), paddingBottom: theme.space(4), paddingRight: theme.space(5) },
   chip: {

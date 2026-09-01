@@ -5,7 +5,7 @@ import { formatCurrency } from '@itoby/shared/owner'
 import { Card, Field } from '../../components/ui'
 import { useInvoices, useReminders } from '../../features/queries'
 import { useAuth } from '../../auth/auth'
-import { theme } from '../../theme/theme'
+import { useStyles, useTheme, type Theme } from '../../theme/theme'
 
 /**
  * The rental module's index of everything that does not need a tab of its own.
@@ -13,6 +13,7 @@ import { theme } from '../../theme/theme'
  * extra to render.
  */
 export function MoreScreen() {
+  const styles = useStyles(makeStyles)
   const navigation = useNavigation()
   const { email } = useAuth()
   const invoices = useInvoices()
@@ -53,6 +54,8 @@ function Row({
   badge?: string
   onPress: () => void
 }) {
+  const { theme } = useTheme()
+  const styles = useStyles(makeStyles)
   return (
     <Pressable
       accessibilityRole="button"
@@ -68,7 +71,8 @@ function Row({
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.color.bg },
   content: { padding: theme.space(4), paddingBottom: theme.space(10) },
   group: {

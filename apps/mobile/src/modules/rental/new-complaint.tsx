@@ -13,7 +13,7 @@ import {
 import { Button, Empty, Loading } from '../../components/ui'
 import { useAllottedUnits, useComplaintCategories, useFileTypeRules } from '../../features/queries'
 import { supabase } from '../../lib/supabase'
-import { theme } from '../../theme/theme'
+import { useStyles, useTheme, type Theme } from '../../theme/theme'
 
 /**
  * Raising a maintenance request.
@@ -28,6 +28,8 @@ import { theme } from '../../theme/theme'
  * web hands it a File; the shared layer treats both as opaque parts.
  */
 export function NewComplaintScreen({ onDone }: { onDone: () => void }) {
+  const { theme } = useTheme()
+  const styles = useStyles(makeStyles)
   const queryClient = useQueryClient()
   const units = useAllottedUnits()
   const categories = useComplaintCategories()
@@ -169,7 +171,8 @@ export function NewComplaintScreen({ onDone }: { onDone: () => void }) {
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.color.bg },
   content: { padding: theme.space(5), paddingBottom: theme.space(12) },
   label: { color: theme.color.muted, fontSize: 12, marginTop: theme.space(4), marginBottom: theme.space(2) },

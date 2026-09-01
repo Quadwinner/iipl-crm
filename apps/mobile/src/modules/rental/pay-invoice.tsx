@@ -13,7 +13,7 @@ import {
 } from '@itoby/shared/owner'
 import { Badge, Button, Card, Field } from '../../components/ui'
 import { supabase } from '../../lib/supabase'
-import { theme } from '../../theme/theme'
+import { useStyles, useTheme, type Theme } from '../../theme/theme'
 
 const RAZORPAY_KEY_ID = process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID ?? ''
 
@@ -36,6 +36,8 @@ export function PayInvoiceScreen({
   invoice: InvoiceRow
   onDone: () => void
 }) {
+  const { theme } = useTheme()
+  const styles = useStyles(makeStyles)
   const queryClient = useQueryClient()
   const [amount, setAmount] = useState(String(invoice.outstanding_amount))
   const [checkout, setCheckout] = useState<{ html: string } | null>(null)
@@ -82,6 +84,7 @@ export function PayInvoiceScreen({
       if (gateway === 'RAZORPAY') {
         setCheckout({
           html: razorpayPage({
+            theme,
             keyId: RAZORPAY_KEY_ID,
             orderId: String(intent.gateway_data.orderId ?? intent.reference),
             amountPaise: Number(intent.gateway_data.amountPaise ?? intent.amount * 100),
@@ -198,7 +201,9 @@ function razorpayPage(options: {
   orderId: string
   amountPaise: number
   description: string
+  theme: Theme
 }): string {
+  const { theme } = options
   const config = JSON.stringify({
     key: options.keyId,
     order_id: options.orderId,
@@ -220,7 +225,8 @@ function razorpayPage(options: {
 </script></body></html>`
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.color.bg },
   content: { padding: theme.space(5), paddingBottom: theme.space(12) },
   title: { color: theme.color.text, fontSize: 20, fontWeight: '800', marginBottom: theme.space(4) },

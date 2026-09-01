@@ -15,16 +15,19 @@ import {
 import { formatDate } from '@itoby/shared/owner'
 import { Badge, Button, Card, Empty, ErrorState, Field, Loading } from '../../components/ui'
 import { supabase } from '../../lib/supabase'
-import { theme } from '../../theme/theme'
+import { useStyles, type Theme, useTheme } from '../../theme/theme'
 
 const Stack = createNativeStackNavigator()
 
-const screenOptions = {
-  headerStyle: { backgroundColor: theme.color.bg },
-  headerTitleStyle: { color: theme.color.text },
-  headerTintColor: theme.color.accent,
-  headerShadowVisible: false,
-} as const
+/** Navigator options depend on the active theme, so they are built per render
+ *  rather than frozen at module scope. */
+const screenOptions = (theme: Theme) =>
+  ({
+    headerStyle: { backgroundColor: theme.color.bg },
+    headerTitleStyle: { color: theme.color.text },
+    headerTintColor: theme.color.accent,
+    headerShadowVisible: false,
+  }) as const
 
 function useLeads() {
   return useQuery({ queryKey: leadKeys.all, queryFn: () => listLeads(supabase()) })
@@ -38,6 +41,7 @@ function useLeads() {
  * without it simply reads zero rows.
  */
 function LeadsScreen() {
+  const styles = useStyles(makeStyles)
   const navigation = useNavigation()
   const [status, setStatus] = useState<LeadStatus | null>(null)
   const leads = useLeads()
@@ -92,6 +96,7 @@ function LeadsScreen() {
 }
 
 function LeadDetailScreen() {
+  const styles = useStyles(makeStyles)
   const route = useRoute<RouteProp<RootParamList, 'LeadDetail'>>()
   const lead = route.params.lead
   const queryClient = useQueryClient()
@@ -156,15 +161,17 @@ function LeadDetailScreen() {
 
 /** The superapp's own admin: leads today, the content CMS stays on the web. */
 export function AdminModule() {
+  const { theme } = useTheme()
   return (
-    <Stack.Navigator screenOptions={screenOptions}>
+    <Stack.Navigator screenOptions={screenOptions(theme)}>
       <Stack.Screen name="Leads" component={LeadsScreen} options={{ title: 'Leads' }} />
       <Stack.Screen name="LeadDetail" component={LeadDetailScreen} options={{ title: 'Lead' }} />
     </Stack.Navigator>
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.color.bg },
   content: { padding: theme.space(4), paddingBottom: theme.space(10) },
   header: {

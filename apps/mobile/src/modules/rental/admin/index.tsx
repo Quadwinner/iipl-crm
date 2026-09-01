@@ -17,23 +17,27 @@ import {
   AdminTenantsScreen,
   AdminUnitsScreen,
 } from './screens'
-import { theme } from '../../../theme/theme'
+import { useTheme, type Theme } from '../../../theme/theme'
 
 const Tab = createBottomTabNavigator()
 const Stack = createNativeStackNavigator()
 
-const screenOptions = {
-  headerStyle: { backgroundColor: theme.color.bg },
-  headerTitleStyle: { color: theme.color.text },
-  headerTintColor: theme.color.accent,
-  headerShadowVisible: false,
-} as const
+/** Navigator options depend on the active theme, so they are built per render
+ *  rather than frozen at module scope. */
+const screenOptions = (theme: Theme) =>
+  ({
+    headerStyle: { backgroundColor: theme.color.bg },
+    headerTitleStyle: { color: theme.color.text },
+    headerTintColor: theme.color.accent,
+    headerShadowVisible: false,
+  }) as const
 
 function AdminTabs() {
+  const { theme } = useTheme()
   return (
     <Tab.Navigator
       screenOptions={{
-        ...screenOptions,
+        ...screenOptions(theme),
         headerShown: false,
         tabBarActiveTintColor: theme.color.accent,
         tabBarInactiveTintColor: theme.color.muted,
@@ -78,8 +82,9 @@ function AdminTabs() {
  * staff — that control is hidden rather than offered and rejected.
  */
 export function RentalAdmin() {
+  const { theme } = useTheme()
   return (
-    <Stack.Navigator screenOptions={screenOptions}>
+    <Stack.Navigator screenOptions={screenOptions(theme)}>
       <Stack.Screen name="AdminTabs" component={AdminTabs} options={{ headerShown: false }} />
       <Stack.Screen name="AdminUnits" component={AdminUnitsScreen} options={{ title: 'Units' }} />
       <Stack.Screen

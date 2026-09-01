@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import { Button } from '../components/ui'
 import { useAuth } from '../auth/auth'
-import { theme } from '../theme/theme'
+import { useStyles, type Theme } from '../theme/theme'
 
 /**
  * Staff and admin accounts authenticate fine but have no owner record, so every
@@ -9,6 +9,7 @@ import { theme } from '../theme/theme'
  * a set of blank screens.
  */
 export function NoAccessScreen() {
+  const styles = useStyles(makeStyles)
   const { role, signOut } = useAuth()
 
   return (
@@ -23,7 +24,8 @@ export function NoAccessScreen() {
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: theme.color.bg,

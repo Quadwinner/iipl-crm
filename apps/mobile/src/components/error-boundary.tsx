@@ -1,6 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
-import { theme } from '../theme/theme'
+import { staticTheme as theme } from '../theme/theme'
 
 interface Props {
   children: ReactNode
@@ -12,6 +12,10 @@ interface State {
 }
 
 /**
+ * Uses the dark tokens directly: this is a class component, so it cannot read
+ * the theme through a hook, and it has to render when the tree below it — the
+ * provider included — may already have failed.
+ *
  * Without this, a render-time throw drops the whole app to Expo Go's generic
  * "Something went wrong" screen, which names neither the error nor where it came
  * from. Showing the message and component stack on-device turns a dead end into

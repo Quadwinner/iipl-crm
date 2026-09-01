@@ -8,14 +8,16 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native'
-import { statusColor, theme } from '../theme/theme'
+import { useStatusColor, useStyles, useTheme, type Theme } from '../theme/theme'
 
 export function Card({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
+  const styles = useStyles(makeStyles)
   return <View style={[styles.card, style]}>{children}</View>
 }
 
 export function Badge({ label }: { label: string }) {
-  const color = statusColor(label)
+  const styles = useStyles(makeStyles)
+  const color = useStatusColor()(label)
   return (
     <View style={[styles.badge, { borderColor: color }]}>
       <Text style={[styles.badgeText, { color }]}>{label.replace(/_/g, ' ')}</Text>
@@ -34,6 +36,8 @@ export function Button({
   busy?: boolean
   variant?: 'primary' | 'ghost'
 }) {
+  const { theme } = useTheme()
+  const styles = useStyles(makeStyles)
   const primary = variant === 'primary'
   return (
     <Pressable
@@ -59,6 +63,7 @@ export function Button({
 
 /** One labelled value in a card. */
 export function Field({ label, value }: { label: string; value: string }) {
+  const styles = useStyles(makeStyles)
   return (
     <View style={styles.field}>
       <Text style={styles.fieldLabel}>{label}</Text>
@@ -68,6 +73,8 @@ export function Field({ label, value }: { label: string; value: string }) {
 }
 
 export function Loading() {
+  const { theme } = useTheme()
+  const styles = useStyles(makeStyles)
   return (
     <View style={styles.centre}>
       <ActivityIndicator color={theme.color.accent} />
@@ -76,6 +83,7 @@ export function Loading() {
 }
 
 export function Empty({ title, hint }: { title: string; hint?: string }) {
+  const styles = useStyles(makeStyles)
   return (
     <View style={styles.centre}>
       <Text style={styles.emptyTitle}>{title}</Text>
@@ -89,6 +97,7 @@ export function Empty({ title, hint }: { title: string; hint?: string }) {
  * database failures into owner-readable sentences, so there is nothing to soften here.
  */
 export function ErrorState({ error, onRetry }: { error: unknown; onRetry?: () => void }) {
+  const styles = useStyles(makeStyles)
   const message = error instanceof Error ? error.message : 'Something went wrong.'
   return (
     <View style={styles.centre}>
@@ -98,7 +107,8 @@ export function ErrorState({ error, onRetry }: { error: unknown; onRetry?: () =>
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   card: {
     backgroundColor: theme.color.surface,
     borderColor: theme.color.border,

@@ -5,7 +5,7 @@ import { downloadDocument } from '@itoby/shared/storage'
 import { Button, Card, Empty, ErrorState, Field, Loading } from '../../components/ui'
 import { useDocuments } from '../../features/queries'
 import { supabase } from '../../lib/supabase'
-import { theme } from '../../theme/theme'
+import { useStyles, type Theme } from '../../theme/theme'
 
 /**
  * Lease documents. Opening one mints a short-lived signed URL under Storage RLS
@@ -13,6 +13,7 @@ import { theme } from '../../theme/theme'
  * bytes go straight from Supabase to the viewer.
  */
 export function DocumentsScreen() {
+  const styles = useStyles(makeStyles)
   const documents = useDocuments()
   const [error, setError] = useState<string | null>(null)
   const [openingId, setOpeningId] = useState<string | null>(null)
@@ -67,7 +68,8 @@ export function DocumentsScreen() {
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.color.bg },
   content: { padding: theme.space(4), paddingBottom: theme.space(10) },
   title: { color: theme.color.text, fontSize: 15, fontWeight: '700', marginBottom: theme.space(2) },

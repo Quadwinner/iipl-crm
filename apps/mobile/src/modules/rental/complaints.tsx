@@ -4,9 +4,10 @@ import { Button } from '../../components/ui'
 import { formatTimestamp } from '@itoby/shared/owner'
 import { Badge, Card, Empty, ErrorState, Field, Loading } from '../../components/ui'
 import { useComplaints } from '../../features/queries'
-import { theme } from '../../theme/theme'
+import { useStyles, type Theme } from '../../theme/theme'
 
 export function ComplaintsScreen() {
+  const styles = useStyles(makeStyles)
   const navigation = useNavigation()
   const complaints = useComplaints()
 
@@ -52,7 +53,8 @@ export function ComplaintsScreen() {
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.color.bg },
   content: { padding: theme.space(4), paddingBottom: theme.space(10) },
   header: {

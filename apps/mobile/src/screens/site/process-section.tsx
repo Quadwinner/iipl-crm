@@ -4,7 +4,7 @@ import { ChevronDown } from 'lucide-react-native'
 import type { ProcessStep } from '@itoby/shared/site'
 import { Enter } from '../../components/motion'
 import { SectionHeader } from '../../components/section'
-import { theme } from '../../theme/theme'
+import { useStyles, useTheme, type Theme } from '../../theme/theme'
 
 const NODE = 34
 const RAIL_X = NODE / 2 - 1
@@ -19,6 +19,8 @@ const PULSE = 60
  * through the steps in the order they happen.
  */
 export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
+  const { theme } = useTheme()
+  const styles = useStyles(makeStyles)
   /**
    * Where each node sits, so the rail can run from the first to the last and
    * stop there. Measured rather than assumed: the steps are different heights.
@@ -162,6 +164,8 @@ function Step({
   last: boolean
   onNodeY?: (y: number) => void
 }) {
+  const { theme } = useTheme()
+  const styles = useStyles(makeStyles)
   // Each node lights as the rail reaches it, which is what makes the drawing read
   // as progress through the steps rather than a line appearing.
   const lit = useRef(new Animated.Value(0)).current
@@ -225,7 +229,8 @@ function Step({
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   section: { marginBottom: theme.space(8), paddingHorizontal: theme.space(5) },
   timeline: { position: 'relative' },
   rail: {

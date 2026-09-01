@@ -8,7 +8,7 @@ import { ProcessSection } from './process-section'
 import { ServicesSection } from './services-section'
 import { iconByName } from '../../lib/icons'
 import { usePublicModules, useServices, useSiteSettings } from '../../features/site'
-import { theme } from '../../theme/theme'
+import { useStyles, useTheme, type Theme } from '../../theme/theme'
 
 /**
  * The company home page, section for section with the website's:
@@ -16,6 +16,8 @@ import { theme } from '../../theme/theme'
  * Every string comes from the CMS — nothing is hardcoded here.
  */
 export function HomeScreen() {
+  const { theme } = useTheme()
+  const styles = useStyles(makeStyles)
   const navigation = useNavigation()
   const settings = useSiteSettings()
   const services = useServices()
@@ -72,6 +74,7 @@ export function HomeScreen() {
 }
 
 function ProductCard({ module }: { module: AppModule }) {
+  const styles = useStyles(makeStyles)
   const Icon = iconByName(module.icon)
   return (
     <Card>
@@ -94,7 +97,8 @@ function ProductCard({ module }: { module: AppModule }) {
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.color.bg },
   content: { paddingBottom: theme.space(12) },
   section: { marginBottom: theme.space(8), paddingHorizontal: theme.space(5) },

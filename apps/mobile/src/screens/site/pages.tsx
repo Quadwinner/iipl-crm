@@ -7,10 +7,11 @@ import { LeadForm } from '../../components/lead-form'
 import { SectionHeader } from '../../components/section'
 import { iconByName } from '../../lib/icons'
 import { useIndustries, usePublicModules, useServices, useSiteSettings } from '../../features/site'
-import { theme } from '../../theme/theme'
+import { useStyles, type Theme } from '../../theme/theme'
 
 /** The company story, straight from the CMS. */
 export function AboutScreen() {
+  const styles = useStyles(makeStyles)
   const settings = useSiteSettings()
   const s = settings.data
 
@@ -34,6 +35,7 @@ export function AboutScreen() {
 }
 
 export function ServicesScreen() {
+  const styles = useStyles(makeStyles)
   const services = useServices()
 
   if (services.isPending) return <Loading />
@@ -67,6 +69,7 @@ export function ServicesScreen() {
 
 /** Long-form copy for one service, matched by slug the way the web route does. */
 export function ServiceDetailScreen() {
+  const styles = useStyles(makeStyles)
   const route = useRoute<RouteProp<RootParamList, 'ServiceDetail'>>()
   const services = useServices()
   const service = (services.data ?? []).find((row) => row.slug === route.params.slug)
@@ -83,6 +86,7 @@ export function ServiceDetailScreen() {
 }
 
 export function IndustriesScreen() {
+  const styles = useStyles(makeStyles)
   const industries = useIndustries()
 
   if (industries.isPending) return <Loading />
@@ -106,6 +110,7 @@ export function IndustriesScreen() {
 
 /** The product catalogue — the same rows the launcher shows, minus the role filter. */
 export function ProductsScreen() {
+  const styles = useStyles(makeStyles)
   const modules = usePublicModules()
 
   if (modules.isPending) return <Loading />
@@ -151,6 +156,7 @@ export function ProductsScreen() {
 }
 
 export function ContactScreen() {
+  const styles = useStyles(makeStyles)
   const settings = useSiteSettings()
   const s = settings.data
 
@@ -176,6 +182,7 @@ export function ContactScreen() {
 }
 
 export function QuoteScreen() {
+  const styles = useStyles(makeStyles)
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
       <SectionHeader
@@ -189,6 +196,7 @@ export function QuoteScreen() {
 }
 
 function ContactRow({ label, value, href }: { label: string; value: string; href?: string }) {
+  const styles = useStyles(makeStyles)
   return (
     <View style={styles.contactRow}>
       <Text style={styles.label}>{label}</Text>
@@ -202,7 +210,8 @@ function ContactRow({ label, value, href }: { label: string; value: string; href
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.color.bg },
   content: { padding: theme.space(5), paddingBottom: theme.space(12) },
   block: { marginTop: theme.space(8) },

@@ -10,10 +10,11 @@ import {
 import { Card, Empty, ErrorState, Field, Loading } from '../../../components/ui'
 import { SectionHeader } from '../../../components/section'
 import { supabase } from '../../../lib/supabase'
-import { theme } from '../../../theme/theme'
+import { useStyles, useTheme, type Theme } from '../../../theme/theme'
 
 /** Everything that does not warrant a tab of its own. */
 export function AdminManageScreen() {
+  const styles = useStyles(makeStyles)
   const navigation = useNavigation()
 
   return (
@@ -46,6 +47,7 @@ export function AdminManageScreen() {
  * place, and showing them here still answers "what is it set to?".
  */
 export function AdminSettingsScreen() {
+  const styles = useStyles(makeStyles)
   const config = useQuery({
     queryKey: settingsKeys.globalConfig,
     queryFn: () => getGlobalConfig(supabase()),
@@ -120,6 +122,8 @@ export function AdminSettingsScreen() {
 }
 
 function Row({ label, onPress }: { label: string; onPress: () => void }) {
+  const { theme } = useTheme()
+  const styles = useStyles(makeStyles)
   return (
     <Pressable
       accessibilityRole="button"
@@ -132,7 +136,8 @@ function Row({ label, onPress }: { label: string; onPress: () => void }) {
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.color.bg },
   content: { padding: theme.space(4), paddingBottom: theme.space(10) },
   group: {

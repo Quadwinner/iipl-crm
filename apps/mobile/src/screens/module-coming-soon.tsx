@@ -6,13 +6,14 @@ import { Badge, Card, Empty, Loading } from '../components/ui'
 import { SectionHeader } from '../components/section'
 import { iconByName } from '../lib/icons'
 import { usePublicModules } from '../features/site'
-import { theme } from '../theme/theme'
+import { useStyles, type Theme } from '../theme/theme'
 
 /**
  * Registered-but-unbuilt modules render from their own app_modules row, so
  * adding a product to the CMS gives it a real page here without a release.
  */
 export function ModuleComingSoonScreen() {
+  const styles = useStyles(makeStyles)
   const route = useRoute<RouteProp<RootParamList, 'ModuleComingSoon'>>()
   const modules = usePublicModules()
   const module = (modules.data ?? []).find((row) => row.key === route.params.moduleKey)
@@ -49,7 +50,8 @@ export function ModuleComingSoonScreen() {
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.color.bg },
   content: { padding: theme.space(5), paddingBottom: theme.space(12) },
   icon: {

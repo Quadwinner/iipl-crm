@@ -10,9 +10,11 @@ import {
 } from 'react-native'
 import { Button } from '../components/ui'
 import { useAuth } from '../auth/auth'
-import { theme } from '../theme/theme'
+import { useStyles, useTheme, type Theme } from '../theme/theme'
 
 export function SignInScreen() {
+  const { theme } = useTheme()
+  const styles = useStyles(makeStyles)
   const { signIn } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -77,7 +79,8 @@ export function SignInScreen() {
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
   flex: { flex: 1, backgroundColor: theme.color.bg },
   container: { flexGrow: 1, justifyContent: 'center', padding: theme.space(6) },
   brand: { marginBottom: theme.space(10) },

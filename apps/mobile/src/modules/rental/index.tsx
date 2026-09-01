@@ -23,23 +23,27 @@ import { PayInvoiceScreen } from './pay-invoice'
 import { ProfileScreen } from './profile'
 import { ReceiptsScreen } from './receipts'
 import { RemindersScreen } from './reminders'
-import { theme } from '../../theme/theme'
+import { useTheme, type Theme } from '../../theme/theme'
 
 const Tab = createBottomTabNavigator()
 const Stack = createNativeStackNavigator()
 
-const screenOptions = {
-  headerStyle: { backgroundColor: theme.color.bg },
-  headerTitleStyle: { color: theme.color.text },
-  headerTintColor: theme.color.accent,
-  headerShadowVisible: false,
-} as const
+/** Navigator options depend on the active theme, so they are built per render
+ *  rather than frozen at module scope. */
+const screenOptions = (theme: Theme) =>
+  ({
+    headerStyle: { backgroundColor: theme.color.bg },
+    headerTitleStyle: { color: theme.color.text },
+    headerTintColor: theme.color.accent,
+    headerShadowVisible: false,
+  }) as const
 
 function RentalTabs() {
+  const { theme } = useTheme()
   return (
     <Tab.Navigator
       screenOptions={{
-        ...screenOptions,
+        ...screenOptions(theme),
         headerShown: false,
         tabBarActiveTintColor: theme.color.accent,
         tabBarInactiveTintColor: theme.color.muted,
@@ -93,12 +97,13 @@ function NewComplaintRoute() {
  */
 export function RentalModule() {
   const { role } = useAuth()
+  const { theme } = useTheme()
 
   if (role === 'ADMINISTRATOR' || role === 'MAINTENANCE_STAFF') return <RentalAdmin />
   if (role !== 'OFFICE_OWNER') return <NoAccessScreen />
 
   return (
-    <Stack.Navigator screenOptions={screenOptions}>
+    <Stack.Navigator screenOptions={screenOptions(theme)}>
       <Stack.Screen name="RentalTabs" component={RentalTabs} options={{ headerShown: false }} />
       <Stack.Screen name="PayInvoice" component={PayInvoiceRoute} options={{ title: 'Pay invoice' }} />
       <Stack.Screen
