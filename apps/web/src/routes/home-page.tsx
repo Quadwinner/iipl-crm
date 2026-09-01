@@ -6,6 +6,7 @@ import { usePublicModules, type AppModule } from '@/features/modules/use-modules
 import { useSiteSettings } from '@/features/site/use-site-settings'
 import { iconByName } from '@/lib/icons'
 import { useReveal } from '@/lib/use-reveal'
+import { DashboardPreview } from './home-preview'
 import './home-page.css'
 
 const MARKETING_SITE = 'https://itobyinfotech.com'
@@ -145,7 +146,8 @@ export function HomePage() {
           </Link>
         </header>
 
-        <div className="relative mx-auto w-full max-w-6xl px-6 pt-20 pb-28 sm:pt-28 sm:pb-36">
+        <div className="relative mx-auto grid w-full max-w-6xl items-center gap-14 px-6 pt-16 pb-24 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-10 lg:pt-20 lg:pb-28">
+          <div>
           <p
             className="rise font-mono text-[11px] tracking-[0.22em] text-white/50 uppercase"
             style={{ ['--d' as string]: '80ms' }}
@@ -190,6 +192,12 @@ export function HomePage() {
               About Itoby Infotech
               <ArrowUpRight className="size-4" aria-hidden="true" />
             </a>
+            </div>
+          </div>
+
+          {/* The product itself, not a stock illustration. */}
+          <div className="frame-float relative hidden lg:block" aria-hidden="true">
+            <DashboardPreview />
           </div>
         </div>
 

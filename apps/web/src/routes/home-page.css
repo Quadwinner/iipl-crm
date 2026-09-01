@@ -197,3 +197,85 @@
   .word > span { transform: none; }
   .pcard:hover { transform: none; }
 }
+
+/* ── Product visual: a browser frame that floats and tilts ───────────────── */
+.frame {
+  transform: perspective(1600px) rotateY(-13deg) rotateX(6deg) translateZ(0);
+  transform-origin: left center;
+  animation: frame-in 1.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 620ms;
+  box-shadow:
+    0 2px 4px oklch(0 0 0 / 0.2),
+    0 12px 28px oklch(0 0 0 / 0.28),
+    0 48px 90px -30px oklch(0 0 0 / 0.55);
+}
+@keyframes frame-in {
+  from {
+    opacity: 0;
+    transform: perspective(1600px) rotateY(-22deg) rotateX(10deg) translate3d(3rem, 2rem, 0) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(1600px) rotateY(-13deg) rotateX(6deg) translateZ(0);
+  }
+}
+.frame-float { animation: float 9s ease-in-out infinite; }
+@keyframes float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(0, -0.85rem, 0); }
+}
+
+/* A highlight sweeping across the glass. */
+.frame-shine {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 38%, oklch(1 0 0 / 0.1) 47%, transparent 56%);
+  background-size: 260% 100%;
+  animation: shine 7.5s ease-in-out infinite;
+}
+@keyframes shine {
+  0%, 62% { background-position: 190% 0; }
+  100%    { background-position: -60% 0; }
+}
+
+/* Rows ticking in, as if the table were loading live. */
+.row-in { animation: row-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: var(--d, 0ms); }
+@keyframes row-in {
+  from { opacity: 0; transform: translate3d(-0.6rem, 0, 0); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* A bar chart that grows on reveal. */
+.bar { transform-origin: bottom; animation: bar 1s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: var(--d, 0ms); }
+@keyframes bar {
+  from { transform: scaleY(0.05); opacity: 0.4; }
+  to   { transform: scaleY(1); opacity: 1; }
+}
+
+/* ── Bento ───────────────────────────────────────────────────────────────── */
+.bento { display: grid; gap: 1.25rem; grid-template-columns: 1fr; }
+@media (min-width: 768px) { .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1024px) {
+  .bento { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 13.5rem; }
+  .bento-hero { grid-column: span 2; grid-row: span 2; }
+  .bento-tall { grid-row: span 2; }
+}
+
+/* Light sections get texture rather than flat white. */
+.tinted {
+  position: relative;
+  background:
+    radial-gradient(ellipse 70% 55% at 12% 0%, color-mix(in oklch, var(--brand-glow) 10%, transparent), transparent 70%),
+    radial-gradient(ellipse 60% 50% at 92% 30%, color-mix(in oklch, var(--brand-glow) 7%, transparent), transparent 70%);
+}
+.hairline {
+  background-image: linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 96px 100%;
+  mask-image: linear-gradient(180deg, transparent, #000 18%, #000 82%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .frame, .frame-float, .frame-shine, .row-in, .bar { animation: none !important; }
+  .frame { transform: none; }
+}
