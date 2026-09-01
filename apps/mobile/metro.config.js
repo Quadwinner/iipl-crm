@@ -17,10 +17,19 @@ config.resolver.nodeModulesPaths = [
   path.resolve(workspaceRoot, 'node_modules'),
 ]
 
-// pnpm's default linker symlinks everything; without this Metro resolves a
-// dependency to the symlink target and can end up with two copies of React.
+// pnpm links packages rather than copying them, so Metro has to follow symlinks.
 config.resolver.unstable_enableSymlinks = true
-config.resolver.disableHierarchicalLookup = true
+
+// Hierarchical lookup must stay ON for pnpm. Its isolated store puts a package's
+// own dependencies in a sibling directory —
+//   .pnpm/@react-navigation+native@7.3.18_.../node_modules/@react-navigation/core
+// — which Metro can only reach by walking up from the importing file. Turning it
+// off (the usual advice for yarn/npm monorepos) makes those siblings invisible and
+// the build dies with "Unable to resolve module @react-navigation/core".
+//
+// This passes locally either way, because pnpm falls back to copying on the FUSE
+// mount this repo lives on and the layout comes out flat. EAS builds on ext4 with
+// real symlinks, so only the CI build catches it.
 
 // pnpm stages installs in directories like `node_modules/@expo/ngrok-bin_tmp_1234`
 // and deletes them moments later. Metro's FallbackWatcher — the one it falls back
