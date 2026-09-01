@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Alert, Linking, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Linking, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import { WebView } from 'react-native-webview'
 import { useQueryClient } from '@tanstack/react-query'
 import {
@@ -12,6 +12,7 @@ import {
   type InvoiceRow,
 } from '@itoby/shared/owner'
 import { Badge, Button, Card, Field } from '../../components/ui'
+import { Sheet } from '../../components/sheet'
 import { supabase } from '../../lib/supabase'
 import { useStyles, useTheme, type Theme } from '../../theme/theme'
 
@@ -44,6 +45,7 @@ export function PayInvoiceScreen({
   const [upi, setUpi] = useState<{ uri: string; reference: string } | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
 
   function refresh() {
     void queryClient.invalidateQueries({ queryKey: invoiceKeys.all })
@@ -113,14 +115,26 @@ export function PayInvoiceScreen({
           const message = event.nativeEvent.data
           setCheckout(null)
           refresh()
-          if (message === 'dismissed') return
-          Alert.alert(
-            'Payment submitted',
-            'We will update this invoice once the gateway confirms it, which can take a moment.',
-          )
-          onDone()
+          // A dismissed checkout is not a payment; only a completed one is worth
+          // confirming, and the webhook still decides the outcome.
+          if (message !== 'dismissed') setSubmitted(true)
         }}
       />
+    )
+  }
+
+  if (submitted) {
+    return (
+      <View style={styles.screen}>
+        <Sheet
+          visible
+          tone="success"
+          title="Payment submitted"
+          body={`We will update invoice ${invoice.billing_cycle_key} once the gateway confirms it, which can take a moment.`}
+          cta="Back to invoices"
+          onClose={onDone}
+        />
+      </View>
     )
   }
 

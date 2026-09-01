@@ -18,8 +18,16 @@ export const STORAGE_BUCKETS = {
   invoices: 'invoices',
 } as const
 
-/** Default signed-URL lifetime, kept short since URLs are minted on demand. */
-export const DEFAULT_SIGNED_URL_TTL_SECONDS = 60
+/**
+ * Default signed-URL lifetime.
+ *
+ * Short, because these are minted on demand and grant unauthenticated access to
+ * a tenant's document — but not so short that handing one to a browser races the
+ * clock. Sixty seconds was: opening the system browser, resolving the host and
+ * Android deciding how to handle a PDF regularly outran it, and an expired link
+ * renders as an error page rather than the invoice.
+ */
+export const DEFAULT_SIGNED_URL_TTL_SECONDS = 300
 
 type DbClient = SupabaseClient<Database>
 
