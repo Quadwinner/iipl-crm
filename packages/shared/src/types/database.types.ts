@@ -1276,7 +1276,9 @@ export type Database = {
           id: number
           intro: string
           phone: string
+          process: Json
           socials: Json
+          stats: Json
           tagline: string
           updated_at: string
           whatsapp: string
@@ -1289,7 +1291,9 @@ export type Database = {
           id?: number
           intro?: string
           phone?: string
+          process?: Json
           socials?: Json
+          stats?: Json
           tagline?: string
           updated_at?: string
           whatsapp?: string
@@ -1302,7 +1306,9 @@ export type Database = {
           id?: number
           intro?: string
           phone?: string
+          process?: Json
           socials?: Json
+          stats?: Json
           tagline?: string
           updated_at?: string
           whatsapp?: string

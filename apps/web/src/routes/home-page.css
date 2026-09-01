@@ -1,385 +1,141 @@
 /* ─────────────────────────────────────────────────────────────────────────
-   Superapp home — motion and atmosphere.
+   Itoby Infotech — company home.
 
-   Scoped to `.home` so nothing here can leak into the CRM. All animation is
-   CSS (no motion library): transform/opacity only, so it stays on the
-   compositor. Everything collapses under prefers-reduced-motion.
+   This page carries the brand of the site it replaces: near-black ground,
+   electric lime accent, heavy type. Scoped to `.itoby` so none of it can
+   reach the CRM, which keeps its own navy/off-white tokens.
+
+   All motion is CSS transform/opacity and collapses under
+   prefers-reduced-motion.
    ───────────────────────────────────────────────────────────────────────── */
 
-.home {
-  --ink: oklch(0.19 0.035 255);
-  --ink-2: oklch(0.24 0.045 255);
-  --glow-a: oklch(0.62 0.15 245);
-  --glow-b: oklch(0.68 0.11 195);
-}
+.itoby {
+  --ink: oklch(0.145 0.008 260);
+  --ink-2: oklch(0.19 0.012 260);
+  --line: oklch(1 0 0 / 0.09);
+  --lime: oklch(0.88 0.24 128);
+  --lime-dim: oklch(0.72 0.19 128);
+  --cyan: oklch(0.78 0.13 195);
+  --fg: oklch(0.98 0.002 260);
+  --fg-2: oklch(0.72 0.012 260);
 
-/* ── Hero canvas ─────────────────────────────────────────────────────────── */
-.home-hero {
-  position: relative;
-  overflow: hidden;
   background: var(--ink);
-  color: oklch(0.97 0.005 250);
-  isolation: isolate;
+  color: var(--fg);
+  font-family: var(--font-sans);
 }
+.itoby ::selection { background: var(--lime); color: #000; }
 
-/* Two slow-drifting light sources. Different durations so they never loop in
-   lockstep and the field never looks like it repeats. */
-.home-hero::before,
-.home-hero::after {
+/* ── Atmosphere ──────────────────────────────────────────────────────────── */
+.aura { position: relative; overflow: hidden; isolation: isolate; }
+.aura::before,
+.aura::after {
   content: '';
   position: absolute;
   z-index: -2;
   border-radius: 50%;
-  filter: blur(90px);
-  opacity: 0.5;
+  filter: blur(110px);
   pointer-events: none;
 }
-.home-hero::before {
-  width: 46rem;
-  height: 46rem;
-  top: -18rem;
-  left: -10rem;
-  background: radial-gradient(circle, var(--glow-a), transparent 68%);
-  animation: home-drift-a 26s ease-in-out infinite alternate;
+.aura::before {
+  width: 52rem; height: 52rem; top: -24rem; left: -14rem;
+  background: radial-gradient(circle, oklch(0.88 0.24 128 / 0.22), transparent 65%);
+  animation: drift-a 28s ease-in-out infinite alternate;
 }
-.home-hero::after {
-  width: 38rem;
-  height: 38rem;
-  right: -12rem;
-  bottom: -20rem;
-  background: radial-gradient(circle, var(--glow-b), transparent 68%);
-  animation: home-drift-b 34s ease-in-out infinite alternate;
+.aura::after {
+  width: 42rem; height: 42rem; right: -16rem; top: 4rem;
+  background: radial-gradient(circle, oklch(0.78 0.13 195 / 0.18), transparent 65%);
+  animation: drift-b 36s ease-in-out infinite alternate;
 }
+@keyframes drift-a { to { transform: translate3d(8rem, 5rem, 0) scale(1.16); } }
+@keyframes drift-b { to { transform: translate3d(-7rem, 6rem, 0) scale(1.1); } }
 
-@keyframes home-drift-a {
-  from { transform: translate3d(0, 0, 0) scale(1); }
-  to   { transform: translate3d(7rem, 4rem, 0) scale(1.14); }
-}
-@keyframes home-drift-b {
-  from { transform: translate3d(0, 0, 0) scale(1.08); }
-  to   { transform: translate3d(-6rem, -5rem, 0) scale(1); }
-}
-
-/* Blueprint grid, masked so it fades out rather than ending on a hard edge. */
-.home-grid {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
+.mesh {
+  position: absolute; inset: 0; z-index: -1;
   background-image:
-    linear-gradient(oklch(1 0 0 / 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, oklch(1 0 0 / 0.05) 1px, transparent 1px);
-  background-size: 68px 68px;
-  mask-image: radial-gradient(ellipse 78% 62% at 50% 34%, #000 40%, transparent 100%);
-  animation: home-grid-in 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-@keyframes home-grid-in {
-  from { opacity: 0; transform: perspective(800px) rotateX(14deg) scale(1.1); }
-  to   { opacity: 1; transform: none; }
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse 80% 65% at 50% 30%, #000 35%, transparent 100%);
 }
 
-/* ── Entrance choreography ───────────────────────────────────────────────── */
-.rise {
-  animation: rise 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: var(--d, 0ms);
-}
-@keyframes rise {
-  from { opacity: 0; transform: translate3d(0, 1.25rem, 0); }
-  to   { opacity: 1; transform: none; }
-}
+/* ── Entrance ────────────────────────────────────────────────────────────── */
+.up { animation: up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: var(--d, 0ms); }
+@keyframes up { from { opacity: 0; transform: translate3d(0, 1.5rem, 0); } to { opacity: 1; transform: none; } }
 
-/* Headline reveals a word at a time from behind its own line box. */
-.word {
-  display: inline-block;
-  overflow: hidden;
-  vertical-align: bottom;
+.clip { display: inline-block; overflow: hidden; vertical-align: bottom; }
+.clip > span { display: inline-block; animation: clip-up 1s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: var(--d, 0ms); }
+@keyframes clip-up { from { transform: translate3d(0, 110%, 0); } to { transform: none; } }
+
+/* Rotating word in the headline. */
+.rotor { display: inline-grid; vertical-align: bottom; }
+.rotor > span {
+  grid-area: 1 / 1;
+  color: var(--lime);
+  opacity: 0;
+  animation: rotor 12s linear infinite;
+  animation-delay: var(--i);
 }
-.word > span {
-  display: inline-block;
-  animation: word-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: var(--d, 0ms);
-}
-@keyframes word-up {
-  from { transform: translate3d(0, 105%, 0); }
-  to   { transform: none; }
+@keyframes rotor {
+  0%, 2%    { opacity: 0; transform: translate3d(0, 60%, 0); }
+  6%, 25%   { opacity: 1; transform: none; }
+  31%, 100% { opacity: 0; transform: translate3d(0, -60%, 0); }
 }
 
 /* ── Scroll reveal ───────────────────────────────────────────────────────── */
-.reveal {
-  opacity: 0;
-  transform: translate3d(0, 1.5rem, 0);
-  transition:
-    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-  transition-delay: var(--d, 0ms);
-}
-.reveal.is-in {
-  opacity: 1;
-  transform: none;
-}
+.rv { opacity: 0; transform: translate3d(0, 1.75rem, 0);
+  transition: opacity 0.75s cubic-bezier(0.22,1,0.36,1), transform 0.75s cubic-bezier(0.22,1,0.36,1);
+  transition-delay: var(--d, 0ms); }
+.rv.in { opacity: 1; transform: none; }
 
-/* ── Product cards ───────────────────────────────────────────────────────── */
-.pcard {
+/* ── Cards ───────────────────────────────────────────────────────────────── */
+.card {
   position: relative;
-  isolation: isolate;
-  transition:
-    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 0.35s ease;
-}
-.pcard::after {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  z-index: -1;
-  border-radius: inherit;
-  opacity: 0;
-  transition: opacity 0.35s ease;
-  background: radial-gradient(120% 80% at 50% 0%, var(--accent) 0%, transparent 70%);
-}
-.pcard:hover {
-  transform: translateY(-4px);
-  border-color: color-mix(in oklch, var(--accent) 45%, transparent);
-  box-shadow: 0 18px 40px -22px color-mix(in oklch, var(--accent) 70%, transparent);
-}
-.pcard:hover::after { opacity: 0.1; }
-
-.pcard-live::before {
-  content: '';
-  position: absolute;
-  inset-inline: 0;
-  top: 0;
-  height: 2px;
-  border-radius: inherit;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
-}
-
-/* Live status dot on the shipping product. */
-.pulse {
-  position: relative;
-}
-.pulse::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: inherit;
-  animation: pulse 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-@keyframes pulse {
-  0%   { transform: scale(1);   opacity: 0.7; }
-  70%  { transform: scale(2.6); opacity: 0; }
-  100% { transform: scale(2.6); opacity: 0; }
-}
-
-/* ── Marquee of module names under the hero ──────────────────────────────── */
-.ticker {
-  display: flex;
-  width: max-content;
-  animation: ticker 38s linear infinite;
-}
-.ticker:hover { animation-play-state: paused; }
-@keyframes ticker {
-  from { transform: translate3d(0, 0, 0); }
-  to   { transform: translate3d(-50%, 0, 0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .home-hero::before,
-  .home-hero::after,
-  .home-grid,
-  .rise,
-  .word > span,
-  .ticker,
-  .pulse::after {
-    animation: none !important;
-  }
-  .reveal { opacity: 1; transform: none; transition: none; }
-  .word > span { transform: none; }
-  .pcard:hover { transform: none; }
-}
-
-/* ── Product visual: a browser frame that floats and tilts ───────────────── */
-.frame {
-  transform: perspective(1600px) rotateY(-13deg) rotateX(6deg) translateZ(0);
-  transform-origin: left center;
-  animation: frame-in 1.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: 620ms;
-  box-shadow:
-    0 2px 4px oklch(0 0 0 / 0.2),
-    0 12px 28px oklch(0 0 0 / 0.28),
-    0 48px 90px -30px oklch(0 0 0 / 0.55);
-}
-@keyframes frame-in {
-  from {
-    opacity: 0;
-    transform: perspective(1600px) rotateY(-22deg) rotateX(10deg) translate3d(3rem, 2rem, 0) scale(0.94);
-  }
-  to {
-    opacity: 1;
-    transform: perspective(1600px) rotateY(-13deg) rotateX(6deg) translateZ(0);
-  }
-}
-.frame-float { animation: float 9s ease-in-out infinite; }
-@keyframes float {
-  0%, 100% { transform: translate3d(0, 0, 0); }
-  50%      { transform: translate3d(0, -0.85rem, 0); }
-}
-
-/* A highlight sweeping across the glass. */
-.frame-shine {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(105deg, transparent 38%, oklch(1 0 0 / 0.1) 47%, transparent 56%);
-  background-size: 260% 100%;
-  animation: shine 7.5s ease-in-out infinite;
-}
-@keyframes shine {
-  0%, 62% { background-position: 190% 0; }
-  100%    { background-position: -60% 0; }
-}
-
-/* Rows ticking in, as if the table were loading live. */
-.row-in { animation: row-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: var(--d, 0ms); }
-@keyframes row-in {
-  from { opacity: 0; transform: translate3d(-0.6rem, 0, 0); }
-  to   { opacity: 1; transform: none; }
-}
-
-/* A bar chart that grows on reveal. */
-.bar { transform-origin: bottom; animation: bar 1s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: var(--d, 0ms); }
-@keyframes bar {
-  from { transform: scaleY(0.05); opacity: 0.4; }
-  to   { transform: scaleY(1); opacity: 1; }
-}
-
-/* ── Bento ───────────────────────────────────────────────────────────────── */
-.bento { display: grid; gap: 1.25rem; grid-template-columns: 1fr; }
-@media (min-width: 768px) { .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (min-width: 1024px) {
-  .bento { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 13.5rem; }
-  .bento-hero { grid-column: span 2; grid-row: span 2; }
-  .bento-tall { grid-row: span 2; }
-}
-
-/* Light sections get texture rather than flat white. */
-.tinted {
-  position: relative;
-  background:
-    radial-gradient(ellipse 70% 55% at 12% 0%, color-mix(in oklch, var(--brand-glow) 10%, transparent), transparent 70%),
-    radial-gradient(ellipse 60% 50% at 92% 30%, color-mix(in oklch, var(--brand-glow) 7%, transparent), transparent 70%);
-}
-.hairline {
-  background-image: linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 96px 100%;
-  mask-image: linear-gradient(180deg, transparent, #000 18%, #000 82%, transparent);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .frame, .frame-float, .frame-shine, .row-in, .bar { animation: none !important; }
-  .frame { transform: none; }
-}
-
-/* ── Section markers: mono numerals on a hairline ────────────────────────── */
-.marker {
-  display: flex;
-  align-items: center;
-  gap: 0.875rem;
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 0.6875rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--muted-foreground);
-}
-.marker::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, var(--border), transparent);
-}
-
-/* ── Capability strip ────────────────────────────────────────────────────── */
-.strip {
-  display: grid;
-  gap: 1px;
-  background: var(--border);
-  border-block: 1px solid var(--border);
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-@media (min-width: 900px) { .strip { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-.strip > * { background: var(--background); padding: 1.75rem 1.5rem; }
-
-/* ── Feature tiles: accent hairline that draws on hover ──────────────────── */
-.tile { position: relative; transition: background-color 0.3s ease; }
-.tile::before {
-  content: '';
-  position: absolute;
-  inset-inline: 0;
-  bottom: -1px;
-  height: 1px;
-  background: var(--primary);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.tile:hover { background: color-mix(in oklch, var(--primary) 3%, transparent); }
-.tile:hover::before { transform: scaleX(1); }
-
-/* ── Role columns ────────────────────────────────────────────────────────── */
-.role { position: relative; padding-top: 1.5rem; }
-.role::before {
-  content: '';
-  position: absolute;
-  inset-inline: 0;
-  top: 0;
-  height: 2px;
-  background: var(--role-accent, var(--primary));
-  transform-origin: left;
-  animation: draw 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: var(--d, 0ms);
-}
-@keyframes draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-
-/* ── Flow steps, connected by a rule ─────────────────────────────────────── */
-.flow { position: relative; }
-.flow::before {
-  content: '';
-  position: absolute;
-  left: 1.125rem;
-  top: 2.25rem;
-  bottom: 2.25rem;
-  width: 1px;
-  background: linear-gradient(180deg, transparent, var(--border) 12%, var(--border) 88%, transparent);
-}
-@media (min-width: 900px) {
-  .flow::before {
-    left: 0; right: 0; top: 1.125rem; bottom: auto; width: auto; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--border) 12%, var(--border) 88%, transparent);
-  }
-}
-
-/* ── Closing band ────────────────────────────────────────────────────────── */
-.band {
-  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: linear-gradient(180deg, oklch(1 0 0 / 0.035), oklch(1 0 0 / 0.012));
+  transition: transform .4s cubic-bezier(.22,1,.36,1), border-color .4s ease, background .4s ease;
   overflow: hidden;
-  background: var(--ink);
-  color: oklch(0.97 0.005 250);
-  isolation: isolate;
 }
-.band::before {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  inset: -30% -10% auto -10%;
-  height: 34rem;
-  background: radial-gradient(ellipse at 50% 0%, var(--glow-a), transparent 66%);
-  opacity: 0.34;
-  filter: blur(80px);
-  animation: home-drift-a 30s ease-in-out infinite alternate;
+.card::before {
+  content: ''; position: absolute; inset-inline: 0; top: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--c, var(--lime)), transparent);
+  opacity: 0; transition: opacity .4s ease;
+}
+.card:hover {
+  transform: translateY(-5px);
+  border-color: color-mix(in oklch, var(--c, var(--lime)) 40%, transparent);
+  background: linear-gradient(180deg, oklch(1 0 0 / 0.06), oklch(1 0 0 / 0.02));
+}
+.card:hover::before { opacity: 1; }
+
+/* ── Marquee ─────────────────────────────────────────────────────────────── */
+.marq { display: flex; width: max-content; animation: marq 42s linear infinite; }
+.marq:hover { animation-play-state: paused; }
+@keyframes marq { to { transform: translate3d(-50%, 0, 0); } }
+
+/* ── Numerals ────────────────────────────────────────────────────────────── */
+.num {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+.eyebrow {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6875rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--fg-2);
 }
 
+/* Pulsing dot for the shipping product. */
+.dot { position: relative; }
+.dot::after {
+  content: ''; position: absolute; inset: 0; border-radius: 50%; background: inherit;
+  animation: ping 2.4s cubic-bezier(.4,0,.6,1) infinite;
+}
+@keyframes ping { 0% { transform: scale(1); opacity: .75; } 75%,100% { transform: scale(2.8); opacity: 0; } }
+
 @media (prefers-reduced-motion: reduce) {
-  .role::before { animation: none; transform: none; }
-  .band::before { animation: none; }
-  .tile::before { transition: none; }
+  .aura::before, .aura::after, .up, .clip > span, .rotor > span, .marq, .dot::after { animation: none !important; }
+  .rotor > span { opacity: 0; }
+  .rotor > span:first-child { opacity: 1; }
+  .rv { opacity: 1; transform: none; transition: none; }
+  .card:hover { transform: none; }
 }
