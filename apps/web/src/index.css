@@ -1,20 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 @import '@itoby/ui/styles.css';
-@import './site/site.css';
 
 /* Tailwind 4 skips node_modules when scanning for classes, so the library's
    compiled output has to be declared explicitly — without this every class
    baked into @itoby/ui components is dropped from the generated CSS. */
 @source '../../../packages/ui/dist';
 @source '../../../packages/ui/src';
-
-/* Public-site additions layered on top of the library's tokens. These resolve
-   only inside `.itoby-site`, which is where site.css defines them. */
-@theme inline {
-  --color-glow-primary: var(--glow-primary);
-  --color-glow-secondary: var(--glow-secondary);
-  --font-display: var(--font-display);
-}
 
 @layer base {
   * {

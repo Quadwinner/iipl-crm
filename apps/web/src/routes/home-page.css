@@ -1,0 +1,199 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Superapp home — motion and atmosphere.
+
+   Scoped to `.home` so nothing here can leak into the CRM. All animation is
+   CSS (no motion library): transform/opacity only, so it stays on the
+   compositor. Everything collapses under prefers-reduced-motion.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.home {
+  --ink: oklch(0.19 0.035 255);
+  --ink-2: oklch(0.24 0.045 255);
+  --glow-a: oklch(0.62 0.15 245);
+  --glow-b: oklch(0.68 0.11 195);
+}
+
+/* ── Hero canvas ─────────────────────────────────────────────────────────── */
+.home-hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--ink);
+  color: oklch(0.97 0.005 250);
+  isolation: isolate;
+}
+
+/* Two slow-drifting light sources. Different durations so they never loop in
+   lockstep and the field never looks like it repeats. */
+.home-hero::before,
+.home-hero::after {
+  content: '';
+  position: absolute;
+  z-index: -2;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.5;
+  pointer-events: none;
+}
+.home-hero::before {
+  width: 46rem;
+  height: 46rem;
+  top: -18rem;
+  left: -10rem;
+  background: radial-gradient(circle, var(--glow-a), transparent 68%);
+  animation: home-drift-a 26s ease-in-out infinite alternate;
+}
+.home-hero::after {
+  width: 38rem;
+  height: 38rem;
+  right: -12rem;
+  bottom: -20rem;
+  background: radial-gradient(circle, var(--glow-b), transparent 68%);
+  animation: home-drift-b 34s ease-in-out infinite alternate;
+}
+
+@keyframes home-drift-a {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(7rem, 4rem, 0) scale(1.14); }
+}
+@keyframes home-drift-b {
+  from { transform: translate3d(0, 0, 0) scale(1.08); }
+  to   { transform: translate3d(-6rem, -5rem, 0) scale(1); }
+}
+
+/* Blueprint grid, masked so it fades out rather than ending on a hard edge. */
+.home-grid {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(oklch(1 0 0 / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(1 0 0 / 0.05) 1px, transparent 1px);
+  background-size: 68px 68px;
+  mask-image: radial-gradient(ellipse 78% 62% at 50% 34%, #000 40%, transparent 100%);
+  animation: home-grid-in 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes home-grid-in {
+  from { opacity: 0; transform: perspective(800px) rotateX(14deg) scale(1.1); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── Entrance choreography ───────────────────────────────────────────────── */
+.rise {
+  animation: rise 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+@keyframes rise {
+  from { opacity: 0; transform: translate3d(0, 1.25rem, 0); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Headline reveals a word at a time from behind its own line box. */
+.word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.word > span {
+  display: inline-block;
+  animation: word-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+@keyframes word-up {
+  from { transform: translate3d(0, 105%, 0); }
+  to   { transform: none; }
+}
+
+/* ── Scroll reveal ───────────────────────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 1.5rem, 0);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--d, 0ms);
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── Product cards ───────────────────────────────────────────────────────── */
+.pcard {
+  position: relative;
+  isolation: isolate;
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s ease;
+}
+.pcard::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  background: radial-gradient(120% 80% at 50% 0%, var(--accent) 0%, transparent 70%);
+}
+.pcard:hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in oklch, var(--accent) 45%, transparent);
+  box-shadow: 0 18px 40px -22px color-mix(in oklch, var(--accent) 70%, transparent);
+}
+.pcard:hover::after { opacity: 0.1; }
+
+.pcard-live::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 2px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+
+/* Live status dot on the shipping product. */
+.pulse {
+  position: relative;
+}
+.pulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: inherit;
+  animation: pulse 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes pulse {
+  0%   { transform: scale(1);   opacity: 0.7; }
+  70%  { transform: scale(2.6); opacity: 0; }
+  100% { transform: scale(2.6); opacity: 0; }
+}
+
+/* ── Marquee of module names under the hero ──────────────────────────────── */
+.ticker {
+  display: flex;
+  width: max-content;
+  animation: ticker 38s linear infinite;
+}
+.ticker:hover { animation-play-state: paused; }
+@keyframes ticker {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-hero::before,
+  .home-hero::after,
+  .home-grid,
+  .rise,
+  .word > span,
+  .ticker,
+  .pulse::after {
+    animation: none !important;
+  }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .word > span { transform: none; }
+  .pcard:hover { transform: none; }
+}
