@@ -10,30 +10,82 @@
  * its CSS, the app reads this file. Changing a brand colour means changing both,
  * and nothing but review catches a drift. That tradeoff is deliberate — the
  * alternative is a build step generating CSS from here, which is more machinery
- * than a seven-colour palette warrants.
+ * than a small palette warrants.
  */
-export const colors = {
-  /** Page background — oklch(0.145 0.008 260). */
-  ink: '#080a0e',
-  /** Raised surface — oklch(0.19 0.012 260). */
-  ink2: '#111419',
-  /** Hairline borders. White at 9%, as `--line`. */
-  line: 'rgba(255,255,255,0.09)',
-  /** Primary accent — oklch(0.88 0.24 128). */
-  lime: '#a9f300',
+
+/** Semantic roles every scheme must fill. */
+export interface Palette {
+  /** Page background. */
+  ink: string
+  /** Raised surface: cards, tab bars. */
+  ink2: string
+  /** A surface raised above ink2 — pressed rows, nested panels. */
+  ink3: string
+  /** Hairline borders. */
+  line: string
+  /** Primary accent. */
+  lime: string
   /** Accent for larger fills, where full lime is too loud. */
+  limeDim: string
+  /** Text that sits *on* the accent. */
+  onLime: string
+  /** Secondary accent. */
+  cyan: string
+  /** Body text. */
+  fg: string
+  /** Muted text. */
+  fg2: string
+  danger: string
+  warn: string
+  ok: string
+}
+
+/** The brand's native scheme — the one the website uses. */
+export const dark: Palette = {
+  ink: '#080a0e',
+  ink2: '#111419',
+  ink3: '#181c22',
+  line: 'rgba(255,255,255,0.09)',
+  lime: '#a9f300',
   limeDim: '#81b900',
-  /** Secondary accent — oklch(0.78 0.13 195). */
+  onLime: '#080a0e',
   cyan: '#1ad1d1',
-  /** Body text — oklch(0.98 0.002 260). */
   fg: '#f8f8fa',
-  /** Muted text — oklch(0.72 0.012 260). */
   fg2: '#a0a5ac',
-  /** Status colours. No web equivalent; used for badges and error states. */
   danger: '#f76c5e',
   warn: '#f2b441',
   ok: '#5fd68a',
-} as const
+}
+
+/**
+ * The light scheme.
+ *
+ * Not an inversion: the same lime that glows on near-black fails contrast on
+ * white, so text and borders darken while the accent stays a fill colour with
+ * dark text on it. Status colours are darkened for the same reason.
+ */
+export const light: Palette = {
+  ink: '#fbfbfa',
+  ink2: '#ffffff',
+  ink3: '#f2f3f1',
+  line: 'rgba(8,10,14,0.12)',
+  lime: '#8fd400',
+  limeDim: '#6fa500',
+  onLime: '#080a0e',
+  cyan: '#0f9c9c',
+  fg: '#101317',
+  fg2: '#5b626b',
+  danger: '#c2402f',
+  warn: '#a97400',
+  ok: '#1f8f4d',
+}
+
+export type SchemeName = 'light' | 'dark'
+
+export const palettes: Record<SchemeName, Palette> = { light, dark }
+
+/** Kept as a named export so existing imports of `colors` still resolve to dark. */
+export const colors = dark
 
 export const radius = { sm: 8, md: 12, lg: 18, pill: 999 } as const
 
@@ -47,27 +99,32 @@ export function space(steps: number): number {
  * complaint look the same everywhere; unknown values stay muted rather than
  * guessing.
  */
-export function statusColor(status: string): string {
+export function statusColorFor(palette: Palette, status: string): string {
   switch (status.toUpperCase()) {
     case 'PAID':
     case 'COMPLETED':
     case 'RESOLVED':
     case 'CLOSED':
     case 'ACTIVE':
-      return colors.ok
+      return palette.ok
     case 'OVERDUE':
     case 'FAILED':
     case 'CANCELLED':
     case 'DISABLED':
-      return colors.danger
+      return palette.danger
     case 'PENDING':
     case 'PARTIALLY_PAID':
     case 'IN_PROGRESS':
     case 'OPEN':
     case 'BETA':
     case 'COMING_SOON':
-      return colors.warn
+      return palette.warn
     default:
-      return colors.fg2
+      return palette.fg2
   }
+}
+
+/** Dark-scheme convenience, for callers with no palette in hand. */
+export function statusColor(status: string): string {
+  return statusColorFor(dark, status)
 }

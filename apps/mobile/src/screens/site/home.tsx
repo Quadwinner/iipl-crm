@@ -1,15 +1,9 @@
-import { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
-import {
-  HERO_EYEBROW,
-  HERO_ROTATING,
-  readProcess,
-  readStats,
-  type AppModule,
-} from '@itoby/shared/site'
+import { readProcess, readStats, type AppModule } from '@itoby/shared/site'
 import { Badge, Button, Card } from '../../components/ui'
 import { SectionHeader } from '../../components/section'
+import { Hero } from './hero'
 import { iconByName } from '../../lib/icons'
 import { usePublicModules, useServices, useSiteSettings } from '../../features/site'
 import { theme } from '../../theme/theme'
@@ -24,14 +18,6 @@ export function HomeScreen() {
   const settings = useSiteSettings()
   const services = useServices()
   const modules = usePublicModules()
-
-  // The website's hero cycles the thing being built; a timer is the RN equivalent
-  // of its CSS keyframes.
-  const [word, setWord] = useState(0)
-  useEffect(() => {
-    const timer = setInterval(() => setWord((n) => (n + 1) % HERO_ROTATING.length), 3000)
-    return () => clearInterval(timer)
-  }, [])
 
   const stats = readStats(settings.data)
   const process = readProcess(settings.data)
@@ -53,33 +39,13 @@ export function HomeScreen() {
         />
       }
     >
-      <View style={styles.hero}>
-        <Text style={styles.eyebrow}>{HERO_EYEBROW}</Text>
-        <Text style={styles.heroTitle}>
-          We build{'\n'}high-converting{'\n'}
-          <Text style={styles.heroAccent}>{HERO_ROTATING[word]}</Text>
-        </Text>
-        {settings.data?.intro ? <Text style={styles.heroBody}>{settings.data.intro}</Text> : null}
-
-        <View style={styles.heroActions}>
-          <Button label="Start a project" onPress={() => navigation.navigate('Contact')} />
-          <Button label="See our work" variant="ghost" onPress={() => navigation.navigate('Services')} />
-        </View>
-      </View>
-
-      {stats.length > 0 ? (
-        <View style={styles.stats}>
-          {stats.map((stat) => (
-            <View key={stat.label} style={styles.stat}>
-              <Text style={styles.statValue}>
-                {stat.value}
-                <Text style={styles.statSuffix}>{stat.suffix}</Text>
-              </Text>
-              <Text style={styles.statLabel}>{stat.label}</Text>
-            </View>
-          ))}
-        </View>
-      ) : null}
+      <Hero
+        intro={settings.data?.intro ?? ''}
+        stats={stats}
+        modules={modules.data ?? []}
+        onStart={() => navigation.navigate('Contact')}
+        onExplore={() => navigation.navigate('Services')}
+      />
 
       <View style={styles.section}>
         <SectionHeader eyebrow="What we do" title="Services" />
@@ -150,39 +116,8 @@ function ProductCard({ module }: { module: AppModule }) {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.color.bg },
-  content: { padding: theme.space(5), paddingBottom: theme.space(12) },
-  hero: { paddingTop: theme.space(4), paddingBottom: theme.space(8) },
-  eyebrow: {
-    color: theme.color.accent,
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 1.4,
-    textTransform: 'uppercase',
-  },
-  heroTitle: {
-    color: theme.color.text,
-    fontSize: 34,
-    fontWeight: '800',
-    letterSpacing: -1,
-    lineHeight: 40,
-    marginTop: theme.space(3),
-  },
-  heroAccent: { color: theme.color.accent },
-  heroBody: { color: theme.color.muted, fontSize: 15, lineHeight: 24, marginTop: theme.space(4) },
-  heroActions: { gap: theme.space(3), marginTop: theme.space(7) },
-  stats: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    backgroundColor: theme.color.surface,
-    borderRadius: theme.radius.lg,
-    padding: theme.space(5),
-    marginBottom: theme.space(8),
-  },
-  stat: { width: '50%', paddingVertical: theme.space(2) },
-  statValue: { color: theme.color.accent, fontSize: 24, fontWeight: '800' },
-  statSuffix: { fontSize: 16 },
-  statLabel: { color: theme.color.muted, fontSize: 12, marginTop: theme.space(1) },
-  section: { marginBottom: theme.space(8) },
+  content: { paddingBottom: theme.space(12) },
+  section: { marginBottom: theme.space(8), paddingHorizontal: theme.space(5) },
   cardTitle: { color: theme.color.text, fontSize: 16, fontWeight: '700' },
   cardTagline: { color: theme.color.accent, fontSize: 12, marginTop: 2 },
   cardBody: { color: theme.color.muted, fontSize: 14, lineHeight: 21, marginTop: theme.space(2) },
@@ -207,6 +142,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.color.surface,
     borderRadius: theme.radius.lg,
     padding: theme.space(6),
+    marginHorizontal: theme.space(5),
   },
   ctaTitle: { color: theme.color.text, fontSize: 20, fontWeight: '800' },
   ctaAction: { marginTop: theme.space(5) },
