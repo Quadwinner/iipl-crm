@@ -1,9 +1,9 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { formatCurrency, formatDate, formatFileSize } from '@itoby/shared/owner'
-import { Button, Card, Empty, ErrorState, Field, Loading } from '../components/ui'
-import { useDocuments, useReceipts } from '../features/queries'
-import { useAuth } from '../auth/auth'
-import { theme } from '../theme/theme'
+import { Button, Card, Empty, ErrorState, Field, Loading } from '../../components/ui'
+import { useDocuments, useReceipts } from '../../features/queries'
+import { useAuth } from '../../auth/auth'
+import { theme } from '../../theme/theme'
 
 export function MoreScreen() {
   const { email, role, signOut } = useAuth()

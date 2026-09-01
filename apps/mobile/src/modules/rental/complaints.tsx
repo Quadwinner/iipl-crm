@@ -1,8 +1,8 @@
 import { FlatList, StyleSheet, Text, View } from 'react-native'
 import { formatTimestamp } from '@itoby/shared/owner'
-import { Badge, Card, Empty, ErrorState, Field, Loading } from '../components/ui'
-import { useComplaints } from '../features/queries'
-import { theme } from '../theme/theme'
+import { Badge, Card, Empty, ErrorState, Field, Loading } from '../../components/ui'
+import { useComplaints } from '../../features/queries'
+import { theme } from '../../theme/theme'
 
 export function ComplaintsScreen() {
   const complaints = useComplaints()

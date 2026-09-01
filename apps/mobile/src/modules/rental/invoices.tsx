@@ -1,8 +1,8 @@
 import { FlatList, StyleSheet, Text, View } from 'react-native'
 import { formatCurrency, formatDate } from '@itoby/shared/owner'
-import { Badge, Card, Empty, ErrorState, Field, Loading } from '../components/ui'
-import { useInvoices } from '../features/queries'
-import { theme } from '../theme/theme'
+import { Badge, Card, Empty, ErrorState, Field, Loading } from '../../components/ui'
+import { useInvoices } from '../../features/queries'
+import { theme } from '../../theme/theme'
 
 export function InvoicesScreen() {
   const invoices = useInvoices()

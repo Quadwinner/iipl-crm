@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { Check, Loader2 } from 'lucide-react'
 
+import { BUDGET_RANGES, submitLead } from '@itoby/shared'
 import { useServices } from '@/features/site/use-content'
 import { supabase } from '@/lib/supabase'
 
 type Source = 'CONTACT_FORM' | 'QUOTE_REQUEST'
 
-const BUDGETS = ['Under ₹1L', '₹1L – ₹5L', '₹5L – ₹15L', '₹15L+', 'Not sure yet']
+const BUDGETS = BUDGET_RANGES
 
 /**
  * The only public write path into `leads`.
@@ -38,23 +39,19 @@ export function LeadForm({ source, cta }: { source: Source; cta: string }) {
     e.preventDefault()
     setError(null)
     setBusy(true)
-    const { error: err } = await supabase().rpc('submit_lead', {
-      p_full_name: form.full_name.trim(),
-      p_email: form.email.trim(),
-      p_phone: form.phone.trim(),
-      p_company: form.company.trim(),
-      p_service_interest: form.service_interest,
-      p_budget_range: form.budget_range,
-      p_message: form.message.trim(),
-      p_source: source,
-      p_page_path: window.location.pathname,
-    })
-    setBusy(false)
-    if (err) {
-      setError(err.message)
-      return
+    try {
+      await submitLead(supabase(), {
+        ...form,
+        source,
+        page_path: window.location.pathname,
+      })
+      setSent(true)
+    } catch (cause) {
+      // submit_lead's rate-limit message is written for the visitor; show it as-is.
+      setError(cause instanceof Error ? cause.message : 'That could not be sent.')
+    } finally {
+      setBusy(false)
     }
-    setSent(true)
   }
 
   if (sent) {

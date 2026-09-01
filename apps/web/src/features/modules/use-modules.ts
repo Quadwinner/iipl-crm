@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
-import type { Database } from '@itoby/shared'
+import { listMyModules, listPublicModules, SITE_STALE_TIME, siteKeys } from '@itoby/shared'
 import { supabase } from '@/lib/supabase'
 
-export type AppModule = Database['public']['Tables']['app_modules']['Row']
+export type { AppModule } from '@itoby/shared'
 
 /**
  * The launcher's module list. Reads through modules_for_current_user(), which
@@ -11,29 +11,17 @@ export type AppModule = Database['public']['Tables']['app_modules']['Row']
  */
 export function useMyModules() {
   return useQuery({
-    queryKey: ['my-modules'],
-    staleTime: 5 * 60_000,
-    queryFn: async (): Promise<AppModule[]> => {
-      const { data, error } = await supabase().rpc('modules_for_current_user')
-      if (error) throw new Error(error.message)
-      return data ?? []
-    },
+    queryKey: siteKeys.myModules,
+    staleTime: SITE_STALE_TIME,
+    queryFn: () => listMyModules(supabase()),
   })
 }
 
 /** The public product catalogue: publicly listed rows, readable by anon. */
 export function usePublicModules() {
   return useQuery({
-    queryKey: ['public-modules'],
-    staleTime: 5 * 60_000,
-    queryFn: async (): Promise<AppModule[]> => {
-      const { data, error } = await supabase()
-        .from('app_modules')
-        .select('*')
-        .eq('listed_publicly', true)
-        .order('sort_order')
-      if (error) throw new Error(error.message)
-      return data ?? []
-    },
+    queryKey: siteKeys.publicModules,
+    staleTime: SITE_STALE_TIME,
+    queryFn: () => listPublicModules(supabase()),
   })
 }

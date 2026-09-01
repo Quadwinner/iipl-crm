@@ -1,25 +1,19 @@
 import { useQuery } from '@tanstack/react-query'
+import { getSiteSettings, SITE_STALE_TIME, siteKeys } from '@itoby/shared'
 import { supabase } from '@/lib/supabase'
 
+export type { SiteSettings } from '@itoby/shared'
+
 /**
- * The singleton site_settings row. Every piece of company copy — name, tagline,
- * intro, contact details, socials — comes from here so the site can be edited
- * from the CMS without a redeploy. Nothing is hardcoded in components.
- *
- * Readable by anon under RLS, so this works on the public site too.
+ * The singleton site_settings row — company copy, contact details, socials,
+ * stats and process steps — so the site can be edited from the CMS without a
+ * redeploy. The query lives in @itoby/shared so the Expo app reads the same row
+ * the same way.
  */
 export function useSiteSettings() {
   return useQuery({
-    queryKey: ['site-settings'],
-    staleTime: 5 * 60_000,
-    queryFn: async () => {
-      const { data, error } = await supabase()
-        .from('site_settings')
-        .select('*')
-        .eq('id', 1)
-        .maybeSingle()
-      if (error) throw new Error(error.message)
-      return data
-    },
+    queryKey: siteKeys.settings,
+    staleTime: SITE_STALE_TIME,
+    queryFn: () => getSiteSettings(supabase()),
   })
 }

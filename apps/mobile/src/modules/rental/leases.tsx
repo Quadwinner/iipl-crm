@@ -1,11 +1,11 @@
 import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { formatCurrency, formatDate, daysUntil, reminderAmount, reminderTitle } from '@itoby/shared/owner'
-import { Badge, Card, Empty, ErrorState, Field, Loading } from '../components/ui'
-import { useInvoices, useLeases, useReminders } from '../features/queries'
-import { useAuth } from '../auth/auth'
-import { theme } from '../theme/theme'
+import { Badge, Card, Empty, ErrorState, Field, Loading } from '../../components/ui'
+import { useInvoices, useLeases, useReminders } from '../../features/queries'
+import { useAuth } from '../../auth/auth'
+import { theme } from '../../theme/theme'
 
-export function HomeScreen() {
+export function LeasesScreen() {
   const { email } = useAuth()
   const leases = useLeases()
   const invoices = useInvoices()
