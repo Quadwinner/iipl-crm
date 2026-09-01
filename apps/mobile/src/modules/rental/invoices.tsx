@@ -9,7 +9,7 @@ import { useInvoices } from '../../features/queries'
 import { theme } from '../../theme/theme'
 
 export function InvoicesScreen() {
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation()
   const invoices = useInvoices()
   const [busyId, setBusyId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)

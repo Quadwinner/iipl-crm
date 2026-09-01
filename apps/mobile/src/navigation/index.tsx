@@ -111,7 +111,7 @@ function AppTabs() {
 
 /** Header action on the public home tab. */
 function SignInLink() {
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation()
   return (
     <Pressable
       accessibilityRole="button"

@@ -1,6 +1,8 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { useNavigation, useRoute } from '@react-navigation/native'
+import type { RouteProp } from '@react-navigation/native'
+import type { RootParamList } from '../../navigation/types'
 import {
   Building2,
   FileText,
@@ -72,7 +74,7 @@ function RentalTabs() {
 /** Payment is pushed rather than shown in a sheet: the WebView needs a full screen. */
 function PayInvoiceRoute() {
   const navigation = useNavigation()
-  const route = useRoute<{ key: string; name: string; params: { invoice: InvoiceRow } }>()
+  const route = useRoute<RouteProp<RootParamList, 'PayInvoice'>>()
   return <PayInvoiceScreen invoice={route.params.invoice} onDone={() => navigation.goBack()} />
 }
 

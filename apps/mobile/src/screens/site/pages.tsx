@@ -1,4 +1,6 @@
 import { useRoute } from '@react-navigation/native'
+import type { RouteProp } from '@react-navigation/native'
+import type { RootParamList } from '../../navigation/types'
 import { Linking, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { Badge, Card, Empty, ErrorState, Loading } from '../../components/ui'
 import { LeadForm } from '../../components/lead-form'
@@ -65,7 +67,7 @@ export function ServicesScreen() {
 
 /** Long-form copy for one service, matched by slug the way the web route does. */
 export function ServiceDetailScreen() {
-  const route = useRoute<{ key: string; name: string; params: { slug: string } }>()
+  const route = useRoute<RouteProp<RootParamList, 'ServiceDetail'>>()
   const services = useServices()
   const service = (services.data ?? []).find((row) => row.slug === route.params.slug)
 

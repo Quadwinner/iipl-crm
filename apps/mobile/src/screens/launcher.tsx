@@ -17,7 +17,7 @@ import { theme } from '../theme/theme'
  * get out of step with it.
  */
 export function LauncherScreen() {
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation()
   const { email, role } = useAuth()
   const modules = useMyModules()
 
@@ -72,10 +72,10 @@ export function LauncherScreen() {
                 return
               }
               // Only rental is built. Anything else registered as ACTIVE without a
-              // screen here would otherwise navigate nowhere.
-              navigation.navigate(module.key === 'rental' ? 'Rental' : 'ModuleComingSoon', {
-                moduleKey: module.key,
-              })
+              // screen here falls back to its own detail page rather than
+              // navigating nowhere.
+              if (module.key === 'rental') navigation.navigate('Rental')
+              else navigation.navigate('ModuleComingSoon', { moduleKey: module.key })
             }}
           />
         ))}

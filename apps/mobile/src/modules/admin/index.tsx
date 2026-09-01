@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { useNavigation, useRoute } from '@react-navigation/native'
+import type { RouteProp } from '@react-navigation/native'
+import type { RootParamList } from '../../navigation/types'
 import { FlatList, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
@@ -37,7 +39,7 @@ function useLeads() {
  * without it simply reads zero rows.
  */
 function LeadsScreen() {
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation()
   const [status, setStatus] = useState<LeadStatus | null>(null)
   const leads = useLeads()
 
@@ -91,7 +93,7 @@ function LeadsScreen() {
 }
 
 function LeadDetailScreen() {
-  const route = useRoute<{ key: string; name: string; params: { lead: Lead } }>()
+  const route = useRoute<RouteProp<RootParamList, 'LeadDetail'>>()
   const lead = route.params.lead
   const queryClient = useQueryClient()
   const [error, setError] = useState<string | null>(null)

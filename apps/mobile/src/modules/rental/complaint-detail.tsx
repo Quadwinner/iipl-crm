@@ -1,4 +1,6 @@
 import { useRoute } from '@react-navigation/native'
+import type { RouteProp } from '@react-navigation/native'
+import type { RootParamList } from '../../navigation/types'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { formatTimestamp, type ComplaintRow } from '@itoby/shared/owner'
 import { Badge, Card, Empty, ErrorState, Field, Loading } from '../../components/ui'
@@ -13,7 +15,7 @@ import { theme } from '../../theme/theme'
  * could not, because owners cannot read staff `profiles` rows.
  */
 export function ComplaintDetailScreen() {
-  const route = useRoute<{ key: string; name: string; params: { complaint: ComplaintRow } }>()
+  const route = useRoute<RouteProp<RootParamList, 'ComplaintDetail'>>()
   const complaint = route.params.complaint
   const history = useComplaintHistory(complaint.id)
 

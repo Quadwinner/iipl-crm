@@ -13,7 +13,7 @@ import { theme } from '../../theme/theme'
  * extra to render.
  */
 export function MoreScreen() {
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation()
   const { email } = useAuth()
   const invoices = useInvoices()
   const reminders = useReminders()

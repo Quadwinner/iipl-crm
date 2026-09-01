@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useRoute } from '@react-navigation/native'
+import type { RouteProp } from '@react-navigation/native'
+import type { RootParamList } from '../../../navigation/types'
 import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import { formatTimestamp } from '@itoby/shared/owner'
 import type { AdminComplaintRow } from '@itoby/shared/admin'
@@ -24,7 +26,7 @@ import { theme } from '../../../theme/theme'
  * server-side either way.
  */
 export function AdminComplaintDetailScreen() {
-  const route = useRoute<{ key: string; name: string; params: { complaint: AdminComplaintRow } }>()
+  const route = useRoute<RouteProp<RootParamList, 'AdminComplaintDetail'>>()
   const complaint = route.params.complaint
   const { role } = useAuth()
 

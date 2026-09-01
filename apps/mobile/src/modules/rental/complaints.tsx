@@ -7,7 +7,7 @@ import { useComplaints } from '../../features/queries'
 import { theme } from '../../theme/theme'
 
 export function ComplaintsScreen() {
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation()
   const complaints = useComplaints()
 
   if (complaints.isPending) return <Loading />

@@ -14,7 +14,7 @@ import { theme } from '../../../theme/theme'
 
 /** Everything that does not warrant a tab of its own. */
 export function AdminManageScreen() {
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation()
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>

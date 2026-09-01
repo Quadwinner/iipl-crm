@@ -1,4 +1,6 @@
 import { useRoute } from '@react-navigation/native'
+import type { RouteProp } from '@react-navigation/native'
+import type { RootParamList } from '../navigation/types'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { Badge, Card, Empty, Loading } from '../components/ui'
 import { SectionHeader } from '../components/section'
@@ -11,7 +13,7 @@ import { theme } from '../theme/theme'
  * adding a product to the CMS gives it a real page here without a release.
  */
 export function ModuleComingSoonScreen() {
-  const route = useRoute<{ key: string; name: string; params: { moduleKey: string } }>()
+  const route = useRoute<RouteProp<RootParamList, 'ModuleComingSoon'>>()
   const modules = usePublicModules()
   const module = (modules.data ?? []).find((row) => row.key === route.params.moduleKey)
 

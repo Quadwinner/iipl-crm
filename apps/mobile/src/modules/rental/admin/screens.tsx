@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native'
+import type { RouteProp } from '@react-navigation/native'
+import type { RootParamList } from '../../../navigation/types'
 import { FlatList, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { formatCurrency, formatDate, formatTimestamp } from '@itoby/shared/owner'
 import type { AdminComplaintRow } from '@itoby/shared/admin'
@@ -64,7 +66,7 @@ function Tile({ label, value, tone }: { label: string; value: string; tone?: 'ok
 }
 
 export function AdminBuildingsScreen() {
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation()
   const buildings = useBuildings()
 
   if (buildings.isPending) return <Loading />
@@ -97,7 +99,7 @@ export function AdminBuildingsScreen() {
 }
 
 export function AdminUnitsScreen() {
-  const route = useRoute<{ key: string; name: string; params?: { buildingId?: string; name?: string } }>()
+  const route = useRoute<RouteProp<RootParamList, 'AdminUnits'>>()
   const buildingId = route.params?.buildingId ?? null
   const units = useUnits(buildingId)
 
@@ -190,7 +192,7 @@ export function AdminStaffScreen() {
 
 /** The complaints queue. Tapping one opens the screen where it can be worked. */
 export function AdminComplaintsScreen() {
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation()
   const [status, setStatus] = useState<'OPEN' | 'IN_PROGRESS' | null>(null)
   const complaints = useAdminComplaints({
     category: null,

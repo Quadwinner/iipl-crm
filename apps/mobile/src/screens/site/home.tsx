@@ -20,7 +20,7 @@ import { theme } from '../../theme/theme'
  * Every string comes from the CMS — nothing is hardcoded here.
  */
 export function HomeScreen() {
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation()
   const settings = useSiteSettings()
   const services = useServices()
   const modules = usePublicModules()
