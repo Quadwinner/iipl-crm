@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { AuthProvider, useAuth } from './src/auth/auth'
+import { ErrorBoundary } from './src/components/error-boundary'
 import { ComplaintsScreen } from './src/screens/complaints'
 import { HomeScreen } from './src/screens/home'
 import { InvoicesScreen } from './src/screens/invoices'
@@ -11,6 +12,7 @@ import { Loading } from './src/components/ui'
 import { MoreScreen } from './src/screens/more'
 import { NoAccessScreen } from './src/screens/no-access'
 import { SignInScreen } from './src/screens/sign-in'
+import { StartupFailure } from './src/screens/startup-failure'
 import { theme } from './src/theme/theme'
 import { View } from 'react-native'
 
@@ -63,7 +65,7 @@ function Tabs() {
  * to read, so any other role gets told plainly instead of shown empty tabs.
  */
 function Root() {
-  const { status, role } = useAuth()
+  const { status, role, failure } = useAuth()
 
   if (status === 'loading') {
     return (
@@ -72,6 +74,7 @@ function Root() {
       </View>
     )
   }
+  if (status === 'broken') return <StartupFailure error={failure} />
   if (status === 'unauthenticated') return <SignInScreen />
   if (role !== 'OFFICE_OWNER') return <NoAccessScreen />
 
@@ -84,13 +87,15 @@ function Root() {
 
 export default function App() {
   return (
-    <SafeAreaProvider>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <StatusBar style="light" />
-          <Root />
-        </AuthProvider>
-      </QueryClientProvider>
-    </SafeAreaProvider>
+    <ErrorBoundary>
+      <SafeAreaProvider>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <StatusBar style="light" />
+            <Root />
+          </AuthProvider>
+        </QueryClientProvider>
+      </SafeAreaProvider>
+    </ErrorBoundary>
   )
 }
