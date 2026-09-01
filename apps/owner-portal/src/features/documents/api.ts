@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { documentKeys, downloadDocument, listOwnerDocuments, type Uuid } from '@itoby/shared'
+import { openSignedFile } from '@itoby/ui'
 import { supabase } from '@/lib/supabase'
 
 export { documentKeys, type OwnerDocumentRow } from '@itoby/shared'
@@ -16,8 +17,7 @@ export function useOwnerDocuments(ownerId: Uuid) {
 export function useDownloadOwnerDocument() {
   return useMutation({
     mutationFn: async (documentId: Uuid) => {
-      const file = await downloadDocument(supabase(), documentId)
-      window.open(file.signedUrl, '_blank', 'noopener,noreferrer')
+      const file = await openSignedFile(() => downloadDocument(supabase(), documentId))
       return file.fileName
     },
   })

@@ -9,6 +9,7 @@ import {
   type PaymentIntentInput,
   type Uuid,
 } from '@itoby/shared'
+import { openSignedFile } from '@itoby/ui'
 import { supabase } from '@rental-owner/lib/supabase'
 
 export {
@@ -57,17 +58,16 @@ export function useGenerateInvoicePdf() {
 export function useDownloadInvoicePdf() {
   return useMutation({
     mutationFn: async (invoiceId: Uuid) => {
-      try {
-        const file = await downloadInvoice(supabase(), invoiceId)
-        window.open(file.signedUrl, '_blank', 'noopener,noreferrer')
-        return file.fileName
-      } catch {
-        // No PDF rendered yet: kick off the render, then retry once.
-        await generateInvoicePdf(supabase(), invoiceId)
-        const file = await downloadInvoice(supabase(), invoiceId)
-        window.open(file.signedUrl, '_blank', 'noopener,noreferrer')
-        return file.fileName
-      }
+      const file = await openSignedFile(async () => {
+        try {
+          return await downloadInvoice(supabase(), invoiceId)
+        } catch {
+          // No PDF rendered yet: kick off the render, then retry once.
+          await generateInvoicePdf(supabase(), invoiceId)
+          return await downloadInvoice(supabase(), invoiceId)
+        }
+      })
+      return file.fileName
     },
   })
 }

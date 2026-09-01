@@ -6,6 +6,7 @@ import {
   receiptKeys,
   type Uuid,
 } from '@itoby/shared'
+import { openSignedFile } from '@itoby/ui'
 import { supabase } from '@/lib/supabase'
 
 export { receiptKeys, type ReceiptRow } from '@itoby/shared'
@@ -25,8 +26,7 @@ export function useOwnerReceipts(ownerId: Uuid) {
 export function useDownloadReceipt(ownerId: Uuid) {
   return useMutation({
     mutationFn: async (receiptId: Uuid) => {
-      const file = await downloadReceipt(supabase(), ownerId, receiptId)
-      window.open(file.signedUrl, '_blank', 'noopener,noreferrer')
+      const file = await openSignedFile(() => downloadReceipt(supabase(), ownerId, receiptId))
       return file.fileName
     },
   })

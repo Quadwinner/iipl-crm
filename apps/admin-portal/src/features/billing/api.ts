@@ -8,6 +8,7 @@ import {
 } from '@itoby/shared'
 import { dbError } from '@/lib/db-error'
 import { invokeEdgeFunction } from '@/lib/edge-function'
+import { openSignedFile } from '@itoby/ui'
 import { supabase } from '@/lib/supabase'
 
 export {
@@ -92,16 +93,16 @@ export function useDownloadInvoicePdf() {
 
   return useMutation({
     mutationFn: async (invoiceId: Uuid) => {
-      try {
-        const file = await downloadInvoice(supabase(), invoiceId)
-        window.open(file.signedUrl, '_blank', 'noopener,noreferrer')
-        return file.fileName
-      } catch {
-        await generate.mutateAsync(invoiceId)
-        const file = await downloadInvoice(supabase(), invoiceId)
-        window.open(file.signedUrl, '_blank', 'noopener,noreferrer')
-        return file.fileName
-      }
+      const file = await openSignedFile(async () => {
+        try {
+          return await downloadInvoice(supabase(), invoiceId)
+        } catch {
+          // No PDF rendered yet: kick off the render, then retry once.
+          await generate.mutateAsync(invoiceId)
+          return await downloadInvoice(supabase(), invoiceId)
+        }
+      })
+      return file.fileName
     },
   })
 }

@@ -11,6 +11,8 @@ export interface AuthState {
   session: AuthSession | null
   role: Role | null
   email: string | null
+  /** Set when sign-in state could not be established; safe to show a visitor. */
+  failure: string | null
   signOut: () => Promise<void>
 }
 

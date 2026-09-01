@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { downloadDocument, type Uuid } from '@itoby/shared'
 import { dbError } from '@/lib/db-error'
 import { invokeEdgeFunctionMultipart } from '@/lib/edge-function'
+import { openSignedFile } from '@itoby/ui'
 import { supabase } from '@/lib/supabase'
 import type { FileStorageConfigRow } from '@/features/settings/api'
 
@@ -120,8 +121,7 @@ export function useUploadDocument() {
 export function useDownloadDocument() {
   return useMutation({
     mutationFn: async (documentId: Uuid) => {
-      const file = await downloadDocument(supabase(), documentId)
-      window.open(file.signedUrl, '_blank', 'noopener,noreferrer')
+      const file = await openSignedFile(() => downloadDocument(supabase(), documentId))
       return file.fileName
     },
   })

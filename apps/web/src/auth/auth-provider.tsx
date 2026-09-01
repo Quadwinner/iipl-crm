@@ -9,9 +9,10 @@ interface InternalState {
   status: AuthStatus
   session: AuthSession | null
   role: Role | null
+  failure: string | null
 }
 
-const INITIAL: InternalState = { status: 'loading', session: null, role: null }
+const INITIAL: InternalState = { status: 'loading', session: null, role: null, failure: null }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<InternalState>(INITIAL)
@@ -22,19 +23,56 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     async function resolve(session: AuthSession | null) {
       if (!session) {
-        if (active) setState({ status: 'unauthenticated', session: null, role: null })
+        if (active) setState({ status: 'unauthenticated', session: null, role: null, failure: null })
         return
       }
-      const { data } = await client
+
+      const { data, error } = await client
         .from('profiles')
         .select('role')
         .eq('user_id', session.user.id)
         .maybeSingle()
       if (!active) return
-      setState({ status: 'authenticated', session, role: data?.role ?? null })
+
+      /**
+       * A session without a resolvable role is not a usable signed-in state: the
+       * launcher would show nothing, and the rental module's role branch would
+       * fall through to its no-access screen. Previously the error was discarded
+       * and the user was left "authenticated" with role null, which reads as a
+       * permissions problem rather than the transient failure it usually is.
+       *
+       * Ending the session is the honest outcome — signing in again re-runs this.
+       */
+      if (error || !data?.role) {
+        void client.auth.signOut()
+        setState({
+          status: 'unauthenticated',
+          session: null,
+          role: null,
+          failure: error
+            ? 'We could not load your account. Sign in again.'
+            : 'This account has no role assigned. Contact an administrator.',
+        })
+        return
+      }
+
+      setState({ status: 'authenticated', session, role: data.role, failure: null })
     }
 
-    void client.auth.getSession().then(({ data }) => resolve(data.session))
+    // A throw here would otherwise be an unhandled rejection and leave the app on
+    // its loading state forever.
+    client.auth
+      .getSession()
+      .then(({ data }) => resolve(data.session))
+      .catch(() => {
+        if (!active) return
+        setState({
+          status: 'unauthenticated',
+          session: null,
+          role: null,
+          failure: 'We could not reach the sign-in service. Check your connection.',
+        })
+      })
 
     // Supabase advises against calling the client from inside this callback, so the
     // profile lookup is deferred to a fresh task.
@@ -51,7 +89,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = useCallback(async () => {
     await logout(supabase())
     queryClient.clear()
-    setState({ status: 'unauthenticated', session: null, role: null })
+    setState({ status: 'unauthenticated', session: null, role: null, failure: null })
   }, [])
 
   const value = useMemo(
@@ -60,6 +98,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       session: state.session,
       role: state.role,
       email: state.session?.user.email ?? null,
+      failure: state.failure,
       signOut,
     }),
     [state, signOut],

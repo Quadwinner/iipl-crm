@@ -25,3 +25,4 @@ export * from './components/textarea'
 
 export { cn } from './lib/utils'
 export { unlockBodyScroll } from './lib/scroll-lock'
+export { openSignedFile } from './lib/open-signed-file'

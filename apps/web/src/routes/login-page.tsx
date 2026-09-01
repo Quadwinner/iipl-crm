@@ -30,7 +30,7 @@ interface LoginLocationState {
  * keep working exactly as they do in the standalone portals.
  */
 export function LoginPage() {
-  const { status, role } = useAuth()
+  const { status, role, failure } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
   const settings = useSiteSettings()
@@ -111,9 +111,11 @@ export function LoginPage() {
             className="surface-card space-y-5 p-5 sm:p-6"
             onSubmit={handleSubmit(onSubmit)}
           >
-            {signInError ? (
+            {/* `failure` comes from the provider — a session that could not be
+                resolved ends here rather than leaving the app half signed-in. */}
+            {signInError ?? failure ? (
               <p role="alert" className="text-destructive text-sm">
-                {signInError}
+                {signInError ?? failure}
               </p>
             ) : null}
 
