@@ -26,7 +26,20 @@ const TREES = [
     to: 'apps/web/src/modules/rental/admin',
     alias: '@rental-admin',
     // Entry points and sign-in belong to the superapp, not the module.
-    drop: ['main.tsx', 'index.css', 'vite-env.d.ts', 'routes/login-page.tsx'],
+    // Leads and the content manager belong to the standalone portal only —
+    // the superapp serves its own copies at /app/admin. Without this they
+    // would appear twice in the superapp, and the second set would 404
+    // because the generated route table below does not include them.
+    drop: [
+      'main.tsx',
+      'index.css',
+      'vite-env.d.ts',
+      'routes/login-page.tsx',
+      'routes/leads-page.tsx',
+      'routes/content-page.tsx',
+      'features/leads/api.ts',
+      'features/cms/api.ts',
+    ],
   },
   {
     name: 'owner',
@@ -90,8 +103,14 @@ function walk(dir, base = dir) {
  *    canAccessRoute and homeRouteForRole all match against real pathnames
  *  - /login is handed back to the superapp
  */
+/** Nav rows for screens the superapp does not mount inside the rental module. */
+const PORTAL_ONLY_NAV = /^\s*\{ to: '\/(leads|content)'.*\n/gm
+/** …and the icons only those rows used, which would otherwise sit unused. */
+const PORTAL_ONLY_ICONS = /^\s*(Inbox|Settings2),\n/gm
+
 function transform(source, alias) {
-  let s = source
+  let s = source.replace(PORTAL_ONLY_NAV, '')
+  if (s !== source) s = s.replace(PORTAL_ONLY_ICONS, '')
   s = s.replaceAll("'@/", `'${alias}/`).replaceAll('"@/', `"${alias}/`)
   s = s
     .replaceAll('to="/', `to="${PREFIX}/`)
