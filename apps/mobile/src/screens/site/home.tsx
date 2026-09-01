@@ -4,6 +4,7 @@ import { readProcess, readStats, type AppModule } from '@itoby/shared/site'
 import { Badge, Button, Card } from '../../components/ui'
 import { SectionHeader } from '../../components/section'
 import { Hero } from './hero'
+import { ProcessSection } from './process-section'
 import { ServicesSection } from './services-section'
 import { iconByName } from '../../lib/icons'
 import { usePublicModules, useServices, useSiteSettings } from '../../features/site'
@@ -57,18 +58,7 @@ export function HomeScreen() {
         ))}
       </View>
 
-      {process.length > 0 ? (
-        <View style={styles.section}>
-          <SectionHeader eyebrow="How we work" title="Process" />
-          {process.map((step) => (
-            <Card key={step.title}>
-              <Text style={styles.stepNumber}>{step.step}</Text>
-              <Text style={styles.cardTitle}>{step.title}</Text>
-              <Text style={styles.cardBody}>{step.body}</Text>
-            </Card>
-          ))}
-        </View>
-      ) : null}
+      <ProcessSection steps={process} />
 
       <View style={styles.cta}>
         <Text style={styles.ctaTitle}>Have something in mind?</Text>
@@ -111,13 +101,6 @@ const styles = StyleSheet.create({
   cardTitle: { color: theme.color.text, fontSize: 16, fontWeight: '700' },
   cardTagline: { color: theme.color.accent, fontSize: 12, marginTop: 2 },
   cardBody: { color: theme.color.muted, fontSize: 14, lineHeight: 21, marginTop: theme.space(2) },
-  stepNumber: {
-    color: theme.color.accent,
-    fontSize: 12,
-    fontWeight: '800',
-    letterSpacing: 1,
-    marginBottom: theme.space(1),
-  },
   productHead: { flexDirection: 'row', alignItems: 'center', gap: theme.space(3) },
   productIcon: {
     width: 40,
