@@ -11,10 +11,12 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./styles.css": "./dist/styles.css"
+    "./styles.css": "./src/styles.css",
+    "./dist/styles.css": "./dist/styles.css"
   },
   "files": [
-    "dist"
+    "dist",
+    "src/styles.css"
   ],
   "sideEffects": [
     "*.css"
