@@ -97,6 +97,15 @@ function PayInvoiceForm({
   async function onSubmit(values: PaymentInitiationInput) {
     setFormError(null)
 
+    // Before the intent, not after: create-payment-intent records a PENDING
+    // payment server-side, so checking the key afterwards leaves an orphan
+    // PENDING row against a real invoice every time someone submits.
+    const keyId = import.meta.env.VITE_RAZORPAY_KEY_ID ?? ''
+    if (values.gateway === 'RAZORPAY' && !keyId) {
+      setFormError('Razorpay is not configured. Use UPI or contact the IIPL office.')
+      return
+    }
+
     try {
       const intent = await createIntent.mutateAsync({
         invoiceId: invoice.invoice_id,
@@ -105,12 +114,6 @@ function PayInvoiceForm({
       })
 
       if (values.gateway === 'RAZORPAY') {
-        const keyId = import.meta.env.VITE_RAZORPAY_KEY_ID
-        if (!keyId) {
-          setFormError('Razorpay is not configured. Use UPI or contact the IIPL office.')
-          return
-        }
-
         const orderId = String(intent.gateway_data.orderId ?? intent.reference)
         const amountPaise = Number(intent.gateway_data.amountPaise ?? intent.amount * 100)
 

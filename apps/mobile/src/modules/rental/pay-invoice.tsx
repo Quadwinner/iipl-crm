@@ -61,6 +61,16 @@ export function PayInvoiceScreen({
       return
     }
 
+    // Before the intent, not after: create-payment-intent records a PENDING
+    // payment server-side, so checking the key afterwards leaves an orphan
+    // PENDING row against a real invoice every time someone taps Pay. Locally the
+    // key comes from .env, but an EAS build reads its env from EAS environment
+    // variables — a build missing the key would quietly accumulate them.
+    if (gateway === 'RAZORPAY' && !RAZORPAY_KEY_ID) {
+      setError('Razorpay is not configured in this build. Use UPI or contact the IIPL office.')
+      return
+    }
+
     setBusy(true)
     try {
       const intent = await createPaymentIntent(supabase(), {
@@ -70,10 +80,6 @@ export function PayInvoiceScreen({
       })
 
       if (gateway === 'RAZORPAY') {
-        if (!RAZORPAY_KEY_ID) {
-          setError('Razorpay is not configured in this build. Use UPI or contact the IIPL office.')
-          return
-        }
         setCheckout({
           html: razorpayPage({
             keyId: RAZORPAY_KEY_ID,
