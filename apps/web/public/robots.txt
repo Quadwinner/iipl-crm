@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# The signed-in workspace is not public content.
+Disallow: /app/
+Disallow: /login
+
+Sitemap: https://itobyinfotech.com/sitemap.xml

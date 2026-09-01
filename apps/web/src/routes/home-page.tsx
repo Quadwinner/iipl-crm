@@ -6,6 +6,7 @@ import { useIndustries, useServices } from '@/features/site/use-content'
 import { useSiteSettings } from '@/features/site/use-site-settings'
 import { iconByName } from '@/lib/icons'
 import { useReveal } from '@/lib/use-reveal'
+import { useSeo } from '@/lib/use-seo'
 import { SiteFooter, SiteNav } from './site/site-layout'
 import './home-page.css'
 
@@ -363,6 +364,12 @@ export function HomePage() {
   const modules = usePublicModules()
   const list = modules.data ?? []
   useReveal([list.length, settings.data?.id])
+  useSeo({
+    title: 'Itoby Infotech — Digital engineering & SaaS lab',
+    description:
+      'We build Next.js applications, mobile apps, custom software, SaaS platforms and AI systems — and run the IIPL product suite.',
+    path: '/',
+  })
 
   const s = settings.data
   const company = s?.company_name ?? ''

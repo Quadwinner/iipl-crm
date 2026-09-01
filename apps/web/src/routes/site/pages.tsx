@@ -6,6 +6,7 @@ import { useIndustries, useServices } from '@/features/site/use-content'
 import { useSiteSettings } from '@/features/site/use-site-settings'
 import { iconByName } from '@/lib/icons'
 import { useReveal } from '@/lib/use-reveal'
+import { useSeo } from '@/lib/use-seo'
 import { LeadForm } from './lead-form'
 import { PageHero, SiteLayout } from './site-layout'
 
@@ -32,6 +33,7 @@ function Empty({ title, body }: { title: string; body: string }) {
 /* ── About ────────────────────────────────────────────────────────────────── */
 
 export function AboutPage() {
+  useSeo({ title: 'About — Itoby Infotech', description: 'An engineering team, not an agency roster. How Itoby Infotech works and what we have shipped.', path: '/about' })
   const settings = useSiteSettings()
   const s = settings.data
   const steps = asArray<{ step: string; title: string; body: string }>(s?.process)
@@ -84,6 +86,7 @@ export function AboutPage() {
 /* ── Services ─────────────────────────────────────────────────────────────── */
 
 export function ServicesPage() {
+  useSeo({ title: 'Services — Itoby Infotech', description: 'Web, mobile, custom software, SaaS platforms, AI systems and the digital marketing that fills them.', path: '/services' })
   const services = useServices()
   const list = services.data ?? []
   useReveal([list.length])
@@ -127,6 +130,12 @@ export function ServiceDetailPage() {
   const list = services.data ?? []
   const s = list.find((x) => x.slug === slug)
   useReveal([list.length, slug])
+  useSeo({
+    title: s ? `${s.title} — Itoby Infotech` : 'Service — Itoby Infotech',
+    description: s?.summary ?? 'Engineering services from Itoby Infotech.',
+    path: `/services/${slug ?? ''}`,
+    noindex: !s,
+  })
 
   if (services.isPending) {
     return <SiteLayout><div className="mx-auto max-w-7xl px-6 py-32" aria-busy="true" /></SiteLayout>
@@ -219,6 +228,7 @@ export function ServiceDetailPage() {
 /* ── Industries ───────────────────────────────────────────────────────────── */
 
 export function IndustriesPage() {
+  useSeo({ title: 'Industries — Itoby Infotech', description: 'Fintech, retail, healthcare, education, manufacturing, insurance, logistics and proptech — domains we already know.', path: '/industries' })
   const industries = useIndustries()
   const list = industries.data ?? []
   useReveal([list.length])
@@ -251,6 +261,7 @@ export function IndustriesPage() {
 /* ── Products ─────────────────────────────────────────────────────────────── */
 
 export function ProductsPage() {
+  useSeo({ title: 'IIPL products — Itoby Infotech', description: 'IIPL Renting, Lead, Billing, Cashmemo and Calling — five SaaS platforms on one account.', path: '/products' })
   const modules = usePublicModules()
   const list = modules.data ?? []
   useReveal([list.length])
@@ -320,6 +331,7 @@ export function ProductsPage() {
 /* ── Portfolio & Blog (content tables ship empty) ─────────────────────────── */
 
 export function PortfolioPage() {
+  useSeo({ title: 'Work — Itoby Infotech', description: 'Selected client work from Itoby Infotech.', path: '/portfolio' })
   return (
     <SiteLayout>
       <PageHero eyebrow="Work" title="Selected work." lead="Case studies are being written up." />
@@ -336,6 +348,7 @@ export function PortfolioPage() {
 }
 
 export function BlogPage() {
+  useSeo({ title: 'Blog — Itoby Infotech', description: 'Engineering write-ups from the Itoby Infotech team.', path: '/blog' })
   return (
     <SiteLayout>
       <PageHero eyebrow="Blog" title="Notes from the build." lead="Engineering write-ups on what we ship." />
@@ -354,6 +367,7 @@ export function BlogPage() {
 /* ── Contact & Quote ──────────────────────────────────────────────────────── */
 
 export function ContactPage() {
+  useSeo({ title: 'Contact — Itoby Infotech', description: 'Tell us what you are building. Email, call or send the form and we reply within one business day.', path: '/contact' })
   const settings = useSiteSettings()
   const s = settings.data
   useReveal([s?.id])
@@ -398,6 +412,7 @@ export function ContactPage() {
 }
 
 export function QuotePage() {
+  useSeo({ title: 'Request a quote — Itoby Infotech', description: 'Get scope, cost and timeline for your project from Itoby Infotech.', path: '/request-quote' })
   useReveal([])
   return (
     <SiteLayout>
