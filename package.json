@@ -13,7 +13,7 @@
     "dev:web": "pnpm --filter web dev",
     "sync:rental": "node scripts/sync-rental.mjs",
     "sync:rental:check": "node scripts/sync-rental.mjs --check",
-    "build": "pnpm --filter @itoby/ui build && pnpm -r --sequential --filter \"!@itoby/ui\" build",
+    "build": "pnpm -r --sequential build",
     "typecheck": "pnpm -r --sequential typecheck",
     "lint": "pnpm -r lint",
     "format": "prettier --write .",
