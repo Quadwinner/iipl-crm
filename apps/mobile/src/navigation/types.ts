@@ -28,12 +28,20 @@ export type AppTabParamList = {
   Account: undefined
 }
 
-export type RentalParamList = {
-  RentalTabs: undefined
+/**
+ * Rental's own tabs, split out from its stack so a caller outside the module can
+ * name one. Opening "invoices" from the launcher means pushing Rental, then its
+ * tab navigator, then that tab — and only a nested param list can express it.
+ */
+export type RentalTabParamList = {
   Leases: undefined
   Invoices: undefined
   Complaints: undefined
   More: undefined
+}
+
+export type RentalParamList = {
+  RentalTabs: NavigatorScreenParams<RentalTabParamList> | undefined
   PayInvoice: { invoice: InvoiceRow }
   NewComplaint: undefined
   ComplaintDetail: { complaint: ComplaintRow }
@@ -67,13 +75,14 @@ export type WorkspaceParamList = {
 
 export type RootParamList = SiteParamList &
   AppTabParamList &
+  RentalTabParamList &
   RentalParamList &
   RentalAdminParamList &
   WorkspaceParamList & {
     Site: NavigatorScreenParams<SiteParamList> | undefined
     App: NavigatorScreenParams<AppTabParamList> | undefined
     SignIn: undefined
-    Rental: undefined
+    Rental: NavigatorScreenParams<RentalParamList> | undefined
     Workspace: undefined
     About: undefined
     Industries: undefined
