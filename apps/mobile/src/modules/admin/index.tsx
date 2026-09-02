@@ -16,6 +16,7 @@ import { formatDate } from '@itoby/shared/owner'
 import { Badge, Button, Card, Empty, ErrorState, Field, Loading } from '../../components/ui'
 import { supabase } from '../../lib/supabase'
 import { useStyles, type Theme, useTheme } from '../../theme/theme'
+import { ModuleBack } from '../../navigation/module-back'
 
 const Stack = createNativeStackNavigator()
 
@@ -164,7 +165,11 @@ export function AdminModule() {
   const { theme } = useTheme()
   return (
     <Stack.Navigator screenOptions={screenOptions(theme)}>
-      <Stack.Screen name="Leads" component={LeadsScreen} options={{ title: 'Leads' }} />
+      <Stack.Screen
+        name="Leads"
+        component={LeadsScreen}
+        options={{ title: 'Leads', headerLeft: () => <ModuleBack /> }}
+      />
       <Stack.Screen name="LeadDetail" component={LeadDetailScreen} options={{ title: 'Lead' }} />
     </Stack.Navigator>
   )

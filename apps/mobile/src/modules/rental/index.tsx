@@ -9,6 +9,7 @@ import {
   MessageSquare,
   MoreHorizontal,
 } from 'lucide-react-native'
+import { ModuleBack } from '../../navigation/module-back'
 import { useAuth } from '../../auth/auth'
 import { RentalAdmin } from './admin'
 import { NoAccessScreen } from '../../screens/no-access'
@@ -104,7 +105,11 @@ export function RentalModule() {
 
   return (
     <Stack.Navigator screenOptions={screenOptions(theme)}>
-      <Stack.Screen name="RentalTabs" component={RentalTabs} options={{ headerShown: false }} />
+      <Stack.Screen
+        name="RentalTabs"
+        component={RentalTabs}
+        options={{ title: 'IIPL Renting', headerLeft: () => <ModuleBack /> }}
+      />
       <Stack.Screen name="PayInvoice" component={PayInvoiceRoute} options={{ title: 'Pay invoice' }} />
       <Stack.Screen
         name="NewComplaint"

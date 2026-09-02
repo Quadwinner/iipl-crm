@@ -18,6 +18,7 @@ import {
   AdminUnitsScreen,
 } from './screens'
 import { useTheme, type Theme } from '../../../theme/theme'
+import { ModuleBack } from '../../../navigation/module-back'
 
 const Tab = createBottomTabNavigator()
 const Stack = createNativeStackNavigator()
@@ -85,7 +86,11 @@ export function RentalAdmin() {
   const { theme } = useTheme()
   return (
     <Stack.Navigator screenOptions={screenOptions(theme)}>
-      <Stack.Screen name="AdminTabs" component={AdminTabs} options={{ headerShown: false }} />
+      <Stack.Screen
+        name="AdminTabs"
+        component={AdminTabs}
+        options={{ title: 'IIPL Renting', headerLeft: () => <ModuleBack /> }}
+      />
       <Stack.Screen name="AdminUnits" component={AdminUnitsScreen} options={{ title: 'Units' }} />
       <Stack.Screen
         name="AdminComplaintDetail"

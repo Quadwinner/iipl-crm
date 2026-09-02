@@ -153,10 +153,13 @@ export function RootNavigator() {
         {status === 'authenticated' ? (
           <>
             <RootStack.Screen name="App" component={AppTabs} options={{ headerShown: false }} />
+            {/* Both modules draw their own headers — see ModuleBack. A header
+                here as well would stack two titles and two back arrows on every
+                screen they push. */}
             <RootStack.Screen
               name="Rental"
               component={RentalModule}
-              options={{ title: 'IIPL Renting' }}
+              options={{ headerShown: false }}
             />
             <RootStack.Screen
               name="Workspace"
