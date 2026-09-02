@@ -200,7 +200,12 @@ function ServiceRow({
 
 const makeStyles = (theme: Theme) =>
   StyleSheet.create({
-  section: { marginBottom: theme.space(8), paddingHorizontal: theme.space(5) },
+  // The hero's marquee ends on a hairline; without this the heading hugs it.
+  section: {
+    marginTop: theme.space(8),
+    marginBottom: theme.space(8),
+    paddingHorizontal: theme.space(5),
+  },
   filters: { gap: theme.space(2), paddingBottom: theme.space(4), paddingRight: theme.space(5) },
   chip: {
     borderColor: theme.color.border,

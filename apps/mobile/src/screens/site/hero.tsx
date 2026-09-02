@@ -1,10 +1,21 @@
 import { useEffect, useRef, useState } from 'react'
 import { Animated, Dimensions, Easing, Pressable, StyleSheet, Text, View } from 'react-native'
 import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg'
-import { HERO_EYEBROW, HERO_ROTATING, type AppModule, type SiteStat } from '@itoby/shared/site'
+import {
+  HERO_EYEBROW,
+  HERO_ROTATING,
+  type AppModule,
+  type SiteStat,
+} from '@itoby/shared/site'
 import { useStyles, useTheme, type Theme } from '../../theme/theme'
 
 const { width: SCREEN } = Dimensions.get('window')
+
+/** Display type, sized to the screen but capped at the design's 42px. */
+const TITLE = Math.min(42, SCREEN * 0.107)
+const TITLE_LINE = Math.round(TITLE * 1.04)
+/** The design tracks the headline at -0.04em. */
+const TITLE_TRACK = -(TITLE * 0.04)
 
 /**
  * The website paints its hero with two large `oklch` radial glows behind the
@@ -65,9 +76,13 @@ function Enter({ delay, children }: { delay: number; children: React.ReactNode }
 }
 
 /**
- * The word the headline cycles. The web does this with CSS keyframes; here each
- * word fades and slides out before the next arrives, so the swap reads as a
- * transition rather than a flicker.
+ * The word the headline cycles, carrying the lime underline with it. The web
+ * does this with CSS keyframes; here each word fades and slides out before the
+ * next arrives, so the swap reads as a transition rather than a flicker.
+ *
+ * The underline lives on the animated wrapper rather than on the Text: border
+ * styles on a Text node render inconsistently across platforms, and a wrapper
+ * also sizes itself to the word so the rule never overhangs it.
  */
 function Rotor() {
   const styles = useStyles(makeStyles)
@@ -95,17 +110,17 @@ function Rotor() {
   }, [anim])
 
   return (
-    <Animated.Text
+    <Animated.View
       style={[
-        styles.rotor,
+        styles.rotorWrap,
         {
           opacity: anim,
           transform: [{ translateY: anim.interpolate({ inputRange: [0, 1], outputRange: [14, 0] }) }],
         },
       ]}
     >
-      {HERO_ROTATING[index]}
-    </Animated.Text>
+      <Text style={styles.rotor}>{HERO_ROTATING[index]}</Text>
+    </Animated.View>
   )
 }
 
@@ -152,6 +167,43 @@ function Marquee({ modules }: { modules: AppModule[] }) {
   )
 }
 
+/**
+ * The proof line under the actions, as two short phrases.
+ *
+ * The design puts a star rating here. We have no ratings with data behind them,
+ * so the same slot carries the figures the CMS does hold. Labels are matched
+ * loosely and then trimmed to one word, because the CMS owns their wording:
+ * "Projects delivered" and "Happy clients" both have to read as a two-word
+ * phrase at 11px. Anything the CMS renamed past recognition still shows, in its
+ * own order, after the matched ones.
+ */
+function readProof(stats: SiteStat[]): [string, string] | null {
+  if (stats.length === 0) return null
+
+  const used = new Set<SiteStat>()
+  const pick = (needle: string) => {
+    const hit = stats.find((stat) => !used.has(stat) && stat.label.toLowerCase().includes(needle))
+    if (hit) used.add(hit)
+    return hit
+  }
+
+  const matched = [pick('project'), pick('year'), pick('client'), pick('countr')]
+  const ordered = [
+    ...matched.filter((stat): stat is SiteStat => stat !== undefined),
+    ...stats.filter((stat) => !used.has(stat)),
+  ]
+
+  const FILLER = new Set(['happy', 'total', 'our', 'active'])
+  const phrase = (stat: SiteStat) => {
+    const word = stat.label.toLowerCase().split(/\s+/).find((part) => !FILLER.has(part))
+    return `${stat.value}${stat.suffix} ${word ?? stat.label.toLowerCase()}`
+  }
+
+  const lead = ordered.slice(0, 2).map(phrase).join('   ·   ')
+  const trail = ordered.slice(2, 4).map(phrase).join('   ·   ')
+  return lead ? [lead, trail] : null
+}
+
 export function Hero({
   intro,
   stats,
@@ -165,9 +217,10 @@ export function Hero({
   onStart: () => void
   onExplore: () => void
 }) {
+  const { theme } = useTheme()
   const styles = useStyles(makeStyles)
-  const [expanded, setExpanded] = useState(false)
   const [size, setSize] = useState({ width: 0, height: 0 })
+  const proof = readProof(stats)
 
   return (
     <View
@@ -183,28 +236,31 @@ export function Hero({
 
       <View style={styles.heroInner}>
         <Enter delay={0}>
-          <Text style={styles.eyebrow}>{HERO_EYEBROW}</Text>
+          <View style={styles.pill}>
+            <View style={styles.pillDot} />
+            <Text style={styles.pillText}>{HERO_EYEBROW}</Text>
+          </View>
         </Enter>
 
         <Enter delay={90}>
-          <Text style={styles.title}>We build</Text>
-          <Text style={styles.title}>high-converting</Text>
-          <View style={styles.rotorRow}>
-            <Rotor />
+          <View style={styles.title}>
+            <Text style={styles.titleLine}>We build</Text>
+            <Text style={styles.titleLine}>high-converting</Text>
+            <View style={styles.rotorRow}>
+              <Rotor />
+            </View>
           </View>
         </Enter>
 
         {intro ? (
           <Enter delay={220}>
             {/*
-              The full intro runs to eight lines on a phone and pushes everything
-              below the fold. Three lines carry the claim; the rest is one tap away.
+              Two lines, and no "read more": the hero states the claim, the About
+              screen carries the full paragraph. Eight lines of prose here pushed
+              the action below the fold.
             */}
-            <Text style={styles.body} numberOfLines={expanded ? undefined : 3}>
+            <Text style={styles.body} numberOfLines={2}>
               {intro}
-            </Text>
-            <Text style={styles.more} onPress={() => setExpanded((v) => !v)}>
-              {expanded ? 'Show less' : 'Read more'}
             </Text>
           </Enter>
         ) : null}
@@ -223,27 +279,37 @@ export function Hero({
               onPress={onExplore}
               style={({ pressed }) => [styles.cta, styles.ctaGhost, pressed && styles.pressed]}
             >
-              <Text style={styles.ctaGhostText}>Our work</Text>
+              <Text style={styles.ctaGhostText}>See our work</Text>
             </Pressable>
           </View>
         </Enter>
 
-        {stats.length > 0 ? (
+        {proof ? (
           <Enter delay={420}>
-            {/* A tight row, not a card: the figures support the claim above rather
-                than forming a section of their own. */}
-            <View style={styles.stats}>
-              {stats.slice(0, 4).map((stat) => (
-                <View key={stat.label} style={styles.stat}>
-                  <Text style={styles.statValue}>
-                    {stat.value}
-                    <Text style={styles.statSuffix}>{stat.suffix}</Text>
+            <View style={styles.proof}>
+              {/* Three brand discs, overlapping. Decoration, not people. */}
+              <View style={styles.discs}>
+                {[theme.color.accent, theme.color.accentDim, theme.color.cyan].map((color, index) => (
+                  <View
+                    key={color}
+                    style={[
+                      styles.disc,
+                      { backgroundColor: color },
+                      index > 0 && styles.discOverlap,
+                    ]}
+                  />
+                ))}
+              </View>
+              <View style={styles.proofText}>
+                <Text style={styles.proofLead} numberOfLines={1}>
+                  {proof[0]}
+                </Text>
+                {proof[1] ? (
+                  <Text style={styles.proofTrail} numberOfLines={1}>
+                    {proof[1]}
                   </Text>
-                  <Text style={styles.statLabel} numberOfLines={2}>
-                    {stat.label}
-                  </Text>
-                </View>
-              ))}
+                ) : null}
+              </View>
             </View>
           </Enter>
         ) : null}
@@ -256,80 +322,115 @@ export function Hero({
 
 const makeStyles = (theme: Theme) =>
   StyleSheet.create({
-  hero: { overflow: 'hidden' },
-  heroInner: { paddingHorizontal: theme.space(5), paddingTop: theme.space(6), paddingBottom: theme.space(7) },
-  eyebrow: {
-    color: theme.color.accent,
-    fontSize: 11,
-    fontWeight: '800',
-    letterSpacing: 1.6,
-    textTransform: 'uppercase',
-    marginBottom: theme.space(4),
-  },
-  title: {
-    color: theme.color.text,
-    fontSize: Math.min(44, SCREEN * 0.115),
-    lineHeight: Math.min(48, SCREEN * 0.125),
-    fontWeight: '800',
-    letterSpacing: -1.4,
-  },
-  rotorRow: { height: Math.min(52, SCREEN * 0.135), justifyContent: 'center', overflow: 'hidden' },
-  rotor: {
-    color: theme.color.accent,
-    fontSize: Math.min(44, SCREEN * 0.115),
-    lineHeight: Math.min(48, SCREEN * 0.125),
-    fontWeight: '800',
-    letterSpacing: -1.4,
-  },
-  body: {
-    color: theme.color.muted,
-    fontSize: 15,
-    lineHeight: 23,
-    marginTop: theme.space(5),
-  },
-  more: {
-    color: theme.color.accent,
-    fontSize: 13,
-    fontWeight: '700',
-    marginTop: theme.space(2),
-  },
-  actions: { flexDirection: 'row', gap: theme.space(3), marginTop: theme.space(6) },
-  cta: {
-    flex: 1,
-    borderRadius: theme.radius.pill,
-    paddingVertical: theme.space(4),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ctaPrimary: { backgroundColor: theme.color.accent },
-  ctaGhost: { borderWidth: 1, borderColor: theme.color.border },
-  ctaPrimaryText: { color: theme.color.accentText, fontSize: 15, fontWeight: '800' },
-  ctaGhostText: { color: theme.color.text, fontSize: 15, fontWeight: '700' },
-  pressed: { opacity: 0.75 },
-  stats: {
-    flexDirection: 'row',
-    marginTop: theme.space(8),
-    gap: theme.space(4),
-  },
-  stat: { flex: 1 },
-  statValue: { color: theme.color.text, fontSize: 22, fontWeight: '800', letterSpacing: -0.5 },
-  statSuffix: { color: theme.color.accent, fontSize: 15 },
-  statLabel: { color: theme.color.muted, fontSize: 11, lineHeight: 15, marginTop: 2 },
-  marquee: {
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: theme.color.border,
-    paddingVertical: theme.space(3),
-    overflow: 'hidden',
-  },
-  marqueeTrack: { flexDirection: 'row' },
-  marqueeItem: { width: 168, flexDirection: 'row', alignItems: 'center', gap: theme.space(2) },
-  marqueeDot: { width: 6, height: 6, borderRadius: 3 },
-  marqueeText: {
-    color: theme.color.muted,
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 1.2,
-    textTransform: 'uppercase',
-  },
-})
+    hero: { overflow: 'hidden' },
+    heroInner: {
+      paddingHorizontal: theme.space(5),
+      paddingTop: theme.space(6),
+      paddingBottom: theme.space(7),
+    },
+
+    pill: {
+      alignSelf: 'flex-start',
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.space(2),
+      backgroundColor: theme.color.surfaceAlt,
+      borderColor: theme.color.border,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderRadius: theme.radius.pill,
+      paddingLeft: 9,
+      paddingRight: 12,
+      paddingVertical: 6,
+    },
+    pillDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: theme.color.accent },
+    pillText: { color: theme.color.muted, fontSize: 11, fontWeight: '600' },
+
+    title: { marginTop: theme.space(5) },
+    titleLine: {
+      color: theme.color.text,
+      fontSize: TITLE,
+      lineHeight: TITLE_LINE,
+      fontWeight: '800',
+      letterSpacing: TITLE_TRACK,
+    },
+    // Tall enough for the underline and for the word to slide clear of the row.
+    rotorRow: { height: TITLE_LINE + 9, overflow: 'hidden' },
+    // The rule sits on the bottom of the line box, so it clears the descenders
+    // in "Apps" and "AI Agents" without moving between words.
+    rotorWrap: {
+      alignSelf: 'flex-start',
+      borderBottomWidth: 3,
+      borderBottomColor: theme.color.accent,
+    },
+    rotor: {
+      color: theme.color.accent,
+      fontSize: TITLE,
+      lineHeight: TITLE_LINE,
+      fontWeight: '800',
+      letterSpacing: TITLE_TRACK,
+    },
+
+    body: {
+      color: theme.color.muted,
+      fontSize: 14,
+      lineHeight: 22,
+      marginTop: theme.space(4),
+    },
+
+    actions: { marginTop: theme.space(6), gap: 9 },
+    cta: {
+      borderRadius: theme.radius.md,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    ctaPrimary: { backgroundColor: theme.color.accent, height: 52 },
+    ctaGhost: {
+      height: 44,
+      backgroundColor: theme.color.surface,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: theme.color.border,
+    },
+    ctaPrimaryText: { color: theme.color.accentText, fontSize: 15, fontWeight: '800' },
+    ctaGhostText: { color: theme.color.text, fontSize: 13.5, fontWeight: '700' },
+    pressed: { opacity: 0.75 },
+
+    proof: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 11,
+      marginTop: theme.space(6),
+      paddingTop: theme.space(5),
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopColor: theme.color.border,
+    },
+    discs: { flexDirection: 'row' },
+    disc: {
+      width: 24,
+      height: 24,
+      borderRadius: 12,
+      borderWidth: 2,
+      borderColor: theme.color.bg,
+    },
+    discOverlap: { marginLeft: -8 },
+    proofText: { flex: 1, gap: 3 },
+    proofLead: { color: theme.color.accent, fontSize: 11, fontWeight: '800' },
+    proofTrail: { color: theme.color.muted, fontSize: 11, fontWeight: '500' },
+
+    marquee: {
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderColor: theme.color.border,
+      paddingVertical: theme.space(3),
+      overflow: 'hidden',
+    },
+    marqueeTrack: { flexDirection: 'row' },
+    marqueeItem: { width: 168, flexDirection: 'row', alignItems: 'center', gap: theme.space(2) },
+    marqueeDot: { width: 6, height: 6, borderRadius: 3 },
+    marqueeText: {
+      color: theme.color.muted,
+      fontSize: 11,
+      fontWeight: '700',
+      letterSpacing: 1.2,
+      textTransform: 'uppercase',
+    },
+  })
