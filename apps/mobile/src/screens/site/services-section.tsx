@@ -15,7 +15,7 @@ import {
 import { ChevronDown } from 'lucide-react-native'
 import type { Service } from '@itoby/shared/site'
 import { Enter } from '../../components/motion'
-import { SectionHeader } from '../../components/section'
+import { SectionHead } from '../../components/section'
 import { iconByName } from '../../lib/icons'
 import { useStyles, useTheme, type Theme } from '../../theme/theme'
 
@@ -71,7 +71,11 @@ export function ServicesSection({ services }: { services: Service[] }) {
   return (
     <View style={styles.section}>
       <Enter>
-        <SectionHeader eyebrow="What we do" title="Services" />
+        <SectionHead
+          title="What we do"
+          actionLabel="All"
+          onAction={() => navigation.navigate('Services')}
+        />
       </Enter>
 
       {categories.length > 2 ? (
@@ -200,12 +204,7 @@ function ServiceRow({
 
 const makeStyles = (theme: Theme) =>
   StyleSheet.create({
-  // The hero's marquee ends on a hairline; without this the heading hugs it.
-  section: {
-    marginTop: theme.space(8),
-    marginBottom: theme.space(8),
-    paddingHorizontal: theme.space(5),
-  },
+  section: { marginBottom: theme.space(8), paddingHorizontal: theme.space(5) },
   filters: { gap: theme.space(2), paddingBottom: theme.space(4), paddingRight: theme.space(5) },
   chip: {
     borderColor: theme.color.border,

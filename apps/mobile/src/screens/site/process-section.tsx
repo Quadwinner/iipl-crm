@@ -3,7 +3,7 @@ import { Animated, Easing, StyleSheet, Text, View } from 'react-native'
 import { ChevronDown } from 'lucide-react-native'
 import type { ProcessStep } from '@itoby/shared/site'
 import { Enter } from '../../components/motion'
-import { SectionHeader } from '../../components/section'
+import { SectionHead } from '../../components/section'
 import { useStyles, useTheme, type Theme } from '../../theme/theme'
 
 const NODE = 34
@@ -81,7 +81,7 @@ export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
   return (
     <View style={styles.section}>
       <Enter>
-        <SectionHeader eyebrow="How we work" title="Process" />
+        <SectionHead title="How we work" />
       </Enter>
 
       <View style={styles.timeline}>
