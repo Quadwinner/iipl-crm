@@ -46,6 +46,12 @@ const QuotePage = lazy(() => sitePages().then((m) => ({ default: m.QuotePage }))
 const ServiceDetailPage = lazy(() => sitePages().then((m) => ({ default: m.ServiceDetailPage })))
 const ServicesPage = lazy(() => sitePages().then((m) => ({ default: m.ServicesPage })))
 
+// Play Store review needs the privacy policy reachable without an account, so
+// it stays outside ProtectedRoute like the rest of the public site.
+const legalPages = () => import('@/routes/site/legal')
+const PrivacyPage = lazy(() => legalPages().then((m) => ({ default: m.PrivacyPage })))
+const TermsPage = lazy(() => legalPages().then((m) => ({ default: m.TermsPage })))
+
 /** Shown while a route chunk loads. Deliberately quiet — a spinner that flashes
  *  for 80ms is worse than a moment of nothing. */
 function RouteFallback() {
@@ -85,6 +91,9 @@ export function App() {
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/request-quote" element={<QuotePage />} />
       <Route path="/quote" element={<Navigate to="/request-quote" replace />} />
+      <Route path="/privacy" element={<PrivacyPage />} />
+      <Route path="/privacy-policy" element={<Navigate to="/privacy" replace />} />
+      <Route path="/terms" element={<TermsPage />} />
       <Route path="/login" element={<LoginPage />} />
 
       <Route element={<ProtectedRoute />}>

@@ -201,6 +201,16 @@ export function SiteFooter() {
 
         <div className="mt-14 flex flex-col gap-4 border-t border-[color:var(--line)] pt-8 text-sm text-[color:var(--fg-2)] sm:flex-row sm:items-center">
           <span>© {new Date().getFullYear()} {s?.company_name ?? ''}</span>
+          {/* Play Store review checks the privacy policy is reachable from the
+              site itself, not only from the listing. */}
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            <Link to="/privacy" className="transition-colors hover:text-[color:var(--fg)]">
+              Privacy
+            </Link>
+            <Link to="/terms" className="transition-colors hover:text-[color:var(--fg)]">
+              Terms
+            </Link>
+          </div>
           <div className="flex flex-wrap gap-x-6 gap-y-2 sm:ml-auto">
             {Object.entries(socials).map(([k, url]) => (
               <a
