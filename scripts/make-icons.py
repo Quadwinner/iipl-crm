@@ -121,16 +121,20 @@ def main():
     print("play listing")
     write(lime_field(512), LISTING / "icon-512.png", flatten_to=LIME)
 
-    # Feature graphic: 1024x500, brand ground, mark and wordmark.
-    fg = Image.new("RGBA", (1024, 500), INK + (255,))
-    fg = glow(fg, LIME, 190, 90, 340, 95)
-    fg = glow(fg, CYAN, 950, 470, 300, 60)
+    # Feature graphic, at exactly the 1024x500 Play requires. If its asset
+    # library calls this "too small to crop", the panel is bound to another
+    # slot — open it from the Feature graphic box, not the app icon box.
+    K = 1
+    fg = Image.new("RGBA", (1024 * K, 500 * K), INK + (255,))
+    fg = glow(fg, LIME, 190 * K, 90 * K, 340 * K, 95)
+    fg = glow(fg, CYAN, 950 * K, 470 * K, 300 * K, 60)
     d = ImageDraw.Draw(fg)
-    tile = lime_field(150)
-    fg.paste(tile, (86, 175), tile)
-    d.text((272, 196), "Itoby", font=ImageFont.truetype(FONT, 86), fill=(248, 248, 250, 255))
-    d.text((276, 300), "One account. Every tool.",
-           font=ImageFont.truetype(FONT, 34), fill=(160, 165, 172, 255))
+    tile = lime_field(150 * K)
+    fg.paste(tile, (86 * K, 175 * K), tile)
+    d.text((272 * K, 196 * K), "Itoby",
+           font=ImageFont.truetype(FONT, 86 * K), fill=(248, 248, 250, 255))
+    d.text((276 * K, 300 * K), "One account. Every tool.",
+           font=ImageFont.truetype(FONT, 34 * K), fill=(160, 165, 172, 255))
     write(fg, LISTING / "feature-graphic-1024x500.png", flatten_to=INK)
 
 
