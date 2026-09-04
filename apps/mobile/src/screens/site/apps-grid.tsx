@@ -1,4 +1,11 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  type StyleProp,
+  type TextStyle,
+} from 'react-native'
 import { ArrowUpRight, type LucideIcon } from 'lucide-react-native'
 import type { AppModule } from '@itoby/shared/site'
 import { iconByName } from '../../lib/icons'
@@ -61,7 +68,13 @@ export function AppsGrid({
   if (modules.length === 0 && extras.length === 0) return null
 
   const total = modules.length + extras.length + (onSeeAll ? 1 : 0)
-  const width = `${100 / (columns ?? columnsFor(total))}%` as const
+  const cols = columns ?? columnsFor(total)
+  const width = `${100 / cols}%` as const
+
+  // At five across on a 360dp phone a cell is barely 60dp wide, and the longest
+  // product name wraps mid-word — "Cashmem / o" — which also pushes that tile's
+  // status marker below its neighbours. A step down in size buys the room back.
+  const label = cols >= 5 ? styles.labelTight : null
 
   return (
     <View style={styles.grid}>
@@ -76,7 +89,7 @@ export function AppsGrid({
               <View style={[styles.tile, { backgroundColor: `${extra.accent}22` }]}>
                 <extra.icon size={22} color={extra.accent} />
               </View>
-              <Text style={styles.label} numberOfLines={2}>
+              <Text style={[styles.label, label]} numberOfLines={2}>
                 {extra.name}
               </Text>
             </Pressable>
@@ -89,7 +102,7 @@ export function AppsGrid({
       {modules.map((module, index) => (
         <View key={module.id} style={{ width }}>
           <Enter delay={(extras.length + index) * 50}>
-            <ModuleTile module={module} onPress={() => onOpen(module)} />
+            <ModuleTile module={module} labelStyle={label} onPress={() => onOpen(module)} />
           </Enter>
         </View>
       ))}
@@ -103,7 +116,7 @@ export function AppsGrid({
               style={({ pressed }) => [styles.cell, pressed && styles.pressed]}
             >
               <SeeAllIcon />
-              <Text style={styles.label} numberOfLines={2}>
+              <Text style={[styles.label, label]} numberOfLines={2}>
                 All products
               </Text>
             </Pressable>
@@ -124,7 +137,15 @@ function SeeAllIcon() {
   )
 }
 
-function ModuleTile({ module, onPress }: { module: AppModule; onPress: () => void }) {
+function ModuleTile({
+  module,
+  labelStyle,
+  onPress,
+}: {
+  module: AppModule
+  labelStyle?: StyleProp<TextStyle>
+  onPress: () => void
+}) {
   const styles = useStyles(makeStyles)
   const Icon = iconByName(module.icon)
   const live = module.status === 'ACTIVE'
@@ -142,7 +163,7 @@ function ModuleTile({ module, onPress }: { module: AppModule; onPress: () => voi
             icon it is meant to annotate. */}
         {live ? <View style={styles.live} /> : null}
       </View>
-      <Text style={[styles.label, !live && styles.labelSoon]} numberOfLines={2}>
+      <Text style={[styles.label, labelStyle, !live && styles.labelSoon]} numberOfLines={2}>
         {shortModuleName(module.name)}
       </Text>
       {!live ? <Text style={styles.soon}>Soon</Text> : null}
@@ -186,6 +207,7 @@ const makeStyles = (theme: Theme) =>
       marginTop: theme.space(2),
       lineHeight: 15,
     },
+    labelTight: { fontSize: 10, lineHeight: 13, letterSpacing: -0.2 },
     labelSoon: { color: theme.color.muted },
     soon: {
       color: theme.color.muted,
