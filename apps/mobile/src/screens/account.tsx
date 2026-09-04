@@ -1,6 +1,8 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ChevronRight } from 'lucide-react-native'
 import { Button, Card, Field } from '../components/ui'
 import { SectionHeader } from '../components/section'
+import { links } from '../lib/links'
 import { useAuth } from '../auth/auth'
 import { useSiteSettings } from '../features/site'
 import { useStyles, useTheme, type Theme } from '../theme/theme'
@@ -61,11 +63,37 @@ export function AccountScreen() {
       </View>
 
       <View style={styles.block}>
+        <SectionHeader title="Legal" />
+        {/* Google Play expects the privacy policy to be reachable from inside
+            the app, not only from the store listing. */}
+        <Card>
+          <LinkRow label="Privacy policy" href={links.privacy} />
+          <LinkRow label="Terms of use" href={links.terms} />
+        </Card>
+      </View>
+
+      <View style={styles.block}>
         <Button label="Sign out" variant="ghost" onPress={() => void signOut()} />
       </View>
 
       <Text style={styles.version}>{settings.data?.company_name || 'Itoby Infotech'}</Text>
     </ScrollView>
+  )
+}
+
+/** One row that opens a page on the company site in the device browser. */
+function LinkRow({ label, href }: { label: string; href: string }) {
+  const { theme } = useTheme()
+  const styles = useStyles(makeStyles)
+  return (
+    <Pressable
+      accessibilityRole="link"
+      onPress={() => void Linking.openURL(href)}
+      style={({ pressed }) => [styles.linkRow, pressed && styles.pressed]}
+    >
+      <Text style={styles.linkText}>{label}</Text>
+      <ChevronRight size={16} color={theme.color.muted} />
+    </Pressable>
   )
 }
 
@@ -93,6 +121,14 @@ const makeStyles = (theme: Theme) =>
   segmentText: { color: theme.color.muted, fontSize: 14, fontWeight: '600' },
   segmentTextActive: { color: theme.color.accentText, fontWeight: '800' },
   hint: { color: theme.color.muted, fontSize: 12, lineHeight: 18, marginTop: theme.space(3) },
+  linkRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: theme.space(3),
+  },
+  linkText: { color: theme.color.text, fontSize: 14, fontWeight: '600' },
+  pressed: { opacity: 0.65 },
   version: {
     color: theme.color.muted,
     fontSize: 12,

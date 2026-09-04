@@ -42,3 +42,7 @@ yarn-error.*
 
 # local env (Expo reads EXPO_PUBLIC_* from here)
 .env
+
+# Google Play service account key. Grants release access to the listing —
+# it is downloaded from Google Cloud and never belongs in the repository.
+google-play-key.json
